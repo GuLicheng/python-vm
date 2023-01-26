@@ -10,7 +10,7 @@ namespace python
     {
     public:
 
-        virtual void print(Object* x) override;
+        // virtual void print(Object* x) override;
 
     };
 
@@ -23,9 +23,9 @@ namespace python
 
         TypeObject();
 
-        void set_own_klass(Klass* k);
+        // void set_own_klass(Klass* k);
 
-        Klass* get_own_klass();
+        // Klass* get_own_klass();
 
     };
 

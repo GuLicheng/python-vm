@@ -1,4 +1,4 @@
-#include "type.hpp"
+#include "TypeObject.hpp"
 
 namespace python
 {
@@ -6,8 +6,5 @@ namespace python
     {
         this->set_klass(TypeKlass::get_instance());
     }
-
-    
-
 
 }
