@@ -6,13 +6,13 @@ namespace python
 	Dict::Dict()
 	{
 		this->dict = new PythonObjectDictionary();
-		this->set_klass(DictKlass::get_instance());
+		this->klass = DictKlass::get_instance();
 	}
 
 	Dict::Dict(PythonObjectDictionary* d)
 	{
 		this->dict = d;
-		this->set_klass(DictKlass::get_instance());
+		this->klass = DictKlass::get_instance();
 	}
 
 	void Dict::put(Object* key, Object* value)

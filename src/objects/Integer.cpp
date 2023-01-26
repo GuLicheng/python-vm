@@ -9,7 +9,7 @@ namespace python
 {
 	Integer::Integer(int64_t x) : val(x)
 	{
-		this->set_klass(IntegerKlass::get_instance());
+		this->klass = IntegerKlass::get_instance();
 	}
 
 	void IntegerKlass::print(Object* x)

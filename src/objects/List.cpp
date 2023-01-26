@@ -10,19 +10,19 @@ namespace python
 	List::List() 
 	{
 		this->inner_list = new std::vector<Object*>();
-		this->set_klass(ListKlass::get_instance());
+		this->klass = ListKlass::get_instance();
 	}
 
 	List::List(int size)
 	{
 		this->inner_list = new std::vector<Object*>();
 		this->inner_list->reserve(size);
-		this->set_klass(ListKlass::get_instance());
+		this->klass = ListKlass::get_instance();
 	}
 
 	List::List(std::vector<Object*>* obj_list) : inner_list(obj_list)
 	{
-		this->set_klass(ListKlass::get_instance());
+		this->klass = ListKlass::get_instance();
 	}
 
 	int List::size() const

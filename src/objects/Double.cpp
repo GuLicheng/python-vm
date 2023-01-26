@@ -9,7 +9,7 @@ namespace python
 {
 	Double::Double(double x) : val(x)
 	{
-		this->set_klass(DoubleKlass::get_instance());
+		this->klass = DoubleKlass::get_instance();
 	}
 
 	void DoubleKlass::print(Object* x)

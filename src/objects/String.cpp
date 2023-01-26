@@ -4,19 +4,15 @@
 
 namespace python
 { 
-	//String::String(const char* s) : str(s)
-	//{
-	//	this->set_klass(StringKlass::get_instance());
-	//}
 
 	String::String(const char* s, int length) : str(s, length)
 	{
-		this->set_klass(StringKlass::get_instance());
+		this->klass = StringKlass::get_instance();
 	}
 
 	String::String(std::string s) : str(std::move(s))
 	{
-		this->set_klass(StringKlass::get_instance());
+		this->klass = StringKlass::get_instance();
 	}
 
 	const char* String::c_str() const
