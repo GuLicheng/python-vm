@@ -35,7 +35,7 @@ namespace python
 		this->defaults = nullptr;
 		this->closure = nullptr;
 
-		this->set_klass(FunctionKlass::get_instance());
+		this->klass = FunctionKlass::get_instance();
 	}
 
 	FunctionObject::FunctionObject(Klass* klass)
@@ -48,7 +48,7 @@ namespace python
 		this->native_func = nullptr;
 		this->closure = nullptr;
 
-		this->set_klass(klass);
+		this->klass = klass;
 	}
 
 	FunctionObject::FunctionObject(NativeFunctionPointer nfp)
@@ -61,7 +61,7 @@ namespace python
 		this->defaults = nullptr;
 		this->closure = nullptr;
 
-		this->set_klass(NativeFunctionKlass::get_instance());
+		this->klass = NativeFunctionKlass::get_instance();
 	}
 
 	Object* FunctionObject::call(List* args)
@@ -76,19 +76,19 @@ namespace python
 
 	MemberFunctionObject::MemberFunctionObject(FunctionObject* func) : owner(nullptr), func(func)
 	{
-		this->set_klass(MemberFunctionKlass::get_instance());
+		this->klass = MemberFunctionKlass::get_instance();
 	}
 
 	MemberFunctionObject::MemberFunctionObject(FunctionObject* func, Object* owner) : owner(owner), func(func)
 	{
-		this->set_klass(MemberFunctionKlass::get_instance());
+		this->klass = MemberFunctionKlass::get_instance();
 	}
 
     CellObject::CellObject(List *ls, int i)
     {
 		this->table = ls;
 		this->index = i;
-		this->set_klass(CellKlass::get_instance());
+		this->klass = CellKlass::get_instance();
     }
 
     Object *CellObject::value()
