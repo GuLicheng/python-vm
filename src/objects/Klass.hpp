@@ -15,6 +15,7 @@ namespace python
 
 	class Klass
 	{
+	protected:
 		String* name = nullptr;
 		
 		Dict* klass_dict = nullptr;

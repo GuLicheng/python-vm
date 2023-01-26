@@ -4,7 +4,16 @@ namespace python
 {
     TypeObject::TypeObject()
     {
-        this->set_klass(TypeKlass::get_instance());
+        this->klass = TypeKlass::get_instance();
     }
 
+    void TypeObject::set_own_klass(Klass *k)
+    {
+        this->klass = k;
+    }
+
+    Klass *TypeObject::get_own_klass()
+    {
+        return this->klass;
+    }
 }

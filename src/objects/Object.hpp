@@ -16,7 +16,8 @@ namespace python
 
 	class Object 
 	{
-
+	protected:
+	
 		Klass* klass = ObjectKlass::get_instance();
 
 	public:
