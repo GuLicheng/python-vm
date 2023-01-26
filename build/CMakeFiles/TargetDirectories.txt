@@ -1,4 +1,0 @@
-D:/code/CppPython/build/CMakeFiles/CppPython.dir
-D:/code/CppPython/build/CMakeFiles/SimpleTest.dir
-D:/code/CppPython/build/CMakeFiles/edit_cache.dir
-D:/code/CppPython/build/CMakeFiles/rebuild_cache.dir
