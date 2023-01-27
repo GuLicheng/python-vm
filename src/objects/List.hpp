@@ -4,6 +4,7 @@
 #include "Klass.hpp"
 #include "Singleton.hpp"
 
+#include <span>
 #include <vector>
 
 namespace python
@@ -15,8 +16,12 @@ namespace python
 		virtual void print(Object* x) override;
 
 		virtual Object* subscr(Object* x, Object* y) override;
+		
 		virtual Object* contains(Object* x, Object* y) override;
+		
 		virtual Object* length(Object* x) override;
+
+		virtual Object* add(Object* x, Object* y) override;
 	};
 
 	class List : public Object

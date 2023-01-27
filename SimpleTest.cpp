@@ -58,6 +58,19 @@ namespace python::test
 		assert(s3->value() == "HelloWorld");
 
 		// list/list
+		List* ls1 = new List();
+		List* ls2 = new List();
+
+		ls2->append(i1);
+		ls2->append(d1);
+		ls2->append(s1);
+
+		List* ls3 = ls1->add(ls2)->as<List>();
+
+		assert(ls3->size() == 3);
+		assert(ls3->get(0) == i1);
+		assert(ls3->get(1) == d1);
+		assert(ls3->get(2) == s1);
 
 	}
 

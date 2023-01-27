@@ -117,6 +117,22 @@ namespace python
 		return new Integer(static_cast<int64_t>(ls->size()));
 	}
 
+    Object* ListKlass::add(Object* x, Object* y)
+    {
+        PYTHON_ASSERT(x && y && x->is<List>() && y->is<List>());
+		
+		auto ls1 = x->as<List>();
+		auto ls2 = y->as<List>();
 
+		auto result = new std::vector<Object*>();
+		result->reserve(ls1->size() + ls2->size());
 
+		for (int i = 0; i < ls1->size(); ++i)
+			result->emplace_back(ls1->get(i));
+		
+		for (int i = 0; i < ls2->size(); ++i)
+			result->emplace_back(ls2->get(i));
+
+		return new List(result);
+    }
 }
