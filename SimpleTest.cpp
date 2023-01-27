@@ -108,6 +108,7 @@ namespace python::test
 	
 		assert(i3->value() == 0);
 
+
 		// float/float
 		Double* d1 = new Double(0.5);
 		Double* d2 = new Double(0.5);

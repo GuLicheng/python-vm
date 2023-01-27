@@ -4,8 +4,6 @@ project(CppPython)
 
 set(SRC_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
-message(${SRC_ROOT_PATH})
-
 set(CMAKE_CXX_FLAGS "-std=c++23 -g -Wall")
 
 set(CMAKE_BUILD_TYPE "Debug")
@@ -30,3 +28,5 @@ set(
 add_executable(CppPython ${RESOURCE_FILES} "CppPython.cpp")
 
 add_executable(SimpleTest ${RESOURCE_FILES} "SimpleTest.cpp")
+
+add_executable(a "a.cpp")

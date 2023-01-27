@@ -1,10 +1,9 @@
-#include <span>
-#include <vector>
+#include <iostream>
 
 
 int main()
 {
-
+    std::cout << "HelloWorld\n";
 }
 
 

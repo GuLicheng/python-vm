@@ -49,7 +49,7 @@ namespace python::detail
 			|| x->get_klass() == DoubleKlass::get_instance();
 	}
 
-	inline double conver2float(Object* x)
+	inline double convert2float(Object* x)
 	{
 		// assert x is not nullptr
 		if (x->get_klass() == DoubleKlass::get_instance())
@@ -73,8 +73,8 @@ namespace python::detail
 				return binary_relation_operation<Integer>(op, x, y);
 		}
 
-		double dx = conver2float(x);
-		double dy = conver2float(y);
+		double dx = convert2float(x);
+		double dy = convert2float(y);
 
 		auto result = std::invoke(op, dx, dy);
 		return result ? Universe::HiTrue : Universe::HiFalse;
@@ -95,8 +95,8 @@ namespace python::detail
 				return binary_arith_operation<Integer>(op, x, y);
 		}
 
-		double dx = conver2float(x);
-		double dy = conver2float(y);
+		double dx = convert2float(x);
+		double dy = convert2float(y);
 
 		return new Double(std::invoke(op, dx, dy));
 	}
@@ -113,8 +113,8 @@ namespace python::detail
 		// their value to double and compare. Otherwise return false.
 		if (is_number_object(x) && is_number_object(y))
 		{
-			double dx = conver2float(x);
-			double dy = conver2float(y);
+			double dx = convert2float(x);
+			double dy = convert2float(y);
 			auto result = dx == dy;
 			return result ? Universe::HiTrue : Universe::HiFalse;
 		}

@@ -21,7 +21,6 @@ namespace python
 			{
 				PYTHON_ASSERT(x && "x should not be nullptr");
 				auto py_int = x->hash_code();
-				// auto cpp_int = ((Integer*)py_int)->value();
 				auto cpp_int = py_int->as<Integer>()->value();
 				return static_cast<size_t>(cpp_int);
 			}
