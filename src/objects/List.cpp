@@ -9,30 +9,28 @@ namespace python
 {
 	List::List() 
 	{
-		this->inner_list = new std::vector<Object*>();
 		this->klass = ListKlass::get_instance();
 	}
 
 	List::List(int size)
 	{
-		this->inner_list = new std::vector<Object*>();
-		this->inner_list->reserve(size);
+		this->inner_list.reserve(size);
 		this->klass = ListKlass::get_instance();
 	}
 
-	List::List(std::vector<Object*>* obj_list) : inner_list(obj_list)
+	List::List(std::vector<Object*> obj_list) : inner_list(std::move(obj_list))
 	{
 		this->klass = ListKlass::get_instance();
 	}
 
 	int List::size() const
 	{
-		return this->inner_list->size();
+		return this->inner_list.size();
 	}
 
 	void List::append(Object* obj)
 	{
-		this->inner_list->emplace_back(obj);
+		this->inner_list.emplace_back(obj);
 	}
 
 	Object* List::get(int index)
@@ -40,7 +38,7 @@ namespace python
 		if (index < 0)
 			index += this->size();
 		PYTHON_ASSERT(index < this->size());
-		return this->inner_list->operator[](index);
+		return this->inner_list[index];
 	}
 
 	void List::set(int index, Object* o)
@@ -48,24 +46,23 @@ namespace python
 		if (index < 0)
 			index += this->size();
 		PYTHON_ASSERT(index < this->size());
-		this->inner_list->operator[](index) = o;
+		this->inner_list[index] = o;
 	}
 
 	Object* List::top()
 	{
-		PYTHON_ASSERT(!this->inner_list->empty());
-		return this->inner_list->back();
+		PYTHON_ASSERT(!this->inner_list.empty());
+		return this->inner_list.back();
 	}
 
 	void List::reverse()
 	{
-		PYTHON_ASSERT(this->inner_list != nullptr);
-		std::ranges::reverse(*(this->inner_list));
+		std::ranges::reverse(this->inner_list);
 	}
 
     void List::insert(int pos, Object* obj)
     {
-		this->inner_list->insert(this->inner_list->begin() + pos, obj);
+		this->inner_list.insert(this->inner_list.begin() + pos, obj);
     }
 
     void ListKlass::print(Object* x)
@@ -124,15 +121,15 @@ namespace python
 		auto ls1 = x->as<List>();
 		auto ls2 = y->as<List>();
 
-		auto result = new std::vector<Object*>();
-		result->reserve(ls1->size() + ls2->size());
+		auto result = std::vector<Object*>();
+		result.reserve(ls1->size() + ls2->size());
 
 		for (int i = 0; i < ls1->size(); ++i)
-			result->emplace_back(ls1->get(i));
+			result.emplace_back(ls1->get(i));
 		
 		for (int i = 0; i < ls2->size(); ++i)
-			result->emplace_back(ls2->get(i));
+			result.emplace_back(ls2->get(i));
 
-		return new List(result);
+		return new List(std::move(result));
     }
 }

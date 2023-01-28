@@ -53,7 +53,7 @@ namespace python
 	{
 		friend class DictKlass;
 
-		PythonObjectDictionary* dict;
+		PythonObjectDictionary dict;
 
 	public:
 
@@ -61,7 +61,7 @@ namespace python
 
 		Dict();
 
-		Dict(PythonObjectDictionary* d);
+		Dict(PythonObjectDictionary d);
 
 		void put(Object* key, Object* value);
 

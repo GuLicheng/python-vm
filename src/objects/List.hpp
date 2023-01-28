@@ -26,7 +26,7 @@ namespace python
 
 	class List : public Object
 	{
-		std::vector<Object*>* inner_list;
+		std::vector<Object*> inner_list;
 
 		friend class Interpreter;
 
@@ -38,7 +38,7 @@ namespace python
 
 		explicit List(int size);
 
-		explicit List(std::vector<Object*>* obj_list);
+		explicit List(std::vector<Object*> obj_list);
 
 		int size() const;
 
