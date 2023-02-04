@@ -27,6 +27,7 @@ namespace python
 	
 		virtual Object* hash_code(Object* x) override;
 		virtual Object* deepcopy(Object* x) override;
+		virtual Object* to_string(Object* x) override;
 	
 	};
 

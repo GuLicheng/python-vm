@@ -1,5 +1,6 @@
 #include "Double.hpp"
 #include "Operation.hpp"
+#include "String.hpp"
 
 #include <iostream>
 #include <cmath>
@@ -90,6 +91,12 @@ namespace python
 		PYTHON_ASSERT(x && x->is<Double>());
 		return new Double(x->as<Double>()->value());
 	}
+
+    Object* DoubleKlass::to_string(Object* x)
+    {
+		PYTHON_ASSERT(x && x->is<Double>());
+        return new String(std::to_string(x->as<Double>()->value()));
+    }
 }
 
 /*

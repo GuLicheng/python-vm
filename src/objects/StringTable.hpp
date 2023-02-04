@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Singleton.hpp"
+#include "Object.hpp"
+#include "List.hpp"
 
 namespace python
 {
@@ -22,6 +24,16 @@ namespace python
             "__getattr__",
             "__setattr__",
         };
+
+        List* name_list;
+
+    public:
+
+        StringTable();
+
+        
+
+
     };
       
 

@@ -46,6 +46,8 @@ namespace python
 	public:
 
 		DictKlass();
+
+		virtual Object* to_string(Object* x) override;
 		
 	};
 

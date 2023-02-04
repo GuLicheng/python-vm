@@ -2,8 +2,8 @@
 #include "Universe.hpp"
 #include "Double.hpp"
 #include "Operation.hpp"
+#include "String.hpp"
 #include "../Python.hpp"
-
 
 namespace python
 {
@@ -86,4 +86,9 @@ namespace python
 		return new Integer(x->as<Integer>()->value());
 	}
 
+    Object* IntegerKlass::to_string(Object* x)
+    {
+		PYTHON_ASSERT(x && x->is<Integer>());
+		return new String(std::to_string(x->as<Integer>()->value()));
+    }
 }

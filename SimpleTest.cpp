@@ -126,7 +126,27 @@ namespace python::test
 	
 	}
 
+	void test_hash_code()
+	{
 
+		auto check = [](Object* o, auto value) {
+			using T = decltype(value);
+			return o->hash_code()->as<Integer>()->value() == std::hash<T>()(value);
+		};
+
+		Object* obj = nullptr;
+
+		obj = new Integer(1);
+		assert(check(obj, 1));
+
+		std::string s = "HelloWorld";
+		obj = new String(s);
+		assert(check(obj, s));
+
+		obj = new Double(3.14);
+		assert(check(obj, 3.14));
+
+	}
 
 }
 
@@ -139,6 +159,7 @@ int main()
 	python::test::test_add();
 	python::test::test_sub();
 	python::test::test_mul();
+	python::test::test_hash_code();
     std::cout << "SimpleTest OK\n";
 }
 

@@ -90,7 +90,12 @@ namespace python
 		return this->klass->length(this);
 	}
 
-	Object* Object::getattr(Object* x)
+    Object* Object::to_string()
+    {
+        return this->klass->to_string(this);
+    }
+
+    Object* Object::getattr(Object* x)
 	{
 		auto result = x->klass->get_klass_dict()->get(x);
 

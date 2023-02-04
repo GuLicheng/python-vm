@@ -22,6 +22,8 @@ namespace python
 		virtual Object* length(Object* x) override;
 
 		virtual Object* add(Object* x, Object* y) override;
+
+		virtual Object* to_string(Object* x) override;
 	};
 
 	class List : public Object

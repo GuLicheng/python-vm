@@ -1,4 +1,4 @@
-import dis, marshal, struct, sys, time, types
+import dis, marshal, sys, types
  
 def show_file(fname):
     f = open(fname, "rb")

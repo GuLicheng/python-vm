@@ -61,6 +61,7 @@ namespace python
 	
 		virtual Object* subscr(Object* x, Object* y) { NOT_IMPLEMENT; }
 		virtual Object* contains(Object* x, Object* y) { NOT_IMPLEMENT; }
+		virtual Object* to_string(Object* x) { NOT_IMPLEMENT; }
 
 		// Methods not implemented in book
 		virtual Object* hash_code(Object* x) { NOT_IMPLEMENT; }

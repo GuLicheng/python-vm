@@ -34,8 +34,10 @@ void print_label_style_fn(const char* label_name, Fn fn, int tab_cnt = 0, bool e
 template <int N = 16>
 void print_hex_code(const char* bytes, int length)
 {
-    std::string ascii;
-    ascii.resize(N);
+    // std::string ascii;
+    // ascii.resize(N);
+
+    char ascii[N];
 
     int j;
 

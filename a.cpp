@@ -1,9 +1,11 @@
 #include <iostream>
+#include <ranges>
+#include <vector>
+
 
 
 int main()
 {
-    std::cout << "HelloWorld\n";
 }
 
 

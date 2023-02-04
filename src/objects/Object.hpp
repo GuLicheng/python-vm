@@ -66,6 +66,7 @@ namespace python
 		Object* hash_code();
 		Object* deepcopy();
 		Object* length();
+		Object* to_string();
 
 
 		Object* getattr(Object* x);

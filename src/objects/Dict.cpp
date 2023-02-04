@@ -1,5 +1,6 @@
 #include "Dict.hpp"
 #include "String.hpp"
+#include <sstream>
 
 namespace python
 {
@@ -50,4 +51,22 @@ namespace python
 		this->set_name(new String("dict"));
     }
 
+    Object* DictKlass::to_string(Object* x)
+    {
+		PYTHON_ASSERT(x && x->is<Dict>());
+		std::stringstream ss;
+		bool first = true;
+		ss << '{';
+		for (auto& d = x->as<Dict>()->dict; auto& [k, v] : d)
+		{
+			if (!first)
+				ss << ", ";
+			first = false;
+			ss << k->to_string()->as<String>()->value();
+			ss << ",";
+			ss << v->to_string()->as<String>()->value();
+		}
+		ss << '}';
+		return new String(ss.str());
+    }
 }

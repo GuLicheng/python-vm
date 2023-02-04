@@ -3,6 +3,7 @@
 #include "Universe.hpp"
 #include "Integer.hpp"
 
+#include <sstream>
 #include <algorithm>
 
 namespace python
@@ -132,4 +133,12 @@ namespace python
 
 		return new List(std::move(result));
     }
+
+    Object* ListKlass::to_string(Object* x)
+    {
+		PYTHON_ASSERT(x && x->is<List>());
+		std::stringstream ss;
+		// for (auto& ls : x->as<List>()->inner_list; )
+    }
+
 }
