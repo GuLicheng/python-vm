@@ -97,6 +97,7 @@ namespace python::collections
         template <typename Alloc, typename T>
         void deallocate(Alloc& alloc, T* p, std::size_t n)
         {
+            assert(p && "p should not be nullptr");
             using alloc_traits = typename std::allocator_traits<Alloc>::template rebind_traits<T>;
             using alloc_type = typename std::allocator_traits<Alloc>::template rebind_alloc<T>;
             alloc_type a{ alloc };
@@ -215,6 +216,8 @@ namespace python::collections
 
         using indices_allocator = typename std::allocator_traits<allocator_type>::template rebind_alloc<index_type>;
         using indices_alloc_traits = std::allocator_traits<indices_allocator>;
+
+        using alloc_traits = std::allocator_traits<allocator_type>;
 
         constexpr static index_type SlotUnused = static_cast<index_type>(-1);
         constexpr static index_type SlotDeleted = static_cast<index_type>(-2);
@@ -454,13 +457,50 @@ namespace python::collections
             auto old_indices = m_indices;
             auto old_slots = m_slots;
             auto old_capacity = m_capacity;
+            auto old_size = m_size;
+            auto old_mused = m_used;
 
             initialize(new_capacity); 
 
-            // If we don't cache hash code, we should use m_hash to get hash code again for each active value.
-            // If std::is_nothrow_move_construable_v<T>, the rehash should be  and we can call std::move for
-            // each element otherwise we must copy each element so that if an exception is thrown, the state of 
-            // container is not changed. 
+
+            struct exception_helper
+            {
+                hash_table* t;
+
+                index_type* indices;      
+                slot_type* slots;         
+                std::size_t size;         
+                std::size_t capacity;     
+                std::size_t used;         
+
+                void stop()
+                { t = nullptr; }
+
+                ~exception_helper()
+                {
+                    // Free memory and recover state
+                    if (t)
+                    {
+                        t->clear();
+                        t->m_indices = indices;
+                        t->m_slots = slots;
+                        t->m_size = size;
+                        t->m_capacity = capacity;
+                        t->m_used = used;
+                        for (auto& value : *t)
+                        {
+                            std::cout << value.val << ' ';
+                        }
+                        std::cout << '\n';
+                    }
+                }
+            };
+
+            exception_helper helper { this, old_indices, old_slots, old_size, old_capacity, old_mused };
+
+            // If std::is_nothrow_move_construable_v<T> is false, the `resize` will copy each 
+            // element from old table to new table such as std::vector. To keep the state of 
+            // container not be changed. We use exception_helper.
             m_size = 0;
             m_used = 0;
             slot_allocator alloc { m_alloc };
@@ -492,6 +532,10 @@ namespace python::collections
                     slot_alloc_traits::destroy(alloc, old_slots + pos);
                 }
             }
+
+            // If no exception is thrown, we stop helper and free the old memory.
+            // Otherwise, helper's destructor will recover the state of container
+            helper.stop();
 
             if (old_capacity)
             {
@@ -584,13 +628,108 @@ namespace python::collections
         {
         }
 
-        // TODO: 
-        hash_table(const hash_table&) = delete;
-        hash_table(hash_table&&) = delete;
-        void swap(hash_table& rhs) = delete;
-        hash_table& operator=(hash_table&&) = delete;
-        hash_table& operator=(const hash_table&) = delete;
+        template <typename I, typename S>
+        void assign_from(I first, S last)
+        {
+            for (auto iter = first; iter != last; ++iter)
+                insert(*iter);
+        }
 
+        void move_impl_and_reset_other(hash_table& rhs)
+        {
+            m_indices = std::exchange(rhs.m_indices, nullptr);
+            m_slots = std::exchange(rhs.m_slots, nullptr);
+            m_size = std::exchange(rhs.m_size, 0);
+            m_capacity = std::exchange(rhs.m_capacity, 0);
+            m_used = std::exchange(rhs.m_used, 0);
+        }
+
+        hash_table(const hash_table& rhs)
+            : m_hash{ rhs.m_hash },  m_ke{ rhs.m_ke }, 
+              m_alloc{ std::allocator_traits<allocator_type>::select_on_container_copy_construction(rhs.m_alloc)},
+              m_indices{ }, m_slots{ }, m_size{ }, m_capacity{ }, m_used{ }
+        {
+            try
+            {
+                assign_from(rhs.begin(), rhs.end());
+            }
+            catch(...)
+            {
+                clear();
+                throw; // rethrow exception
+            }
+        }
+
+
+
+        hash_table(hash_table&& rhs) noexcept(IsNothrowMoveConstruct)
+            : m_hash{ std::move(rhs.m_hash) },  m_ke{ std::move(rhs.m_ke) }, m_alloc{ std::move(rhs.m_alloc) },
+              m_indices{ std::exchange(rhs.m_indices, nullptr) }, 
+              m_slots{ std::exchange(rhs.m_slots, nullptr) }, 
+              m_size{ std::exchange(rhs.m_size, 0) }, 
+              m_capacity{ std::exchange(rhs.m_capacity, 0) }, 
+              m_used{ std::exchange(rhs.m_used, 0) }
+        {
+        }
+
+        hash_table& operator=(const hash_table& rhs) 
+        {
+            if (std::addressof(rhs) != this)
+			{
+                clear();
+                // copy member
+                m_ke = rhs.m_ke;
+                m_hash = rhs.m_hash;
+				if constexpr (typename alloc_traits::propagate_on_container_copy_assignment())
+					m_alloc = rhs.m_alloc;
+				try
+				{
+                    assign_from(rhs.begin(), rhs.end());
+				}
+				catch (...)
+				{
+					clear();
+					throw;
+				}
+			}
+			return *this;
+        }
+
+        hash_table& operator=(hash_table&& rhs) noexcept(IsNothrowMoveAssign)
+        {
+            if (this != std::addressof(rhs))
+			{
+                clear();
+                m_hash = std::move(rhs.m_hash);
+                m_ke = std::move(rhs.m_ke);
+
+
+				if constexpr (typename alloc_traits::propagate_on_container_move_assignment())
+				{
+					m_alloc = std::move(rhs.m_alloc);
+					move_impl_and_reset_other(rhs);
+				}
+                else
+                {
+                    if (typename alloc_traits::is_always_equal() || m_alloc == rhs.m_alloc)
+                    {
+                        move_impl_and_reset_other(rhs);
+                    }
+                    else
+                    {
+                        assign_from(std::make_move_iterator(rhs.begin()), std::make_move_iterator(rhs.end()));
+                        rhs.clear();
+                    }
+                }
+			}
+			return *this;
+        }
+
+
+        ~hash_table()
+        { clear(); }
+
+        void swap(hash_table& rhs) = delete;
 
         std::size_t size() const 
         { return m_size; }
@@ -743,6 +882,28 @@ namespace python::collections
         size_type erase(K&& x)
         { return remove_by_key(x); }
 
+        void clear()
+        {
+            if (m_capacity == 0)
+                return;
+
+            // Destroy elements
+            slot_allocator alloc { m_alloc };
+            for (std::size_t i = 0; i < m_used; ++i)
+                slot_alloc_traits::destroy(alloc, m_slots + i);
+
+            // Free memory
+            detail::deallocate(m_alloc, m_indices, m_capacity);
+            detail::deallocate(m_alloc, m_slots, m_capacity);
+
+            // Reset other member
+            m_indices = nullptr;
+            m_slots = nullptr;
+            m_capacity = 0;
+            m_size = 0;
+            m_used = 0;
+        }
+
     protected:
     
         [[no_unique_address]] hasher m_hash;
@@ -757,12 +918,13 @@ namespace python::collections
     };
 
 
-    template <typename T>
+    template <typename T, typename HashFunction = std::hash<T>, 
+        typename KeyEqual = std::equal_to<T>, typename Allocator = std::allocator<T>>
     using hash_set = hash_table<
         std::tuple<T>, 
-        std::hash<T>, 
-        std::equal_to<T>, 
-        std::allocator<T>, 
+        HashFunction, 
+        KeyEqual, 
+        Allocator, 
         detail::py_hash_generator<>, 
         identity, 
         true
@@ -918,3 +1080,120 @@ namespace python::collections
 
 
 }
+
+
+template <bool Report = false, int CopyThrowExceptionCount = -1, int MoveThrowExceptionCount = -1>
+struct Int32
+{
+public:
+    inline static int default_constructor = 0;
+    inline static int copy_constructor = 0;
+    inline static int copy_assignment = 0;
+    inline static int move_constructor = 0;
+    inline static int move_assignment = 0;
+    inline static int destructor = 0;
+    inline static int int_constructor = 0;
+public:
+
+    int static total_construct() 
+    {
+        return default_constructor + copy_constructor + move_constructor + int_constructor;
+    }
+
+    int static total_destruct()
+    { 
+        return destructor; 
+    }
+
+    int val;
+
+    Int32() : val{ 0 } 
+    { 
+        ++default_constructor; 
+        if constexpr (Report) std::cout << "default init: " << val << '\n';
+    }
+    
+    explicit Int32(int x) : val{ x }
+    {
+        ++int_constructor; 
+        if constexpr (Report) std::cout << "int init: " << val << '\n';
+    }
+
+    Int32(const Int32& rhs) : val{ rhs.val }
+    { 
+        ++copy_constructor; 
+        if constexpr (Report) std::cout << "copy_constructor" << val << '\n';
+
+        if constexpr (CopyThrowExceptionCount != -1)
+        {
+            struct CopyConstructorException { };
+            if (copy_constructor >= CopyThrowExceptionCount)
+            {
+                throw CopyConstructorException();
+            }
+        }
+    }
+
+    Int32(Int32&& rhs) noexcept(MoveThrowExceptionCount == -1) : val{ std::exchange(rhs.val, 0) }
+    { 
+        ++move_constructor; 
+        if constexpr (Report) std::cout << "move_constructor" << val << '\n';    
+
+        if constexpr (MoveThrowExceptionCount != -1)
+        {
+            struct MoveConstructorException { };
+            if (move_constructor >= MoveThrowExceptionCount)
+            {
+                ++destructor; // If exception is thrown, the class should destroy itself
+                throw MoveConstructorException();
+            }
+        }
+
+    }
+
+    Int32& operator=(const Int32& rhs) 
+    {
+        this->val = rhs.val; 
+        ++copy_assignment;
+        if constexpr (Report) std::cout << "copy_assignment :" << val << std::endl;
+        return *this;
+    }
+
+    Int32& operator=(Int32&& rhs) noexcept
+    { 
+        this->val = std::exchange(rhs.val, 0);
+        ++move_assignment;
+        if constexpr (Report) std::cout << "move_assignment :" << val << std::endl;
+        return *this;
+    }
+
+    operator int() const noexcept
+    { return this->val; }
+
+    Int32 operator+(Int32 rhs) const noexcept
+    { return Int32{ this->val + rhs.val }; }
+
+    ~Int32() 
+    { 
+        ++destructor; 
+        if constexpr (Report) std::cout << "destructor" << val << '\n';   
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, Int32 f)
+    {
+        return os << f.val;
+    }
+
+    constexpr auto operator<=>(const Int32&) const noexcept = default;
+
+    constexpr std::size_t hash_code() const noexcept
+    { return static_cast<std::size_t>(val); }
+
+    struct HashType
+    {
+        constexpr std::size_t operator()(const Int32& i) const noexcept
+        { return static_cast<std::size_t>(i.val); }
+    };
+
+};
+
