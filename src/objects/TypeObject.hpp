@@ -1,3 +1,10 @@
+/*
+    ---> | ListKlass  |
+    |    | type_object| -----> |TypeObject|
+    -------------------------- | own_klass|
+                               |   klass  | -----> TypeKlass
+*/
+
 #pragma once
 
 #include "Klass.hpp"
