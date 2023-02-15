@@ -13,6 +13,9 @@ namespace python
 	class ListKlass : public Klass, public Singleton<ListKlass>
 	{
 	public:
+
+		ListKlass();
+
 		virtual void print(Object* x) override;
 
 		virtual Object* subscr(Object* x, Object* y) override;
@@ -23,7 +26,7 @@ namespace python
 
 		virtual Object* add(Object* x, Object* y) override;
 
-		virtual Object* to_string(Object* x) override;
+		// virtual Object* to_string(Object* x) override;
 	};
 
 	class List : public Object

@@ -4,6 +4,7 @@
 #include "Singleton.hpp"
 #include "../Python.hpp"
 
+#include <type_traits>
 #include <iostream>
 
 namespace python
@@ -39,7 +40,11 @@ namespace python
 		void set_klass(Klass* k) { this->klass = k; }
 
 		template <typename T>
-		T* as() { return static_cast<T*>(this); }
+		T* as() 
+		{
+			static_assert(std::is_base_of_v<Object, T>); 
+			return static_cast<T*>(this); 
+		}
 
 		template <typename T>
 		bool is() const { return this->get_klass() == T::KlassType::get_instance(); }

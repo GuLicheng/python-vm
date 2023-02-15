@@ -12,37 +12,72 @@ namespace python
 	class String;
 	class Dict;
 	class TypeObject;
+	class List;
 
 	class Klass
 	{
+
+		friend class TypeKlass;
+
 	protected:
+
+		List* super = nullptr;
+
+		List* mro = nullptr;
+
+		TypeObject* type_object = nullptr;
+
 		String* name = nullptr;
 		
 		Dict* klass_dict = nullptr;
 
-		Klass* super = nullptr;
-
-		TypeObject* type_object = nullptr;
-
 		friend class Object;
+
+		// Object* find_and_call(Object* x, List* args, Object* function_name);
+		
+		// Object* find_in_parent(Object* x, Object* y);
+
 
 	public:
 
 		Klass() = default;
 
+		static Object* create_klass(Object* x, Object* supers, Object* name);
+
+		static int compare_klass(Klass* x, Klass* y);
+
+		// Super
+		void add_super(Klass* x);
+		
+		Object* get_super();
+		
+		void order_supers();
+
+		void set_super_list(List* x) { this->super = x; }
+
+		// Mro
+		List* get_mro() { return this->mro; }
+
+		// Default __init__
+		virtual Object* allocate_instance(Object* callable, List* args) { NOT_IMPLEMENT; }
+
+		// Name
 		void set_name(String* x) { this->name = x; }
 
 		String* get_name() const { return this->name; }
 
+		// Klass
 		void set_klass_dict(Dict* d) { this->klass_dict = d; }
 
 		Dict* get_klass_dict() { return this->klass_dict; }
 
+		// Type
 		void set_type_object(TypeObject* obj) { this->type_object = obj; }
 
 		TypeObject* get_type_object() { return this->type_object; }
 
-		virtual void print(Object* obj) { PYTHON_ASSERT(false && "not implement"); }
+		// Member function
+		virtual void print(Object* obj);
 
 		// Some relationship
 		virtual Object* less(Object* x, Object* y) { NOT_IMPLEMENT; }
@@ -70,6 +105,16 @@ namespace python
 
 
 		virtual Object* get_klass_attr(Object* x, Object* y) { NOT_IMPLEMENT; }
+
+
+		// gc interface
+		// virtual void oops_do(class Closure*, Object*);
+
+		// class itself only
+		virtual std::size_t size() { NOT_IMPLEMENT; }
+		// virtual void oops_do(class Closure*);
+
+		// void* operator new(std::size_t);
 
 	};
 }

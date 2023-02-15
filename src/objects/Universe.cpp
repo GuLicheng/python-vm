@@ -10,9 +10,9 @@ namespace python
 {
 	void Universe::genesis()
 	{
-		HiTrue = new Integer(1);
-		HiFalse = new Integer(0);
-		HiNone = new Object();
+		True = new Integer(1);
+		False = new Integer(0);
+		None = new Object();
 
 		Dict* klass_dict = new Dict();
 		StringKlass::get_instance()->set_klass_dict(klass_dict);

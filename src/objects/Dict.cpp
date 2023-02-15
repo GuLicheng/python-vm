@@ -1,5 +1,7 @@
 #include "Dict.hpp"
 #include "String.hpp"
+#include "TypeObject.hpp"
+
 #include <sstream>
 
 namespace python
@@ -23,7 +25,7 @@ namespace python
 	Object* Dict::get(Object* key)
 	{
 		auto iter = this->dict.find(key);
-		return iter == this->dict.end() ? Universe::HiNone : iter->second;
+		return iter == this->dict.end() ? Universe::None : iter->second;
 	}
 
 	bool Dict::has_key(Object* key)
@@ -40,7 +42,7 @@ namespace python
 	{
 		auto iter = this->dict.find(k);
 		if (iter == this->dict.end())
-			return Universe::HiNone;
+			return Universe::None;
 		auto value = iter->second;
 		this->dict.erase(iter);
 		return value;
@@ -48,7 +50,8 @@ namespace python
 
     DictKlass::DictKlass()
     {
-		this->set_name(new String("dict"));
+		// (new TypeObject())->set_own_klass(this);
+		// this->set_name(new String("dict"));
     }
 
     Object* DictKlass::to_string(Object* x)

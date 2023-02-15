@@ -10,6 +10,14 @@ namespace python
 	{
 	public:
 
+		DoubleKlass() = default;
+
+		void initialize();
+
+		virtual std::size_t size() override;
+
+		virtual Object* allocate_instance(Object* callable, List* args) override;
+
 		virtual void print(Object* x) override;
 
 		virtual Object* less(Object* x, Object* y) override;

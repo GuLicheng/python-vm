@@ -8,11 +8,11 @@ namespace python
 	struct Universe
 	{
 
-		inline static Integer* HiTrue = nullptr;
+		inline static Integer* True = nullptr;
 
-		inline static Integer* HiFalse = nullptr;
+		inline static Integer* False = nullptr;
 
-		inline static Object* HiNone = nullptr;
+		inline static Object* None = nullptr;
 
 		static void genesis();
 

@@ -129,15 +129,14 @@ namespace python::test
 	void test_hash_code()
 	{
 
-		auto check = [](Object* o, auto value) {
-			using T = decltype(value);
-			return o->hash_code()->as<Integer>()->value() == std::hash<T>()(value);
+		auto check = []<typename T>(Object* o, T value) {
+			return (std::size_t)o->hash_code()->as<Integer>()->value() == std::hash<T>()(value);
 		};
 
 		Object* obj = nullptr;
 
 		obj = new Integer(1);
-		assert(check(obj, 1));
+		assert(check(obj, 1ll));
 
 		std::string s = "HelloWorld";
 		obj = new String(s);

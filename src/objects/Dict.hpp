@@ -28,7 +28,7 @@ namespace python
 			bool operator()(Object* x, Object* y) const
 			{
 				auto py_boolean = x->equal(y);
-				return py_boolean == Universe::HiTrue ? true : false;
+				return py_boolean == Universe::True ? true : false;
 			}
 		};
 	}

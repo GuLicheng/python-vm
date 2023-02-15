@@ -1,6 +1,9 @@
 #include "Double.hpp"
 #include "Operation.hpp"
 #include "String.hpp"
+#include "Dict.hpp"
+#include "TypeObject.hpp"
+#include "List.hpp"
 
 #include <iostream>
 #include <cmath>
@@ -13,8 +16,28 @@ namespace python
 		this->klass = DoubleKlass::get_instance();
 	}
 
-	void DoubleKlass::print(Object* x)
-	{
+    void DoubleKlass::initialize()
+    {
+		this->set_klass_dict(new Dict());
+		this->set_name(new String("double"));
+		TypeObject().set_own_klass(this);
+		this->add_super(ObjectKlass::get_instance());
+	}
+
+    std::size_t DoubleKlass::size()
+    {
+        return sizeof(Double);
+    }
+
+    Object *DoubleKlass::allocate_instance(Object *callable, List* args)
+    {
+        if (!args || args->size() == 0)
+			return new Double(0.0);
+		return nullptr;
+    }
+
+    void DoubleKlass::print(Object *x)
+    {
 		PYTHON_ASSERT(x && x->is<Double>());
 		std::cout << x->as<Double>()->value();
 	}
@@ -28,7 +51,6 @@ namespace python
 	{
 		return detail::binary_relation_operation_number(std::less_equal<>(), x, y);
 	}
-
 
 	Object* DoubleKlass::greater(Object* x, Object* y)
 	{

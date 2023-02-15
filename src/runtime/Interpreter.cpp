@@ -8,6 +8,13 @@
 #include "../Python.hpp"
 #include "../objects/NativeFunction.hpp"
 
+#include "../objects/Integer.hpp"
+#include "../objects/List.hpp"
+#include "../objects/String.hpp"
+#include "../objects/Dict.hpp"
+#include "../objects/Object.hpp"
+#include "../objects/TypeObject.hpp"
+
 #include <algorithm>
 
 namespace python
@@ -142,10 +149,10 @@ namespace python
 				{
 				using enum ByteCode::COMPARE;
 				case IS:
-					this->push((lhs == rhs ? Universe::HiTrue : Universe::HiFalse));
+					this->push((lhs == rhs ? Universe::True : Universe::False));
 					break;
 				case IS_NOT:
-					this->push((lhs != rhs ? Universe::HiTrue : Universe::HiFalse));
+					this->push((lhs != rhs ? Universe::True : Universe::False));
 					break;
 				case GREATER:
 					this->push(lhs->greater(rhs));
@@ -197,27 +204,27 @@ namespace python
 			{
 				auto v = this->frame->co_names->get(op_arg);
 				auto w = this->frame->locals->get(v);
-				if (w != Universe::HiNone)
+				if (w != Universe::None)
 				{
 					this->push(w);
 					break;
 				}
 
 				w = this->frame->globals->get(v);
-				if (w != Universe::HiNone)
+				if (w != Universe::None)
 				{
 					this->push(w);
 					break;
 				}
 
 				w = this->buildin->get(v);
-				if (w != Universe::HiNone)
+				if (w != Universe::None)
 				{
 					this->push(w);
 					break;
 				}
 
-				this->push(Universe::HiNone);
+				this->push(Universe::None);
 				break;
 			}
 			case ByteCode::SETUP_LOOP:
@@ -328,18 +335,18 @@ namespace python
 			{
 				auto v = this->frame->co_names->get(op_arg);
 				auto w = this->frame->globals->get(v);
-				if (w != Universe::HiNone) {
+				if (w != Universe::None) {
 					this->push(w);
 					break;
 				}
 
 				w = this->buildin->get(v);
-				if (w != Universe::HiNone) {
+				if (w != Universe::None) {
 					this->push(w);
 					break;
 				}
 
-				this->push(Universe::HiNone);
+				this->push(Universe::None);
 				break;
 			}
 			case ByteCode::BINARY_SUBSCR:
@@ -449,11 +456,17 @@ namespace python
 
 		this->buildin = new Dict();
 
-		this->buildin->put(new String("True"), Universe::HiTrue);
-		this->buildin->put(new String("False"), Universe::HiFalse);
-		this->buildin->put(new String("None"), Universe::HiNone);
+		this->buildin->put(new String("True"), Universe::True);
+		this->buildin->put(new String("False"), Universe::False);
+		this->buildin->put(new String("None"), Universe::None);
 
 		this->buildin->put(new String("len"), new FunctionObject(native::len));
+
+		this->buildin->put(new String("int"), IntegerKlass::get_instance()->get_type_object());
+		this->buildin->put(new String("object"), ObjectKlass::get_instance()->get_type_object());
+		this->buildin->put(new String("str"), StringKlass::get_instance()->get_type_object());
+		this->buildin->put(new String("list"), ListKlass::get_instance()->get_type_object());
+		this->buildin->put(new String("dict"), DictKlass::get_instance()->get_type_object());
 
 		// TESTING:
 	}

@@ -7,32 +7,29 @@
 namespace python
 {
 
-    class StringTable : Singleton<StringTable>
+    struct StringTable : Singleton<StringTable>
     {
-        static constexpr const char* names[] = {
-            "__next__",
-            "__module__",
-            "__init__",
-            "__add__",
-            "__len__",
-            "__call__",
-            "__name__",
-            "__iter__",
-            "__repr__",
-            "__getitem__",
-            "__setitem__",
-            "__getattr__",
-            "__setattr__",
-        };
+        String* next_str;
+        String* mod_str;
+        String* init_str;
+        String* add_str;
+        String* len_str;
+        String* call_str;
+        String* getitem_str;
+        String* setitem_str;
+        String* getattr_str;
+        String* setattr_str;
+        String* name_str;
+        String* iter_str;
+        String* repr_str;
 
-        List* name_list;
-
-    public:
+        String* libdir_pre_str;
+        String* empty_str;
+        String* so_pre_str;
+        String* so_suf_str;
+        String* pyc_suf_str;
 
         StringTable();
-
-        
-
 
     };
       

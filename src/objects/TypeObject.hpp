@@ -17,16 +17,19 @@ namespace python
     {
     public:
 
-        // virtual void print(Object* x) override;
+        virtual void print(Object* x) override;
 
     };
 
     class TypeObject : public Object
     {
+        friend class TypeKlass;
 
         Klass* own_klass;
 
     public:
+
+        using KlassType = TypeKlass;
 
         TypeObject();
 

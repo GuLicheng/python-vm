@@ -12,7 +12,7 @@
 namespace python
 {
 
-	class Interpreter
+	class Interpreter : public Singleton<Interpreter>
 	{
 
 		FrameObject* frame;
@@ -41,6 +41,8 @@ namespace python
 	public:
 
 		Interpreter();
+
+		Object* call_virtual(Object* func, List* args) { NOT_IMPLEMENT; }
 
 		void run(CodeObject* codes);
 

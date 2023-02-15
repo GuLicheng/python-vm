@@ -137,7 +137,7 @@ namespace python
 				list->add(new Double(this->file_stream->read_double()));
 				break;
 			case TYPE_NONE:
-				list->add(Universe::HiNone);
+				list->add(Universe::None);
 				break;
 			case 't':
 				str = this->get_string();

@@ -2,19 +2,21 @@ cmake_minimum_required(VERSION 3.0)
 
 project(CppPython)
 
-set(SRC_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR})
+set(PROJECT_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(CMAKE_CXX_FLAGS "-std=c++23 -g -Wall")
+set(CMAKE_CXX_FLAGS_DEBUG "-std=c++23 -g -Wall")
+set(CMAKE_CXX_FLAGS_RELEASE  "-std=c++23 -O3 ")
 
-set(CMAKE_BUILD_TYPE "Debug")
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${PROJECT_ROOT_PATH}/bin/debug")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${PROJECT_ROOT_PATH}")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${PROJECT_ROOT_PATH}/bin/release")
 
-set(EXECUTABLE_OUTPUT_PATH ${SRC_ROOT_PATH})
 
-file(GLOB OBJECTS "${SRC_ROOT_PATH}/src/objects/*.cpp")
-file(GLOB READER "${SRC_ROOT_PATH}/src/reader/*.cpp")
-file(GLOB RUNTIME "${SRC_ROOT_PATH}/src/runtime/*.cpp")
+file(GLOB OBJECTS "${PROJECT_ROOT_PATH}/src/objects/*.cpp")
+file(GLOB READER "${PROJECT_ROOT_PATH}/src/reader/*.cpp")
+file(GLOB RUNTIME "${PROJECT_ROOT_PATH}/src/runtime/*.cpp")
 
 message(${OBJECTS})
 message(${READER})

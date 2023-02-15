@@ -1,10 +1,18 @@
 #include "../Python.hpp"
 #include "List.hpp"
+#include "Dict.hpp"
 #include "Universe.hpp"
 #include "Integer.hpp"
+#include "NativeFunction.hpp"
+#include "FunctionObject.hpp"
+#include "String.hpp"
+#include "TypeObject.hpp"
 
 #include <sstream>
 #include <algorithm>
+
+
+
 
 namespace python
 {
@@ -66,8 +74,20 @@ namespace python
 		this->inner_list.insert(this->inner_list.begin() + pos, obj);
     }
 
-    void ListKlass::print(Object* x)
-	{
+    ListKlass::ListKlass()
+    {
+		Dict* dict = new Dict();
+		dict->put(new String("append"), new FunctionObject(native::list_append));
+		
+		this->klass_dict = dict;
+
+		(new TypeObject())->set_own_klass(this);
+		this->set_name(new String("list"));
+
+	}
+
+    void ListKlass::print(Object *x)
+    {
 		List* lx = (List*)x;
 		PYTHON_ASSERT(lx && lx->is<List>());
 
@@ -103,9 +123,9 @@ namespace python
 		for (int i = 0; i < ls->size(); ++i)
 		{
 			if (ls->get(i)->equal(y))
-				return Universe::HiTrue;
+				return Universe::True;
 		}
-		return Universe::HiFalse;
+		return Universe::False;
 	}
 
 	Object* ListKlass::length(Object* x)
@@ -134,11 +154,5 @@ namespace python
 		return new List(std::move(result));
     }
 
-    Object* ListKlass::to_string(Object* x)
-    {
-		PYTHON_ASSERT(x && x->is<List>());
-		std::stringstream ss;
-		// for (auto& ls : x->as<List>()->inner_list; )
-    }
 
 }

@@ -99,7 +99,7 @@ namespace python
 	{
 		auto result = x->klass->get_klass_dict()->get(x);
 
-		if (result == Universe::HiNone)
+		if (result == Universe::None)
 		{
 			return result;
 		}

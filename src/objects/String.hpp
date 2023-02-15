@@ -12,6 +12,8 @@ namespace python
 	{
 	public:
 
+		StringKlass();
+
 		virtual void print(Object* x) override;
 		virtual Object* hash_code(Object* x) override;
 		virtual Object* deepcopy(Object* x) override;

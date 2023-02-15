@@ -24,7 +24,7 @@ namespace python::detail
 		PYTHON_ASSERT(iy && (iy->get_klass() == KlassT::get_instance()) && "y should not be nullptr");
 
 		auto result = std::invoke(op, ix->value(), iy->value());
-		return result ? Universe::HiTrue : Universe::HiFalse;
+		return result ? Universe::True : Universe::False;
 	}
 
 	// This function requires x and y are same type
@@ -77,7 +77,7 @@ namespace python::detail
 		double dy = convert2float(y);
 
 		auto result = std::invoke(op, dx, dy);
-		return result ? Universe::HiTrue : Universe::HiFalse;
+		return result ? Universe::True : Universe::False;
 	}
 
 	// This function requires both x and y must be one of (int/double)
@@ -116,11 +116,11 @@ namespace python::detail
 			double dx = convert2float(x);
 			double dy = convert2float(y);
 			auto result = dx == dy;
-			return result ? Universe::HiTrue : Universe::HiFalse;
+			return result ? Universe::True : Universe::False;
 		}
 		else
 		{
-			return Universe::HiFalse;
+			return Universe::False;
 		}
 
 	}
@@ -130,7 +130,7 @@ namespace python::detail
 	{
 		auto result = pyobject_equal<ObjectType>(x, y);
 
-		return result == Universe::HiTrue ? Universe::HiFalse : Universe::HiTrue;
+		return result == Universe::True ? Universe::False : Universe::True;
 	}
 
 	struct PythonModulo 

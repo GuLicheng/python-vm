@@ -1,6 +1,7 @@
 #include "String.hpp"
 #include "Integer.hpp"
 #include "Operation.hpp"
+#include "TypeObject.hpp"
 
 namespace python
 { 
@@ -35,8 +36,14 @@ namespace python
 		return std::string_view(this->str);
 	}
 
-	void StringKlass::print(Object* x)
-	{
+    StringKlass::StringKlass()
+    {
+		// (new TypeObject())->set_own_klass(this);
+		// this->set_name(new String("str"));
+    }
+
+    void StringKlass::print(Object *x)
+    {
 		PYTHON_ASSERT(x && x->is<String>());
 		auto s = (String*)x;
 		std::cout << s->sv();

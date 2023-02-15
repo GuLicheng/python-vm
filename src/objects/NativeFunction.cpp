@@ -2,6 +2,7 @@
 #include "Object.hpp"
 #include "List.hpp"
 #include "String.hpp"
+#include "Universe.hpp"
 
 #include <cctype>
 #include <algorithm>
@@ -37,4 +38,15 @@ namespace python::native
 
 	}
 
+	Object* list_append(List* args) 
+	{
+		PYTHON_ASSERT(args && args->size() == 1);
+		auto arg0 = args->get(0);
+
+		PYTHON_ASSERT(arg0->is<String>());
+		
+		arg0->as<List>()->append(args->get(1));
+		return Universe::None;
+
+	}
 }

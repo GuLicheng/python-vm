@@ -1,4 +1,9 @@
 *.exe
+
+# some config
 .vscode
 .fleet
+
+# directory
 build/
+bin/

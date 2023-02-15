@@ -11,12 +11,12 @@ using namespace python;
 void python_main()
 {
     const char* files[] = {
-        R"(test\hello.pyc)",
-        R"(test\test_if.pyc)",
-        R"(test\test_loop.pyc)",
-        R"(test\test_float.pyc)",
-        R"(test\test_function.pyc)",
-        R"(test\test.pyc)",
+        R"(../../test\hello.pyc)",
+        R"(../../test\test_if.pyc)",
+        R"(../../test\test_loop.pyc)",
+        R"(../../test\test_float.pyc)",
+        R"(../../test\test_function.pyc)",
+        R"(../../test\test.pyc)",
     };
 
     const char* file = files[4];
@@ -27,8 +27,8 @@ void python_main()
     auto codeobj = parser.parse();
 
     std::cout << "==================Start running code==================\n";
-    auto interpreter = Interpreter();
-    interpreter.run(codeobj);
+    auto interpreter = Interpreter::get_instance();
+    interpreter->run(codeobj);
 
     std::cout << "==================End running code==================\n";
 }
