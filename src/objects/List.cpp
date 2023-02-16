@@ -76,6 +76,10 @@ namespace python
 
     ListKlass::ListKlass()
     {
+	}
+
+    void ListKlass::initialize()
+    {
 		Dict* dict = new Dict();
 		dict->put(new String("append"), new FunctionObject(native::list_append));
 		
@@ -83,8 +87,20 @@ namespace python
 
 		(new TypeObject())->set_own_klass(this);
 		this->set_name(new String("list"));
+    }
 
-	}
+    Object* ListKlass::allocate_instance(Object* callable, List* args)
+    {
+		if (!args || args->size() == 0)
+			return new List();
+		else
+			return NULL;
+    }
+
+    size_t ListKlass::size()
+    {
+		return sizeof(List);
+    }
 
     void ListKlass::print(Object *x)
     {

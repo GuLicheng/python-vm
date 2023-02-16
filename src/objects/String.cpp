@@ -55,7 +55,7 @@ namespace python
 		this->add_super(ObjectKlass::get_instance());
     }
 
-    Object *StringKlass::allocate_instance(Object* callable, List* args)
+    Object* StringKlass::allocate_instance(Object* callable, List* args)
     { 
 		if (!args || args->size() == 0)
 			return new String("");

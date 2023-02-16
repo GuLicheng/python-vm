@@ -16,6 +16,12 @@ namespace python
 
 		ListKlass();
 
+		void initialize();
+
+    	virtual Object* allocate_instance(Object* callable, List* args) override;
+
+		virtual size_t size() override;
+
 		virtual void print(Object* x) override;
 
 		virtual Object* subscr(Object* x, Object* y) override;

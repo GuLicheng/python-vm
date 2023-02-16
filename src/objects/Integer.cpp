@@ -28,7 +28,7 @@ namespace python
 		return sizeof(Integer);
     }
 
-    Object *IntegerKlass::allocate_instance(Object* callable, List* args)
+    Object* IntegerKlass::allocate_instance(Object* callable, List* args)
     {
 		if (!args || args->size() == 0)
 			return new Integer(0);
