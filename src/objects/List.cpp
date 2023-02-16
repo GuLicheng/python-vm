@@ -64,7 +64,30 @@ namespace python
 		return this->inner_list.back();
 	}
 
-	void List::reverse()
+    Object* List::pop()
+    {
+		PYTHON_ASSERT(this->inner_list.size() > 0);
+        auto ret = this->inner_list.back();
+		this->inner_list.pop_back();
+		return ret; 
+    }
+
+    void List::delete_by_index(int index)
+    {
+		this->inner_list.erase(this->inner_list.begin() + index);
+    }
+
+    void List::delete_by_object(Object* obj)
+    {
+		auto location = std::ranges::find_if(this->inner_list, [=](Object* x) {
+			return x->equal(obj);
+		});
+
+		if (location != this->inner_list.end())
+			this->inner_list.erase(location);
+    }
+
+    void List::reverse()
 	{
 		std::ranges::reverse(this->inner_list);
 	}

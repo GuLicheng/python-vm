@@ -61,6 +61,12 @@ namespace python
 
 		Object* top();
 
+		Object* pop();
+
+		void delete_by_index(int index);
+
+		void delete_by_object(Object* obj);
+
 		void reverse();
 
 		void insert(int pos, Object* obj);
