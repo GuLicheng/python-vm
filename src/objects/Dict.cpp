@@ -83,7 +83,7 @@ namespace python
 		if (!args || args->size() == 0)
 			return new Dict();
 		else
-			return NULL;
+			return nullptr;
     }
 
     size_t DictKlass::size()

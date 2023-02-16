@@ -60,7 +60,7 @@ namespace python
 		if (!args || args->size() == 0)
 			return new String("");
 		else
-			return NULL;
+			return nullptr;
     }
 
     size_t StringKlass::size()

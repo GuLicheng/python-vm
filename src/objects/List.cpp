@@ -94,7 +94,7 @@ namespace python
 		if (!args || args->size() == 0)
 			return new List();
 		else
-			return NULL;
+			return nullptr;
     }
 
     size_t ListKlass::size()
