@@ -2,6 +2,9 @@
 #include "Integer.hpp"
 #include "Operation.hpp"
 #include "TypeObject.hpp"
+#include "Dict.hpp"
+#include "NativeFunction.hpp"
+#include "FunctionObject.hpp"
 
 namespace python
 { 
@@ -38,8 +41,31 @@ namespace python
 
     StringKlass::StringKlass()
     {
-		// (new TypeObject())->set_own_klass(this);
-		// this->set_name(new String("str"));
+    }
+
+    void StringKlass::initialize()
+    {
+		Dict* klass_dict = new Dict();
+
+		klass_dict->put(new String("upper"), new FunctionObject(native::string_upper));
+
+		this->set_klass_dict(klass_dict);
+		this->set_name(new String("str"));
+		TypeObject().set_own_klass(this);
+		this->add_super(ObjectKlass::get_instance());
+    }
+
+    Object *StringKlass::allocate_instance(Object* callable, List* args)
+    { 
+		if (!args || args->size() == 0)
+			return new String("");
+		else
+			return NULL;
+    }
+
+    size_t StringKlass::size()
+    {
+		return sizeof(String);
     }
 
     void StringKlass::print(Object *x)

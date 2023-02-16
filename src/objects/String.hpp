@@ -14,6 +14,12 @@ namespace python
 
 		StringKlass();
 
+		void initialize();
+
+    	virtual Object* allocate_instance(Object* callable, List* args) override;
+
+		virtual size_t size() override;
+
 		virtual void print(Object* x) override;
 		virtual Object* hash_code(Object* x) override;
 		virtual Object* deepcopy(Object* x) override;
