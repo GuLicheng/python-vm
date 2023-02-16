@@ -10,6 +10,12 @@ namespace python
 	{
 	public:
 
+		void initialize();
+
+		virtual size_t size() override;
+
+		virtual Object* allocate_instance(Object* callable, List* args) override;
+
 		virtual void print(Object* x) override;
 
 		virtual Object* less(Object* x, Object* y) override;

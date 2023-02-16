@@ -3,6 +3,9 @@
 #include "Double.hpp"
 #include "Operation.hpp"
 #include "String.hpp"
+#include "Dict.hpp"
+#include "List.hpp"
+#include "TypeObject.hpp"
 #include "../Python.hpp"
 
 namespace python
@@ -12,8 +15,29 @@ namespace python
 		this->klass = IntegerKlass::get_instance();
 	}
 
-	void IntegerKlass::print(Object* x)
-	{
+    void IntegerKlass::initialize()
+    {
+		this->set_klass_dict(new Dict());
+		this->set_name(new String("int"));
+		TypeObject().set_own_klass(this);
+		this->add_super(ObjectKlass::get_instance());
+    }
+
+    size_t IntegerKlass::size()
+    {
+		return sizeof(Integer);
+    }
+
+    Object *IntegerKlass::allocate_instance(Object *callable, List* args)
+    {
+		if (!args || args->size() == 0)
+			return new Integer(0);
+		else
+			return nullptr;
+    }
+
+    void IntegerKlass::print(Object *x)
+    {
 		PYTHON_ASSERT(x && x->is<Integer>());
 		std::cout << x->as<Integer>()->value();
 	}
