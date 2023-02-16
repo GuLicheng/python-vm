@@ -47,6 +47,12 @@ namespace python
 
 		DictKlass();
 
+		void initialize();
+
+    	virtual Object* allocate_instance(Object* callable, List* args) override;
+
+		virtual size_t size() override;
+
 		virtual Object* to_string(Object* x) override;
 		
 	};

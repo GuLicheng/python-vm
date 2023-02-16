@@ -29,7 +29,7 @@ namespace python
         return sizeof(Double);
     }
 
-    Object *DoubleKlass::allocate_instance(Object *callable, List* args)
+    Object *DoubleKlass::allocate_instance(Object* callable, List* args)
     {
         if (!args || args->size() == 0)
 			return new Double(0.0);
