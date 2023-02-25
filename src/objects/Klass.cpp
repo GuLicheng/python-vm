@@ -39,52 +39,53 @@ namespace python
     {
         if (!this->super || this->super->size() == 0)
             return nullptr;
-        
+
         // Return the first base class
         return this->super->get(0)->as<TypeObject>();
     }
 
     void Klass::order_supers()
     {
-        // Use DFS reorder super classes for quick find the overwrite function.
-        if (!this->super)
+        if (this->super == NULL)
             return;
-        
-        if (!this->mro)
+
+        if (this->mro == NULL)
             this->mro = new List();
-        
+
         int cur = -1;
-        for (int i = 0; i < this->super->size(); ++i)
-        {
-            auto tp_obj = this->super->get(i)->as<TypeObject>();
-            auto k = tp_obj->get_own_klass();
-            if (!k->mro)
+        for (int i = 0; i < this->super->size(); i++) {
+            TypeObject* tp_obj = (TypeObject*)(this->super->get(i));
+            Klass* k = tp_obj->get_own_klass();
+            this->mro->append(tp_obj);
+            if (k->mro == NULL)
                 continue;
-            
-            for (int j = 0; j < k->mro->size(); ++j)
-            {
-                auto tp_obj = k->mro->get(j)->as<TypeObject>();
+
+            for (int j = 0; j < k->mro->size(); j++) {
+                TypeObject* tp_obj = (TypeObject*)(k->mro->get(j));
                 int index = this->mro->index(tp_obj);
-                if (index < cur)
-                {
-                    PYTHON_ASSERT(false && "Error: method resolution order conflicts.");
+                if (index < cur) {
+                    printf("Error: method resolution order conflicts.\n");
+                    assert(false);
                 }
                 cur = index;
-                if (index >= 0)
+
+                if (index >= 0) {
                     this->mro->delete_by_index(index);
+                }
                 this->mro->append(tp_obj);
             }
-        }   
+        }
 
-        if (!this->mro)
+        if (this->mro == NULL)
             return;
 
-        std::cout << this->name->value() << "'s mro is";
-        for (int i = 0; i < this->mro->size(); ++i)
-        {
-            auto tp_obj = this->mro->get(i)->as<TypeObject>();
-            auto k = tp_obj->get_own_klass();
-            std::cout << k->get_name()->value() << ',';
+        // printf("%s's mro is ", this->name->value());
+        std::cout << this->name->value() << "'s mro is ";
+        for (int i = 0; i < this->mro->size(); i++) {
+            TypeObject* tp_obj = (TypeObject*)(this->mro->get(i));
+            Klass* k = tp_obj->get_own_klass();
+            // printf("%s, ", k->name->value());
+            std::cout << k->name->value() << ", ";
         }
         std::cout << '\n';
 
@@ -94,7 +95,7 @@ namespace python
     {
         Object* inst = new Object();
         inst->set_klass(callable->as<TypeObject>()->get_own_klass());
-        Object* ctor = inst->getattr(StringTable::get_instance()->init_str);
+        Object* ctor = inst->get_klass_attr(StringTable::init);
         if (ctor != Universe::None)
         {
             Interpreter::get_instance()->call_virtual(ctor, args);
@@ -117,6 +118,13 @@ namespace python
 
     }
 
+    Object* Klass::add(Object* x, Object* y)
+    {
+        List* args = new List();
+        args->append(y);
+        return this->find_and_call(x, args, StringTable::add);
+    }
+
     Object* Klass::get_klass_attr(Object* x, Object* y)
     {
         auto result = this->find_in_parent(x, y);
@@ -125,9 +133,9 @@ namespace python
         return result;
     }
 
-    Object *Klass::getattr(Object *object, Object *attribute_name)
+    Object* Klass::getattr(Object* object, Object* attribute_name)
     {
-        auto func = this->find_in_parent(object, StringTable::get_instance()->getattr_str);
+        auto func = this->find_in_parent(object, StringTable::getattr);
 
         // Invoke __getattr__(self, attribute_name)
         if (func->klass == FunctionKlass::get_instance())
@@ -152,7 +160,7 @@ namespace python
 
     Object* Klass::setattr(Object* object, Object* key, Object* value)
     {
-        auto func = object->klass->klass_dict->get(StringTable::get_instance()->setattr_str);
+        auto func = object->klass->klass_dict->get(StringTable::setattr);
 
         // For member function, we bind the object and function
         if (func->klass == FunctionKlass::get_instance())
@@ -198,7 +206,7 @@ namespace python
 
         if (result != Universe::None)
             return result;
-        
+
         // Find attribute in all parents
         for (int i = 0; i < x->klass->mro->size(); ++i)
         {
@@ -211,6 +219,21 @@ namespace python
         return result;
     }
 
+    /*
+        class A(object):
+            number = 1
+
+            def __init__(self, v):
+                self.value = v
+
+        x: { 
+            "__init__": <Function: __init__>
+            "number": 1, 
+            "__module__": "__main__" 
+        }
+        supers: [object]
+        name: A
+    */
     Object* Klass::create_klass(Object* x, Object* supers, Object* name)
     {
         PYTHON_ASSERT(x->is<Dict>());
@@ -227,7 +250,7 @@ namespace python
 
         TypeObject* type_obj = new TypeObject();
         type_obj->set_own_klass(new_klass);
-        
+
         return type_obj;
     }
 

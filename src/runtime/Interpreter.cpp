@@ -69,13 +69,14 @@ namespace python
 		}
 		else if (callable->get_klass() == TypeKlass::get_instance())
 		{
-			Object* inst = callable->as<TypeObject>()->get_own_klass()->allocate_instance(callable, args);
+			auto own_class = callable->as<TypeObject>()->get_own_klass();
+			Object* inst = own_class->allocate_instance(callable, args);
 			this->push(inst);
 		}
 		else
 		{
 			// PYTHON_ASSERT(false && "Error function type");
-			Object* m = callable->get_klass_attr(StringTable::get_instance()->call_str);
+			Object* m = callable->get_klass_attr(StringTable::call);
 			if (m != Universe::None)
 			{
 				this->build_frame(m, args, op_arg);
@@ -101,7 +102,7 @@ namespace python
 				op_arg = this->frame->get_op_arg();
 			}
 
-			std::cout << "Evaluating: " << (int)op_code << '\n';
+			// std::cout << "Evaluating: " << (int)op_code << '\n';
 
 			switch (op_code)
 			{
@@ -508,6 +509,7 @@ namespace python
 	{
 		this->frame = nullptr;
 		this->ret_value = nullptr;
+		this->status = Status::IS_OK;
 
 		this->buildin = new Dict();
 
@@ -562,7 +564,7 @@ namespace python
     void Interpreter::run(CodeObject* codes)
 	{
 		this->frame = new FrameObject(codes);
-		this->frame->locals->put(StringTable::get_instance()->name_str, new String("__main__"));
+		this->frame->locals->put(StringTable::name, new String("__main__"));
 		this->eval_frame();
 
 		// TODO: ...

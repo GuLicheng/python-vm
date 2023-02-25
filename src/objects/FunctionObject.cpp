@@ -18,7 +18,8 @@ namespace python
 
 		FunctionObject* fo = (FunctionObject*)obj;
 
-		PYTHON_ASSERT(fo && fo->is<FunctionObject>());
+		// PYTHON_ASSERT(fo && fo->is<FunctionObject>());
+		PYTHON_ASSERT(fo);
 
 		fo->func_name->print();
 
@@ -71,6 +72,13 @@ namespace python
 	{
 		return std::invoke(this->native_func, args);
 	}
+
+    void FunctionObject::print()
+    {
+		std::cout << "FunctionObject";
+		if (this->func_name)
+			std::cout << " Name is " << this->func_name->value();
+    }
 
 	MemberFunctionKlass::MemberFunctionKlass()
 	{
@@ -127,6 +135,18 @@ namespace python
     {
 		this->set_klass_dict(new Dict());
 		this->set_name(new String("cell"));
+    }
+
+    void CellKlass::print(Object* object)
+    {
+		std::cout << "CellObject";
+    }
+
+    void NativeFunctionKlass::print(Object* object)
+    {
+		std::cout << "NativeFunctionObject";
+		if (this->name)
+			std::cout << " Name is " << this->name;
     }
 
 }

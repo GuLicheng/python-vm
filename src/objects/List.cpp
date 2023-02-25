@@ -74,9 +74,7 @@ namespace python
 
     int List::index(Object* object)
     {
-		auto location = std::ranges::find_if(this->inner_list, [=](Object* x) {
-			return x->equal(object);
-		});
+		auto location = std::ranges::find(this->inner_list, object);
 		return location == this->inner_list.end() ?
 				 -1 : std::ranges::distance(this->inner_list.begin(), location);
     }

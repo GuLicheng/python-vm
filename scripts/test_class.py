@@ -1,25 +1,11 @@
-class Z(object):
-    def say(self):
-        print("I am Z")
+class A(object):
 
-class X(Z):
-    def say(self):
-        print("I am X")
+    number = 1
 
-# class Y(Z):
-#     def say(self):
-#         print("I am Y")       
+    def __init__(self, v):
+        self.value = v
 
-# class A(X, Y):
-#     def say(self):
-#         print("I am A")
 
-# class B(Z):
-#     def say(self):
-#         print("I am B")
-
-# class C(B, A):
-#     pass
-
-c = X()
-c.say()
+a = A()
+print(a.number)
+print(a.value)

@@ -11,7 +11,7 @@ namespace python
 
     void TypeKlass::print(Object* x)
     {
-        PYTHON_ASSERT(x->is<TypeObject>());       
+        PYTHON_ASSERT(x->is<TypeObject>());
 
         std::cout << "<type";
 
@@ -20,7 +20,7 @@ namespace python
         Dict* attr_dict = own_klass->klass_dict;
         if (attr_dict)
         {
-            Object* mod = attr_dict->get(StringTable::get_instance()->mod_str);
+            Object* mod = attr_dict->get(StringTable::mod);
             if (mod != Universe::None)
             {
                 mod->print();
@@ -45,15 +45,15 @@ namespace python
         this->klass = TypeKlass::get_instance();
     }
 
-    void TypeObject::set_own_klass(Klass *k)
+    void TypeObject::set_own_klass(Klass* k)
     {
         this->own_klass = k;
         k->set_type_object(this);
     }
 
-    Klass *TypeObject::get_own_klass()
+    Klass* TypeObject::get_own_klass()
     {
-        return this->klass;
+        return this->own_klass;
     }
 
 }

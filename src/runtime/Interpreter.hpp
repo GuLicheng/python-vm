@@ -14,12 +14,23 @@ namespace python
 
 	class Interpreter : public Singleton<Interpreter>
 	{
+		enum struct Status
+		{
+			IS_OK,
+			IS_BREAK,
+			IS_CONTINUE,
+			IS_EXCEPTION,
+			IS_RETURN,
+			IS_YIELD,
+		};
 
 		FrameObject* frame;
 
 		Object* ret_value;
 
 		Dict* buildin;
+
+		Status status;
 
 	private:
 		void push(Object* x);
@@ -40,11 +51,11 @@ namespace python
 
 		void enter_frame(FrameObject* frame);
 
-		void initialize();
-
 	public:
 
 		Interpreter();
+
+		void initialize();
 
 		Object* call_virtual(Object* func, List* args);
 

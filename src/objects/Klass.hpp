@@ -42,6 +42,8 @@ namespace python
 
 		Klass() = default;
 
+		Klass(const Klass&) = delete;
+
 		static Object* create_klass(Object* x, Object* supers, Object* name);
 
 		static int compare_klass(Klass* x, Klass* y);
@@ -88,7 +90,7 @@ namespace python
 		virtual Object* greater_equal(Object* x, Object* y) { NOT_IMPLEMENT; }
 
 		// Some aritheric operation
-		virtual Object* add(Object* x, Object* y) { NOT_IMPLEMENT; }
+		virtual Object* add(Object* x, Object* y);
 		virtual Object* sub(Object* x, Object* y) { NOT_IMPLEMENT; }
 		virtual Object* mul(Object* x, Object* y) { NOT_IMPLEMENT; }
 		virtual Object* div(Object* x, Object* y) { NOT_IMPLEMENT; }

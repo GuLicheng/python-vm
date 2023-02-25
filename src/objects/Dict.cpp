@@ -109,4 +109,16 @@ namespace python
 		ss << '}';
 		return new String(ss.str());
     }
+    
+	void DictKlass::print(Object* object)
+    {
+		auto dict = object->as<Dict>();
+		for (auto [k, v] : dict->dict)
+		{
+			k->print();
+			std::cout << ", ";
+			v->print();
+			std::cout << ' ';
+		}
+    }
 }

@@ -13,10 +13,7 @@ namespace python
 	class ObjectKlass : public Klass, public Singleton<ObjectKlass>
 	{
 	public:
-		// virtual void print(Object* obj) override {
-		// 	std::cout << "ObjectType\n";
-		// }
-
+		virtual void print(Object* object) override;
 	};
 
 	class Object 
@@ -35,7 +32,7 @@ namespace python
 
 		Object() = default;
 
-		//virtual ~Object() = default;
+		Object(const Object&) = delete;
 
 		void init_dict();
 

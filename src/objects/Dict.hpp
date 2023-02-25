@@ -54,6 +54,8 @@ namespace python
 		virtual size_t size() override;
 
 		virtual Object* to_string(Object* x) override;
+
+		virtual void print(Object* object) override;
 		
 	};
 

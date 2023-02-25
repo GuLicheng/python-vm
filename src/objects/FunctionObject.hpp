@@ -8,8 +8,6 @@
 
 namespace python
 {
-
-
 	class CodeObject;
 	class String;
 	class Closure;
@@ -18,13 +16,13 @@ namespace python
 	{
 	public:
 
-		virtual void print(Object* obj) override;
+		virtual void print(Object* object) override;
 
 	};
 
 	class NativeFunctionKlass : public Klass, public Singleton<NativeFunctionKlass>
 	{
-
+		virtual void print(Object* object) override;
 	};
 
 	using NativeFunctionPointer = Object*(*)(List* args);
@@ -35,6 +33,8 @@ namespace python
 	public:
 
 		CellKlass();
+
+		virtual void print(Object* object) override;
 
 		// virtual void oops_do(Closure* closure, Object* obj);
 
@@ -88,8 +88,9 @@ namespace python
 
 		Object* call(List* args);
 
-	};
+		virtual void print();
 
+	};
 
 	class MemberFunctionObject : public Object
 	{

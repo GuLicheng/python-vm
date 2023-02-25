@@ -18,9 +18,11 @@ void python_main()
         R"(../../test\test.pyc)",
         R"(../../test\test_type.pyc)",
         R"(../../test\test_class.pyc)",
+        R"(../../test\test_derive.pyc)",
+        R"(../../test\test_operator_overload.pyc)",
     };
 
-    const char* file = files[7];
+    const char* file = files[9];
     auto stream = BufferedInputStream(file);
     std::cout << stream << '\n';
 

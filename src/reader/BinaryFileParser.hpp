@@ -4,6 +4,7 @@
 #include "BufferedInputStream.hpp"
 #include "../objects/CodeObject.hpp"
 #include "../objects/Object.hpp"
+#include "../ArrayList.hpp"
 
 
 namespace python

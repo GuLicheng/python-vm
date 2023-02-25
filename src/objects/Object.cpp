@@ -3,6 +3,7 @@
 #include "Dict.hpp"
 #include "FunctionObject.hpp"
 #include "String.hpp"
+#include "Universe.hpp"
 
 namespace python
 {
@@ -117,4 +118,12 @@ namespace python
         return this->klass->setattr(this, key, value);
     }
     
+    void ObjectKlass::print(Object* object)
+    {
+		if (object != Universe::None)
+			std::cout << "This is a class object";
+		else
+			std::cout << "None";
+    }
+
 }

@@ -9,6 +9,7 @@
 #include "FunctionObject.hpp"
 #include "Klass.hpp"
 #include "TypeObject.hpp"
+#include "../runtime/Interpreter.hpp"
 
 namespace python
 {
@@ -59,6 +60,8 @@ namespace python
 		NativeFunctionKlass::get_instance()->order_supers();
 		MemberFunctionKlass::get_instance()->order_supers();
 
+
+		Interpreter::get_instance()->initialize();
 
 		std::cout << "ObjectKlass " << ObjectKlass::get_instance() << '\n';
 		std::cout << "TypeKlass " << TypeKlass::get_instance() << '\n';
