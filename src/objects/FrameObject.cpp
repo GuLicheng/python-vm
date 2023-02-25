@@ -9,6 +9,8 @@ namespace python
 		this->co_names = codes->co_names;
 
 		this->locals = new Dict();
+		this->locals->put(new String("__name__"), new String("__main__"));
+
 		this->globals = this->locals;
 
 		this->stack = new ArrayList<Object*>();
@@ -209,6 +211,11 @@ namespace python
 	{
 		return this->sender == nullptr;
 	}
+
+    bool FrameObject::is_entry_frame() const
+    {
+        return this->entry_frame;
+    }
 
     Object* FrameObject::get_cell_from_parameter(int index)
     {

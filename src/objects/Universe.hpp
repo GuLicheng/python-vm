@@ -1,9 +1,12 @@
 #pragma once
 
-#include "Integer.hpp"
-
 namespace python
 {
+
+	class Integer;
+	class Object;
+	class List;
+	class Klass;
 
 	struct Universe
 	{
@@ -13,6 +16,8 @@ namespace python
 		inline static Integer* False = nullptr;
 
 		inline static Object* None = nullptr;
+
+		inline static List* klasses = nullptr;
 
 		static void genesis();
 

@@ -20,7 +20,7 @@ namespace python
     {
 		this->set_klass_dict(new Dict());
 		this->set_name(new String("double"));
-		TypeObject().set_own_klass(this);
+		(new TypeObject)->set_own_klass(this);
 		this->add_super(ObjectKlass::get_instance());
 	}
 

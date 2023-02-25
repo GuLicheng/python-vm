@@ -63,6 +63,8 @@ namespace python
 
 		Object* pop();
 
+		int index(Object* object);
+
 		void delete_by_index(int index);
 
 		void delete_by_object(Object* obj);

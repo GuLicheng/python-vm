@@ -45,13 +45,13 @@ namespace python
 
     void StringKlass::initialize()
     {
+		(new TypeObject())->set_own_klass(this);
 		Dict* klass_dict = new Dict();
 
 		klass_dict->put(new String("upper"), new FunctionObject(native::string_upper));
 
 		this->set_klass_dict(klass_dict);
 		this->set_name(new String("str"));
-		TypeObject().set_own_klass(this);
 		this->add_super(ObjectKlass::get_instance());
     }
 

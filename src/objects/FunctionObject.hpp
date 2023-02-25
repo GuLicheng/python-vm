@@ -108,6 +108,10 @@ namespace python
 
 		MemberFunctionObject(FunctionObject* func, Object* owner);
 
+		static bool is_function(Object* x);
+
+		static bool is_yield_function(Object* x);
+
 	};
 
 	class CellObject : public Object

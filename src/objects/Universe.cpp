@@ -14,13 +14,26 @@ namespace python
 {
 	void Universe::genesis()
 	{
+
+		klasses = new List();
+
 		True = new Integer(1);
 		False = new Integer(0);
 		None = new Object();
 
-		// Initialize
-		// Klass* object_klass = ObjectKlass::get_instance();
-		// Klass* type_klass = TypeKlass::get_instance();
+		// Initialize type object
+		Klass* object_klass = ObjectKlass::get_instance();
+		Klass* type_klass   = TypeKlass::get_instance();
+
+		TypeObject* tp_obj = new TypeObject();
+		tp_obj->set_own_klass(type_klass);
+
+		TypeObject* obj_obj = new TypeObject();
+		obj_obj->set_own_klass(object_klass);
+
+		type_klass->add_super(object_klass);
+		// do nothing for object klass
+		//object_klass->add_super(NULL);
 
 		IntegerKlass::get_instance()->initialize();
 		DoubleKlass::get_instance()->initialize();
@@ -29,6 +42,32 @@ namespace python
 		DictKlass::get_instance()->initialize();
 		// ModuleKlass::get_instance()->initialize();
 
+		type_klass->set_klass_dict(new Dict());
+		object_klass->set_klass_dict(new Dict());
+
+		type_klass->set_name(new String("type"));
+		object_klass->set_name(new String("object"));
+
+		IntegerKlass::get_instance()->order_supers();
+		DoubleKlass::get_instance()->order_supers();
+		StringKlass::get_instance()->order_supers();
+		DictKlass::get_instance()->order_supers();
+		ListKlass::get_instance()->order_supers();
+		type_klass->order_supers();
+
+		FunctionKlass::get_instance()->order_supers();
+		NativeFunctionKlass::get_instance()->order_supers();
+		MemberFunctionKlass::get_instance()->order_supers();
+
+
+		std::cout << "ObjectKlass " << ObjectKlass::get_instance() << '\n';
+		std::cout << "TypeKlass " << TypeKlass::get_instance() << '\n';
+		
+		std::cout << "IntegerKlass " << IntegerKlass::get_instance() << '\n';
+		std::cout << "DoubleKlass " << DoubleKlass::get_instance() << '\n';
+		std::cout << "StringKlass " << StringKlass::get_instance() << '\n';
+		std::cout << "DictKlass " << DictKlass::get_instance() << '\n';
+		std::cout << "ListKlass " << ListKlass::get_instance() << '\n';
 
 	}
 

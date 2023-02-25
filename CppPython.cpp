@@ -1,4 +1,3 @@
-
 #include "src/reader/BufferedInputStream.hpp"
 #include "src/reader/BinaryFileParser.hpp"
 #include "src/runtime/Interpreter.hpp"
@@ -17,9 +16,11 @@ void python_main()
         R"(../../test\test_float.pyc)",
         R"(../../test\test_function.pyc)",
         R"(../../test\test.pyc)",
+        R"(../../test\test_type.pyc)",
+        R"(../../test\test_class.pyc)",
     };
 
-    const char* file = files[4];
+    const char* file = files[7];
     auto stream = BufferedInputStream(file);
     std::cout << stream << '\n';
 

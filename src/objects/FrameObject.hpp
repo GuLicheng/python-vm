@@ -59,6 +59,8 @@ namespace python
 
 		bool is_first_frame() const;
 
+		bool is_entry_frame() const;
+
 		Object* get_cell_from_parameter(int index);
 	};
 }

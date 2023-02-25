@@ -72,6 +72,15 @@ namespace python
 		return ret; 
     }
 
+    int List::index(Object* object)
+    {
+		auto location = std::ranges::find_if(this->inner_list, [=](Object* x) {
+			return x->equal(object);
+		});
+		return location == this->inner_list.end() ?
+				 -1 : std::ranges::distance(this->inner_list.begin(), location);
+    }
+
     void List::delete_by_index(int index)
     {
 		this->inner_list.erase(this->inner_list.begin() + index);
@@ -79,12 +88,9 @@ namespace python
 
     void List::delete_by_object(Object* obj)
     {
-		auto location = std::ranges::find_if(this->inner_list, [=](Object* x) {
-			return x->equal(obj);
-		});
-
-		if (location != this->inner_list.end())
-			this->inner_list.erase(location);
+		auto idx = this->index(obj);
+		if (idx != -1)
+			this->delete_by_index(idx);
     }
 
     void List::reverse()
@@ -108,8 +114,9 @@ namespace python
 		
 		this->klass_dict = dict;
 
-		(new TypeObject())->set_own_klass(this);
+		(new TypeObject)->set_own_klass(this);
 		this->set_name(new String("list"));
+		this->add_super(ObjectKlass::get_instance());
     }
 
     Object* ListKlass::allocate_instance(Object* callable, List* args)

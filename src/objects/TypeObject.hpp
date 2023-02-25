@@ -19,6 +19,8 @@ namespace python
 
         virtual void print(Object* x) override;
 
+        virtual Object* setattr(Object* object, Object* key, Object* value) override;
+
     };
 
     class TypeObject : public Object

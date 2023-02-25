@@ -33,6 +33,13 @@ namespace python
 
     }
 
+    Object* TypeKlass::setattr(Object* object, Object* key, Object* value)
+    {
+        // Add attribute into klass dict
+        object->as<TypeObject>()->get_own_klass()->get_klass_dict()->put(key, value);
+        return Universe::None;
+    }
+
     TypeObject::TypeObject()
     {
         this->klass = TypeKlass::get_instance();

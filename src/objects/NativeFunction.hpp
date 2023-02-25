@@ -5,6 +5,8 @@ namespace python::native
 {
 	/* Global Function */
 	Object* len(List* args);
+	Object* isinstance(List* args);
+	Object* type_of(List* args);
 
 	/* class `string` */
 	Object* string_upper(List* args);

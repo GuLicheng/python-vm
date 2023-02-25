@@ -38,11 +38,15 @@ namespace python
 
 		void destroy_frame();
 
+		void enter_frame(FrameObject* frame);
+
+		void initialize();
+
 	public:
 
 		Interpreter();
 
-		Object* call_virtual(Object* func, List* args) { NOT_IMPLEMENT; }
+		Object* call_virtual(Object* func, List* args);
 
 		void run(CodeObject* codes);
 

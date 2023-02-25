@@ -2,11 +2,18 @@
 #include "Universe.hpp"
 #include "Dict.hpp"
 #include "FunctionObject.hpp"
+#include "String.hpp"
 
 namespace python
 {
-	void Object::print()
+    void Object::init_dict()
+    {
+		this->obj_dict = new Dict();
+    }
+
+    void Object::print()
 	{
+		// std::cout << "name = " << this->klass->get_name()->value() << '\n';
 		this->klass->print(this);
 	}
 
@@ -95,22 +102,19 @@ namespace python
         return this->klass->to_string(this);
     }
 
-    Object* Object::getattr(Object* x)
-	{
-		auto result = x->klass->get_klass_dict()->get(x);
+    Object* Object::getattr(Object* attribute)
+    {
+        return this->klass->getattr(this, attribute);
+    }
 
-		if (result == Universe::None)
-		{
-			return result;
-		}
+    Object* Object::get_klass_attr(Object* attribute)
+    {
+        return this->klass->get_klass_attr(this, attribute);
+    }
 
-		// Only klass attr needs bind
-		if (result->get_klass() == FunctionKlass::get_instance()
-		  || result->get_klass() == NativeFunctionKlass::get_instance())
-		{
-			result = new MemberFunctionObject((FunctionObject*)result, this);
-		}
-
-		return result;
-	}
+    Object* Object::setattr(Object* key, Object* value)
+    {
+        return this->klass->setattr(this, key, value);
+    }
+    
 }

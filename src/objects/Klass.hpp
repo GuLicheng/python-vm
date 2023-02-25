@@ -21,9 +21,9 @@ namespace python
 
 	protected:
 
-		List* super = nullptr;
+		List* super = nullptr;  // super classes
 
-		List* mro = nullptr;
+		List* mro = nullptr;  // memory resolution order, control the process of methods searching
 
 		TypeObject* type_object = nullptr;
 
@@ -33,9 +33,9 @@ namespace python
 
 		friend class Object;
 
-		// Object* find_and_call(Object* x, List* args, Object* function_name);
+		Object* find_and_call(Object* x, List* args, Object* function_name);
 		
-		// Object* find_in_parent(Object* x, Object* y);
+		Object* find_in_parent(Object* x, Object* y);
 
 
 	public:
@@ -59,7 +59,7 @@ namespace python
 		List* get_mro() { return this->mro; }
 
 		// Default __init__
-		virtual Object* allocate_instance(Object* callable, List* args) { NOT_IMPLEMENT; }
+		virtual Object* allocate_instance(Object* callable, List* args);
 
 		// Name
 		void set_name(String* x) { this->name = x; }
@@ -104,14 +104,16 @@ namespace python
 		virtual Object* length(Object* x) { NOT_IMPLEMENT; }
 
 
-		virtual Object* get_klass_attr(Object* x, Object* y) { NOT_IMPLEMENT; }
+		virtual Object* get_klass_attr(Object* x, Object* y);
 
+		virtual Object* getattr(Object* object, Object* attribute_name);
+		virtual Object* setattr(Object* object, Object* key, Object* value);
 
 		// gc interface
 		// virtual void oops_do(class Closure*, Object*);
 
 		// class itself only
-		virtual std::size_t size() { NOT_IMPLEMENT; }
+		virtual std::size_t size();
 		// virtual void oops_do(class Closure*);
 
 		// void* operator new(std::size_t);

@@ -7,6 +7,7 @@
 #include "BinaryFileParser.hpp"
 #include "../objects/Integer.hpp"
 #include "../objects/Double.hpp"
+#include "../objects/List.hpp"
 #include "../objects/Universe.hpp"
 #include "../Python.hpp"
 
@@ -150,8 +151,19 @@ namespace python
 			case 'R': // ?
 				list->add(this->string_table.get(this->file_stream->read_int()));
 				break;
+			case '(':
+				{
+					auto tuples = get_tuple();
+					auto ls = new List();
+					for (int i = 0; i < tuples->size(); ++i)
+					{
+						ls->append(ls->get(i));
+					}
+					list->add(ls);
+					break;
+				};
 			default:
-				std::cout << "Error\n";
+				std::cout << "Parse tuple Error" << ", got unknown character " << obj_type << "\n";
 				std::terminate();
 			}
 		}

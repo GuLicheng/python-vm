@@ -3,6 +3,9 @@
 #include "String.hpp"
 #include "CodeObject.hpp"
 #include "Dict.hpp"
+#include "List.hpp"
+#include "TypeObject.hpp"
+#include "Object.hpp"
 
 #include <iostream>
 #include <functional>
@@ -83,6 +86,30 @@ namespace python
 	{
 		this->klass = MemberFunctionKlass::get_instance();
 	}
+
+    bool MemberFunctionObject::is_function(Object* x)
+    {
+        Klass* k = x->get_klass();
+		if (k == (Klass*) FunctionKlass::get_instance())
+			return true;
+		
+		if (!k->get_mro())
+			return false;
+
+		for (int i = 0; i < k->get_mro()->size(); ++i)
+		{
+			if (k->get_mro()->get(i) == FunctionKlass::get_instance()->get_type_object())
+				return true;
+		}
+
+		return false;
+    }
+
+	bool MemberFunctionObject::is_yield_function(Object* x)
+    {
+        NOT_IMPLEMENT;
+    }
+	
 
     CellObject::CellObject(List *ls, int i)
     {

@@ -12,14 +12,22 @@ namespace python
 
 	class ObjectKlass : public Klass, public Singleton<ObjectKlass>
 	{
+	public:
+		// virtual void print(Object* obj) override {
+		// 	std::cout << "ObjectType\n";
+		// }
 
 	};
 
 	class Object 
 	{
+		friend class Klass;
+
 	protected:
 	
 		Klass* klass = ObjectKlass::get_instance();
+
+		Dict* obj_dict = nullptr;
 
 	public:
 
@@ -29,9 +37,11 @@ namespace python
 
 		//virtual ~Object() = default;
 
+		void init_dict();
+
 		virtual void show() { std::cout << "Object(None?)"; };
 
-		const Klass* get_klass() const 
+		Klass* get_klass()  
 		{ 
 			PYTHON_ASSERT(this->klass); 
 			return this->klass; 
@@ -47,7 +57,7 @@ namespace python
 		}
 
 		template <typename T>
-		bool is() const { return this->get_klass() == T::KlassType::get_instance(); }
+		bool is() { return this->get_klass() == T::KlassType::get_instance(); }
 
 
 		void print();
@@ -74,7 +84,9 @@ namespace python
 		Object* to_string();
 
 
-		Object* getattr(Object* x);
+		Object* setattr(Object* key, Object* value);
+		Object* getattr(Object* attribute);
+		Object* get_klass_attr(Object* attribute);
 
 	};
 

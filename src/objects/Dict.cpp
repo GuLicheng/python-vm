@@ -74,7 +74,7 @@ namespace python
 		// 		new FunctionObject(dict_iteritems));
 		this->set_klass_dict(klass_dict);
 		this->set_name(new String("dict"));
-		TypeObject().set_own_klass(this);
+		(new TypeObject)->set_own_klass(this);
 		this->add_super(ObjectKlass::get_instance());
     }
 
