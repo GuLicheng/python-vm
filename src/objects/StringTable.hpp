@@ -21,7 +21,11 @@ namespace python
         DefineString(call);
         DefineString(name);
      
+        // some operators
         DefineString(add);
+        DefineString(sub);
+        DefineString(mul);
+        DefineString(len);
     };
 
     #undef STR

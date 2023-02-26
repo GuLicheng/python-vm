@@ -91,8 +91,8 @@ namespace python
 
 		// Some aritheric operation
 		virtual Object* add(Object* x, Object* y);
-		virtual Object* sub(Object* x, Object* y) { NOT_IMPLEMENT; }
-		virtual Object* mul(Object* x, Object* y) { NOT_IMPLEMENT; }
+		virtual Object* sub(Object* x, Object* y);
+		virtual Object* mul(Object* x, Object* y);
 		virtual Object* div(Object* x, Object* y) { NOT_IMPLEMENT; }
 		virtual Object* mod(Object* x, Object* y) { NOT_IMPLEMENT; }
 	
@@ -103,7 +103,7 @@ namespace python
 		// Methods not implemented in book
 		virtual Object* hash_code(Object* x) { NOT_IMPLEMENT; }
 		virtual Object* deepcopy(Object* x) { NOT_IMPLEMENT; }
-		virtual Object* length(Object* x) { NOT_IMPLEMENT; }
+		virtual Object* length(Object* x);
 
 
 		virtual Object* get_klass_attr(Object* x, Object* y);

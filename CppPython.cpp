@@ -4,6 +4,7 @@
 #include "src/objects/Universe.hpp"
 
 #include <iostream>
+#include <fstream>
 
 using namespace python;
 
@@ -24,7 +25,10 @@ void python_main()
 
     const char* file = files[9];
     auto stream = BufferedInputStream(file);
-    std::cout << stream << '\n';
+
+    std::fstream log { "a.txt" };
+
+    log << stream << '\n';
 
     auto parser = BinaryFileParser(&stream);
     auto codeobj = parser.parse();

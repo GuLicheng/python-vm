@@ -125,6 +125,25 @@ namespace python
         return this->find_and_call(x, args, StringTable::add);
     }
 
+    Object* Klass::sub(Object* x, Object* y)
+    {
+        List* args = new List();
+        args->append(y);
+        return this->find_and_call(x, args, StringTable::sub);
+    }
+
+    Object* Klass::mul(Object* x, Object* y)
+    {
+        List* args = new List();
+        args->append(y);
+        return this->find_and_call(x, args, StringTable::mul);
+    }
+
+    Object* Klass::length(Object* x)
+    {
+        return this->find_and_call(x, nullptr, StringTable::mul);
+    }
+
     Object* Klass::get_klass_attr(Object* x, Object* y)
     {
         auto result = this->find_in_parent(x, y);
