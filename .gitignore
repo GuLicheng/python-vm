@@ -1,9 +1,10 @@
 *.exe
 
-# some config
+# some configs
 .vscode
 .fleet
+.vs
 
-# directory
+# directories
 build/
 bin/
