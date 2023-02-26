@@ -75,7 +75,7 @@ namespace python
 		std::cout << s->sv();
 	}
 
-	Object* StringKlass::hash_code(Object* x)
+	Object* StringKlass::__hash__(Object* x)
 	{
 		PYTHON_ASSERT(x && x->is<String>());
 		auto sv = ((String*)x)->sv();
@@ -83,46 +83,46 @@ namespace python
 		return detail::cpp_hash_value2py_int(hash_val);
 	}
 
-	Object* StringKlass::deepcopy(Object* x)
+	Object* StringKlass::__deepcopy__(Object* x)
 	{
 		PYTHON_ASSERT(x && x->is<String>());
 		auto str = (String*)x;
 		return new String(str->c_str(), str->length());
 	}
 
-	Object* StringKlass::length(Object* x)
+	Object* StringKlass::__len__(Object* x)
 	{
 		PYTHON_ASSERT(x && x->is<String>());
 		String* s = (String*)x;
 		return new Integer(static_cast<int64_t>(s->sv().size()));
 	}
 
-	Object* StringKlass::less(Object* x, Object* y)
+	Object* StringKlass::__lt__(Object* x, Object* y)
 	{
 		return detail::binary_relation_operation<String>(std::less<>(), x, y);
 	}
 
-	Object* StringKlass::not_equal(Object* x, Object* y)
+	Object* StringKlass::__ne__(Object* x, Object* y)
 	{
 		return detail::binary_relation_operation<String>(std::not_equal_to<>(), x, y);
 	}
 
-	Object* StringKlass::less_equal(Object* x, Object* y)
+	Object* StringKlass::__le__(Object* x, Object* y)
 	{
 		return detail::binary_relation_operation<String>(std::less_equal<>(), x, y);
 	}
 
-	Object* StringKlass::equal(Object* x, Object* y)
+	Object* StringKlass::__eq__(Object* x, Object* y)
 	{
 		return detail::binary_relation_operation<String>(std::equal_to<>(), x, y);
 	}
 
-	Object* StringKlass::greater(Object* x, Object* y)
+	Object* StringKlass::__gt__(Object* x, Object* y)
 	{
 		return detail::binary_relation_operation<String>(std::greater<>(), x, y);
 	}
 
-	Object* StringKlass::greater_equal(Object* x, Object* y)
+	Object* StringKlass::__ge__(Object* x, Object* y)
 	{
 		return detail::binary_relation_operation<String>(std::greater_equal<>(), x, y);
 	}

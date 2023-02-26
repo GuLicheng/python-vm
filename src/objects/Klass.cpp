@@ -22,7 +22,7 @@ namespace python
         else if (y == IntegerKlass::get_instance())
             return 1;
 
-        if (x->get_name()->less(y->get_name()) == (Object*)Universe::True)
+        if (x->get_name()->__lt__(y->get_name()) == (Object*)Universe::True)
             return -1;
         else
             return 1;
@@ -118,6 +118,13 @@ namespace python
 
     }
 
+    Object* Klass::__lt__(Object* x, Object* y)
+    {
+        List* args = new List();
+        args->append(y);
+        return this->find_and_call(x, args, StringTable::le);
+    }
+
     Object* Klass::add(Object* x, Object* y)
     {
         List* args = new List();
@@ -125,21 +132,21 @@ namespace python
         return this->find_and_call(x, args, StringTable::add);
     }
 
-    Object* Klass::sub(Object* x, Object* y)
+    Object* Klass::__sub__(Object* x, Object* y)
     {
         List* args = new List();
         args->append(y);
         return this->find_and_call(x, args, StringTable::sub);
     }
 
-    Object* Klass::mul(Object* x, Object* y)
+    Object* Klass::__mul__(Object* x, Object* y)
     {
         List* args = new List();
         args->append(y);
         return this->find_and_call(x, args, StringTable::mul);
     }
 
-    Object* Klass::length(Object* x)
+    Object* Klass::__len__(Object* x)
     {
         return this->find_and_call(x, nullptr, StringTable::mul);
     }

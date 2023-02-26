@@ -60,24 +60,24 @@ namespace python
 		void print();
 
 		Object* add(Object* x);
-		Object* sub(Object* x);
-		Object* mul(Object* x);
+		Object* __sub__(Object* x);
+		Object* __mul__(Object* x);
 		Object* div(Object* x);
 		Object* mod(Object* x);
 
-		Object* greater(Object* x);
-		Object* less(Object* x);
-		Object* equal(Object* x);
-		Object* not_equal(Object* x);
-		Object* less_equal(Object* x);
-		Object* greater_equal(Object* x);
+		Object* __gt__(Object* x);
+		Object* __lt__(Object* x);
+		Object* __eq__(Object* x);
+		Object* __ne__(Object* x);
+		Object* __le__(Object* x);
+		Object* __ge__(Object* x);
 
 		Object* subscr(Object* x);
 		Object* contains(Object* x);
 
-		Object* hash_code();
-		Object* deepcopy();
-		Object* length();
+		Object* __hash__();
+		Object* __deepcopy__();
+		Object* __len__();
 		Object* to_string();
 
 

@@ -146,7 +146,7 @@ namespace python
 			case ByteCode::BINARY_SUBTRACT:
 			{
 				auto [v, w] = this->pop_top_two();
-				this->push(w->sub(v));
+				this->push(w->__sub__(v));
 				break;
 			}
 			case ByteCode::BINARY_DIVIDE:
@@ -158,7 +158,7 @@ namespace python
 			case ByteCode::BINARY_MULTIPLY:
 			{
 				auto [v, w] = this->pop_top_two();
-				this->push(w->mul(v));
+				this->push(w->__mul__(v));
 				break;
 			}
 			case ByteCode::BINARY_MODULO:
@@ -188,22 +188,22 @@ namespace python
 					this->push((lhs != rhs ? Universe::True : Universe::False));
 					break;
 				case GREATER:
-					this->push(lhs->greater(rhs));
+					this->push(lhs->__gt__(rhs));
 					break;
 				case LESS:
-					this->push(lhs->less(rhs));
+					this->push(lhs->__lt__(rhs));
 					break;
 				case EQUAL:
-					this->push(lhs->equal(rhs));
+					this->push(lhs->__eq__(rhs));
 					break;
 				case NOT_EQUAL:
-					this->push(lhs->not_equal(rhs));
+					this->push(lhs->__ne__(rhs));
 					break;
 				case LESS_EQUAL:
-					this->push(lhs->less_equal(rhs));
+					this->push(lhs->__le__(rhs));
 					break;
 				case GREATER_EQUAL:
-					this->push(lhs->greater_equal(rhs));
+					this->push(lhs->__ge__(rhs));
 					break;
 				default: std::unreachable();
 				}

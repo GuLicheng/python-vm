@@ -42,32 +42,32 @@ namespace python
 		std::cout << x->as<Integer>()->value();
 	}
 
-	Object* IntegerKlass::less(Object* x, Object* y)
+	Object* IntegerKlass::__lt__(Object* x, Object* y)
 	{
 		return detail::binary_relation_operation_number(std::less<>(), x, y);
 	}
 
-	Object* IntegerKlass::less_equal(Object* x, Object* y)
+	Object* IntegerKlass::__le__(Object* x, Object* y)
 	{
 		return detail::binary_relation_operation_number(std::less_equal<>(), x, y);
 	}
 
-	Object* IntegerKlass::greater(Object* x, Object* y)
+	Object* IntegerKlass::__gt__(Object* x, Object* y)
 	{
 		return detail::binary_relation_operation_number(std::greater<>(), x, y);
 	}
 
-	Object* IntegerKlass::greater_equal(Object* x, Object* y)
+	Object* IntegerKlass::__ge__(Object* x, Object* y)
 	{
 		return detail::binary_relation_operation_number(std::greater_equal<>(), x, y);
 	}
 
-	Object* IntegerKlass::equal(Object* x, Object* y)
+	Object* IntegerKlass::__eq__(Object* x, Object* y)
 	{
 		return detail::pyobject_equal<Integer>(x, y);
 	}
 
-	Object* IntegerKlass::not_equal(Object* x, Object* y)
+	Object* IntegerKlass::__ne__(Object* x, Object* y)
 	{
 		return detail::pyobject_not_equal<Integer>(x, y);
 	}
@@ -77,12 +77,12 @@ namespace python
 		return detail::binary_arith_operation_number(std::plus<>(), x, y);
 	}
 
-	Object* IntegerKlass::sub(Object* x, Object* y)
+	Object* IntegerKlass::__sub__(Object* x, Object* y)
 	{
 		return detail::binary_arith_operation_number(std::minus<>(), x, y);
 	}
 
-	Object* IntegerKlass::mul(Object* x, Object* y)
+	Object* IntegerKlass::__mul__(Object* x, Object* y)
 	{
 		return detail::binary_arith_operation_number(std::multiplies<>(), x, y);
 	}
@@ -97,14 +97,14 @@ namespace python
 		return detail::binary_arith_operation_number(detail::PythonModulo(), x, y);
 	}
 
-	Object* IntegerKlass::hash_code(Object* x)
+	Object* IntegerKlass::__hash__(Object* x)
 	{
 		PYTHON_ASSERT(x && x->is<Integer>());
 		auto cpp_int = x->as<Integer>()->value();
 		return detail::cpp_hash_value2py_int(std::hash<int64_t>()(cpp_int));
 	}
 
-	Object* IntegerKlass::deepcopy(Object* x)
+	Object* IntegerKlass::__deepcopy__(Object* x)
 	{
 		PYTHON_ASSERT(x && x->is<Integer>());
 		return new Integer(x->as<Integer>()->value());

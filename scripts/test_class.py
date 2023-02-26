@@ -6,6 +6,6 @@ class A(object):
         self.value = v
 
 
-a = A()
+a = A(2)
 print(a.number)
 print(a.value)

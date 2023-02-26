@@ -20,14 +20,14 @@ namespace python
 			/* static */ size_t operator()(Object* x) const
 			{
 				PYTHON_ASSERT(x && "x should not be nullptr");
-				auto py_int = x->hash_code();
+				auto py_int = x->__hash__();
 				auto cpp_int = py_int->as<Integer>()->value();
 				return static_cast<size_t>(cpp_int);
 			}
 
 			bool operator()(Object* x, Object* y) const
 			{
-				auto py_boolean = x->equal(y);
+				auto py_boolean = x->__eq__(y);
 				return py_boolean == Universe::True ? true : false;
 			}
 		};

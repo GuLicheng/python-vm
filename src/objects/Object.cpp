@@ -23,14 +23,14 @@ namespace python
 		return this->klass->add(this, x);
 	}
 
-	Object* Object::sub(Object* x)
+	Object* Object::__sub__(Object* x)
 	{
-		return this->klass->sub(this, x);
+		return this->klass->__sub__(this, x);
 	}
 
-	Object* Object::mul(Object* x)
+	Object* Object::__mul__(Object* x)
 	{
-		return this->klass->mul(this, x);
+		return this->klass->__mul__(this, x);
 	}
 
 	Object* Object::div(Object* x)
@@ -43,34 +43,34 @@ namespace python
 		return this->klass->mod(this, x);
 	}
 
-	Object* Object::greater(Object* x)
+	Object* Object::__gt__(Object* x)
 	{
-		return this->klass->greater(this, x);
+		return this->klass->__gt__(this, x);
 	}
 
-	Object* Object::less(Object* x)
+	Object* Object::__lt__(Object* x)
 	{
-		return this->klass->less(this, x);
+		return this->klass->__lt__(this, x);
 	}
 
-	Object* Object::equal(Object* x)
+	Object* Object::__eq__(Object* x)
 	{
-		return this->klass->equal(this, x);
+		return this->klass->__eq__(this, x);
 	}
 
-	Object* Object::not_equal(Object* x)
+	Object* Object::__ne__(Object* x)
 	{
-		return this->klass->not_equal(this, x);
+		return this->klass->__ne__(this, x);
 	}
 
-	Object* Object::less_equal(Object* x)
+	Object* Object::__le__(Object* x)
 	{
-		return this->klass->less_equal(this, x);
+		return this->klass->__le__(this, x);
 	}
 
-	Object* Object::greater_equal(Object* x)
+	Object* Object::__ge__(Object* x)
 	{
-		return this->klass->greater_equal(this, x);
+		return this->klass->__ge__(this, x);
 	}
 
 	Object* Object::subscr(Object* x)
@@ -83,19 +83,19 @@ namespace python
 		return this->klass->contains(this, x);
 	}
 
-	Object* Object::hash_code()
+	Object* Object::__hash__()
 	{
-		return this->klass->hash_code(this);
+		return this->klass->__hash__(this);
 	}
 
-	Object* Object::deepcopy()
+	Object* Object::__deepcopy__()
 	{
-		return this->klass->deepcopy(this);
+		return this->klass->__deepcopy__(this);
 	}
 
-	Object* Object::length()
+	Object* Object::__len__()
 	{
-		return this->klass->length(this);
+		return this->klass->__len__(this);
 	}
 
     Object* Object::to_string()

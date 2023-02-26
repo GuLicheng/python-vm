@@ -166,13 +166,13 @@ namespace python
 
 		for (int i = 0; i < ls->size(); ++i)
 		{
-			if (ls->get(i)->equal(y))
+			if (ls->get(i)->__eq__(y))
 				return Universe::True;
 		}
 		return Universe::False;
 	}
 
-	Object* ListKlass::length(Object* x)
+	Object* ListKlass::__len__(Object* x)
 	{
 		PYTHON_ASSERT(x && x->is<List>());
 		List* ls = x->as<List>();

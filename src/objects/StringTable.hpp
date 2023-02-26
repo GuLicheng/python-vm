@@ -26,6 +26,7 @@ namespace python
         DefineString(sub);
         DefineString(mul);
         DefineString(len);
+        DefineString(le);
     };
 
     #undef STR

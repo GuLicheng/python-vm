@@ -79,22 +79,22 @@ namespace python::test
 		// int/int
 		Integer* i1 = new Integer(0);
 		Integer* i2 = new Integer(1);
-		Integer* i3 = i1->sub(i2)->as<Integer>();
+		Integer* i3 = i1->__sub__(i2)->as<Integer>();
 	
 		assert(i3->value() == -1);
 
 		// float/float
 		Double* d1 = new Double(0.5);
 		Double* d2 = new Double(0.5);
-		Double* d3 = d1->sub(d2)->as<Double>();
+		Double* d3 = d1->__sub__(d2)->as<Double>();
 
 		assert(d3->value() == 0.0);
 
 		// float/int	
-		Double* d4 = d1->sub(i1)->as<Double>();
+		Double* d4 = d1->__sub__(i1)->as<Double>();
 
 		// int/float  
-		Double* d5 = i1->sub(d1)->as<Double>();
+		Double* d5 = i1->__sub__(d1)->as<Double>();
 
 		assert(d4->value() + d5->value() == 0.0);
 	}
@@ -104,7 +104,7 @@ namespace python::test
 		// int/int
 		Integer* i1 = new Integer(0);
 		Integer* i2 = new Integer(1);
-		Integer* i3 = i1->mul(i2)->as<Integer>();
+		Integer* i3 = i1->__mul__(i2)->as<Integer>();
 	
 		assert(i3->value() == 0);
 
@@ -112,15 +112,15 @@ namespace python::test
 		// float/float
 		Double* d1 = new Double(0.5);
 		Double* d2 = new Double(0.5);
-		Double* d3 = d1->mul(d2)->as<Double>();
+		Double* d3 = d1->__mul__(d2)->as<Double>();
 
 		assert(d3->value() == 0.5 * 0.5);
 	
 		// float/int	
-		Double* d4 = d1->mul(i1)->as<Double>();
+		Double* d4 = d1->__mul__(i1)->as<Double>();
 
 		// int/float  
-		Double* d5 = i1->mul(d1)->as<Double>();
+		Double* d5 = i1->__mul__(d1)->as<Double>();
 
 		assert(d4->value() == d5->value());
 	
@@ -130,7 +130,7 @@ namespace python::test
 	{
 
 		auto check = []<typename T>(Object* o, T value) {
-			return (std::size_t)o->hash_code()->as<Integer>()->value() == std::hash<T>()(value);
+			return (std::size_t)o->__hash__()->as<Integer>()->value() == std::hash<T>()(value);
 		};
 
 		Object* obj = nullptr;

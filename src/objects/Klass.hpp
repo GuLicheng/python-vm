@@ -81,18 +81,18 @@ namespace python
 		// Member function
 		virtual void print(Object* obj);
 
-		// Some relationship
-		virtual Object* less(Object* x, Object* y) { NOT_IMPLEMENT; }
-		virtual Object* not_equal(Object* x, Object* y) { NOT_IMPLEMENT; }
-		virtual Object* equal(Object* x, Object* y) { NOT_IMPLEMENT; }
-		virtual Object* greater(Object* x, Object* y) { NOT_IMPLEMENT; }
-		virtual Object* less_equal(Object* x, Object* y) { NOT_IMPLEMENT; }
-		virtual Object* greater_equal(Object* x, Object* y) { NOT_IMPLEMENT; }
 
-		// Some aritheric operation
+		// Magic methods
+		virtual Object* __lt__(Object* x, Object* y);
+		virtual Object* __ne__(Object* x, Object* y) { NOT_IMPLEMENT; }
+		virtual Object* __eq__(Object* x, Object* y) { NOT_IMPLEMENT; }
+		virtual Object* __gt__(Object* x, Object* y) { NOT_IMPLEMENT; }
+		virtual Object* __le__(Object* x, Object* y) { NOT_IMPLEMENT; }
+		virtual Object* __ge__(Object* x, Object* y) { NOT_IMPLEMENT; }
+
 		virtual Object* add(Object* x, Object* y);
-		virtual Object* sub(Object* x, Object* y);
-		virtual Object* mul(Object* x, Object* y);
+		virtual Object* __sub__(Object* x, Object* y);
+		virtual Object* __mul__(Object* x, Object* y);
 		virtual Object* div(Object* x, Object* y) { NOT_IMPLEMENT; }
 		virtual Object* mod(Object* x, Object* y) { NOT_IMPLEMENT; }
 	
@@ -101,9 +101,9 @@ namespace python
 		virtual Object* to_string(Object* x) { NOT_IMPLEMENT; }
 
 		// Methods not implemented in book
-		virtual Object* hash_code(Object* x) { NOT_IMPLEMENT; }
-		virtual Object* deepcopy(Object* x) { NOT_IMPLEMENT; }
-		virtual Object* length(Object* x);
+		virtual Object* __hash__(Object* x) { NOT_IMPLEMENT; }
+		virtual Object* __deepcopy__(Object* x) { NOT_IMPLEMENT; }
+		virtual Object* __len__(Object* x);
 
 
 		virtual Object* get_klass_attr(Object* x, Object* y);

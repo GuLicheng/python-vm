@@ -28,7 +28,7 @@ namespace python
 		
 		virtual Object* contains(Object* x, Object* y) override;
 		
-		virtual Object* length(Object* x) override;
+		virtual Object* __len__(Object* x) override;
 
 		virtual Object* add(Object* x, Object* y) override;
 

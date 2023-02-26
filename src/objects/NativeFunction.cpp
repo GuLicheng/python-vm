@@ -27,7 +27,7 @@ namespace python::native
 	Object* len(List* args)
 	{
 		PYTHON_ASSERT(args->size() == 1);
-		return args->get(0)->length();
+		return args->get(0)->__len__();
 	}
 
     Object* isinstance(List *args)
