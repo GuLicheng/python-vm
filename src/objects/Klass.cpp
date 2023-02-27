@@ -13,6 +13,7 @@
 
 namespace python
 {
+
     int Klass::compare_klass(Klass* x, Klass* y) {
         if (x == y)
             return 0;
@@ -120,48 +121,60 @@ namespace python
 
     Object* Klass::__lt__(Object* x, Object* y)
     {
-        List* args = new List();
-        args->append(y);
-        return this->find_and_call(x, args, StringTable::le);
+        return find_magic_method_and_call(StringTable::lt, x, y);
     }
 
-    Object* Klass::add(Object* x, Object* y)
+    Object* Klass::__gt__(Object* x, Object* y)
     {
-        List* args = new List();
-        args->append(y);
-        return this->find_and_call(x, args, StringTable::add);
+        return find_magic_method_and_call(StringTable::gt, x, y);
+    }
+
+    Object* Klass::__le__(Object* x, Object* y)
+    {
+        return find_magic_method_and_call(StringTable::le, x, y);
+    }
+
+    Object* Klass::__ge__(Object* x, Object* y)
+    {
+        return find_magic_method_and_call(StringTable::ge, x, y);
+    }
+
+    Object* Klass::__add__(Object* x, Object* y)
+    {
+        return find_magic_method_and_call(StringTable::add, x, y);
     }
 
     Object* Klass::__sub__(Object* x, Object* y)
     {
-        List* args = new List();
-        args->append(y);
-        return this->find_and_call(x, args, StringTable::sub);
+        return find_magic_method_and_call(StringTable::sub, x, y);
     }
 
     Object* Klass::__mul__(Object* x, Object* y)
     {
-        List* args = new List();
-        args->append(y);
-        return this->find_and_call(x, args, StringTable::mul);
+        return find_magic_method_and_call(StringTable::mul, x, y);
+    }
+
+    Object* Klass::__hash__(Object* x)
+    {
+        return find_magic_method_and_call(StringTable::hash, x);
     }
 
     Object* Klass::__len__(Object* x)
     {
-        return this->find_and_call(x, nullptr, StringTable::mul);
+        return find_magic_method_and_call(StringTable::len, x);
     }
 
     Object* Klass::get_klass_attr(Object* x, Object* y)
     {
-        auto result = this->find_in_parent(x, y);
+        auto result = find_in_parent(x, y);
         if (MemberFunctionObject::is_function(result))
             result = new MemberFunctionObject(result->as<FunctionObject>(), x);
         return result;
     }
 
-    Object* Klass::getattr(Object* object, Object* attribute_name)
+    Object* Klass::__getattr__(Object* object, Object* attribute_name)
     {
-        auto func = this->find_in_parent(object, StringTable::getattr);
+        auto func = find_in_parent(object, StringTable::getattr);
 
         // Invoke __getattr__(self, attribute_name)
         if (func->klass == FunctionKlass::get_instance())
@@ -184,7 +197,7 @@ namespace python
 
     }
 
-    Object* Klass::setattr(Object* object, Object* key, Object* value)
+    Object* Klass::__setattr__(Object* object, Object* key, Object* value)
     {
         auto func = object->klass->klass_dict->get(StringTable::setattr);
 
@@ -210,6 +223,20 @@ namespace python
     std::size_t Klass::size()
     {
         return sizeof(Object);
+    }
+
+    Object* Klass::find_magic_method_and_call(Object* magic_method_name, Object* self)
+    {
+        PYTHON_ASSERT(magic_method_name->is<String>());
+        return find_and_call(self, nullptr, magic_method_name);
+    }
+
+    Object* Klass::find_magic_method_and_call(Object* magic_method_name, Object* self, Object* arg1)
+    {
+        PYTHON_ASSERT(magic_method_name->is<String>());
+        auto args = new List();
+        args->append(arg1); 
+        return find_and_call(self, args, magic_method_name);
     }
 
     Object* Klass::find_and_call(Object* x, List* args, Object* function_name)

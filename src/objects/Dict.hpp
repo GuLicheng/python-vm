@@ -53,7 +53,9 @@ namespace python
 
 		virtual size_t size() override;
 
-		virtual Object* to_string(Object* x) override;
+		virtual Object* __str__(Object* x) override;
+
+		virtual Object* __contains__(Object* x, Object* y) override;
 
 		virtual void print(Object* object) override;
 		

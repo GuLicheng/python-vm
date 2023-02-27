@@ -59,11 +59,11 @@ namespace python
 
 		void print();
 
-		Object* add(Object* x);
+		Object* __add__(Object* x);
 		Object* __sub__(Object* x);
 		Object* __mul__(Object* x);
-		Object* div(Object* x);
-		Object* mod(Object* x);
+		Object* __div__(Object* x);
+		Object* __mod__(Object* x);
 
 		Object* __gt__(Object* x);
 		Object* __lt__(Object* x);
@@ -73,16 +73,16 @@ namespace python
 		Object* __ge__(Object* x);
 
 		Object* subscr(Object* x);
-		Object* contains(Object* x);
+		Object* __contains__(Object* x);
 
 		Object* __hash__();
 		Object* __deepcopy__();
 		Object* __len__();
-		Object* to_string();
+		Object* __str__();
 
 
-		Object* setattr(Object* key, Object* value);
-		Object* getattr(Object* attribute);
+		Object* __setattr__(Object* key, Object* value);
+		Object* __getattr__(Object* attribute);
 		Object* get_klass_attr(Object* attribute);
 
 	};

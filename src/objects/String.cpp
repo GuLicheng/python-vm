@@ -127,7 +127,7 @@ namespace python
 		return detail::binary_relation_operation<String>(std::greater_equal<>(), x, y);
 	}
 
-	Object* StringKlass::add(Object* x, Object* y)
+	Object* StringKlass::__add__(Object* x, Object* y)
 	{
 		return detail::binary_arith_operation<String>(std::plus<>(), x, y);
 	}

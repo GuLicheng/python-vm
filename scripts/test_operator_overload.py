@@ -16,10 +16,23 @@ class Number(object):
         print("call __mul__")
         return Number(self.value * other.value)
     
+    # relation ship operator
+    def __lt__(self, other):
+        print("call __lt__")
+        return self.value < other.value
+
+    def __gt__(self, other):
+        print("call __gt__")
+        return self.value > other.value
+
     def __le__(self, other):
         print("call __le__")
-        return self.value < other.value
+        return self.value <= other.value
     
+    def __ge__(self, other):
+        print("call __ge__")
+        return self.value >= other.value
+
     # def __truediv__(self, other):
     #     return Number(self.value / other.value)
     
@@ -27,8 +40,9 @@ class Number(object):
     #     return Number(self.value // other.value)
 
     def __hash__(self):
-        pass
-    
+        print("call __hash__")
+        return hash(self.value)
+
     def __str__(self):
         pass
 
@@ -48,3 +62,8 @@ c = a * b
 print(c.value)
 
 print(a < b)
+print(a <= b)
+print(a > b)
+print(a >= b)
+
+print(hash(a))

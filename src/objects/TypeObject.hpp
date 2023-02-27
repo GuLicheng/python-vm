@@ -19,7 +19,7 @@ namespace python
 
         virtual void print(Object* x) override;
 
-        virtual Object* setattr(Object* object, Object* key, Object* value) override;
+        virtual Object* __setattr__(Object* object, Object* key, Object* value) override;
 
     };
 

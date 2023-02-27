@@ -157,7 +157,7 @@ namespace python
 		return ((List*)x)->get(index);
 	}
 
-	Object* ListKlass::contains(Object* x, Object* y)
+	Object* ListKlass::__contains__(Object* x, Object* y)
 	{
 		PYTHON_ASSERT(x && y && "x and y should not be nullptr.");
 
@@ -179,7 +179,7 @@ namespace python
 		return new Integer(static_cast<int64_t>(ls->size()));
 	}
 
-    Object* ListKlass::add(Object* x, Object* y)
+    Object* ListKlass::__add__(Object* x, Object* y)
     {
         PYTHON_ASSERT(x && y && x->is<List>() && y->is<List>());
 		

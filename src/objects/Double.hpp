@@ -27,15 +27,15 @@ namespace python
 		virtual Object* __le__(Object* x, Object* y) override;
 		virtual Object* __ge__(Object* x, Object* y) override;
 
-		virtual Object* add(Object* x, Object* y) override;
+		virtual Object* __add__(Object* x, Object* y) override;
 		virtual Object* __sub__(Object* x, Object* y) override;
 		virtual Object* __mul__(Object* x, Object* y) override;
-		virtual Object* div(Object* x, Object* y) override;
-		virtual Object* mod(Object* x, Object* y) override;
+		virtual Object* __div__(Object* x, Object* y) override;
+		virtual Object* __mod__(Object* x, Object* y) override;
 	
 		virtual Object* __hash__(Object* x) override;
 		virtual Object* __deepcopy__(Object* x) override;
-		virtual Object* to_string(Object* x) override;
+		virtual Object* __str__(Object* x) override;
 	
 	};
 

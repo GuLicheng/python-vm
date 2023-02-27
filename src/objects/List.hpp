@@ -26,13 +26,13 @@ namespace python
 
 		virtual Object* subscr(Object* x, Object* y) override;
 		
-		virtual Object* contains(Object* x, Object* y) override;
+		virtual Object* __contains__(Object* x, Object* y) override;
 		
 		virtual Object* __len__(Object* x) override;
 
-		virtual Object* add(Object* x, Object* y) override;
+		virtual Object* __add__(Object* x, Object* y) override;
 
-		// virtual Object* to_string(Object* x) override;
+		// virtual Object* __str__(Object* x) override;
 	};
 
 	class List : public Object

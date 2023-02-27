@@ -51,10 +51,16 @@ namespace python::native
 		return Universe::False;
     }
 
-    Object* type_of(List* args)
+    Object* type(List* args)
     {
         auto arg0 = args->get(0);
 		return arg0->get_klass()->get_type_object();
+    }
+
+    Object* hash(List* args)
+    {
+		PYTHON_ASSERT(args->size() == 1);
+		return args->get(0)->__hash__();
     }
 
     Object* string_upper(List* args)
@@ -71,9 +77,7 @@ namespace python::native
 		{
 			result += std::toupper(c);
 		}
-
 		return new String(std::move(result));
-
 	}
 
 	Object* list_append(List* args) 

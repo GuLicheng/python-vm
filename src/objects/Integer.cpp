@@ -72,7 +72,7 @@ namespace python
 		return detail::pyobject_not_equal<Integer>(x, y);
 	}
 
-	Object* IntegerKlass::add(Object* x, Object* y)
+	Object* IntegerKlass::__add__(Object* x, Object* y)
 	{
 		return detail::binary_arith_operation_number(std::plus<>(), x, y);
 	}
@@ -87,12 +87,12 @@ namespace python
 		return detail::binary_arith_operation_number(std::multiplies<>(), x, y);
 	}
 
-	Object* IntegerKlass::div(Object* x, Object* y)
+	Object* IntegerKlass::__div__(Object* x, Object* y)
 	{
 		return detail::binary_arith_operation_number(std::divides<>(), x, y);
 	}
 
-	Object* IntegerKlass::mod(Object* x, Object* y)
+	Object* IntegerKlass::__mod__(Object* x, Object* y)
 	{
 		return detail::binary_arith_operation_number(detail::PythonModulo(), x, y);
 	}
@@ -110,7 +110,7 @@ namespace python
 		return new Integer(x->as<Integer>()->value());
 	}
 
-    Object* IntegerKlass::to_string(Object* x)
+    Object* IntegerKlass::__str__(Object* x)
     {
 		PYTHON_ASSERT(x && x->is<Integer>());
 		return new String(std::to_string(x->as<Integer>()->value()));

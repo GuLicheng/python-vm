@@ -33,11 +33,15 @@ namespace python
 
 		friend class Object;
 
-		Object* find_and_call(Object* x, List* args, Object* function_name);
+		static Object* find_magic_method_and_call(Object* magic_method_name, Object* self);
+
+		static Object* find_magic_method_and_call(Object* magic_method_name, Object* self, Object* arg1);
+
+		static Object* find_and_call(Object* x, List* args, Object* function_name);
+
+		static Object* find_in_parent(Object* x, Object* y);
+
 		
-		Object* find_in_parent(Object* x, Object* y);
-
-
 	public:
 
 		Klass() = default;
@@ -83,33 +87,34 @@ namespace python
 
 
 		// Magic methods
-		virtual Object* __lt__(Object* x, Object* y);
-		virtual Object* __ne__(Object* x, Object* y) { NOT_IMPLEMENT; }
 		virtual Object* __eq__(Object* x, Object* y) { NOT_IMPLEMENT; }
-		virtual Object* __gt__(Object* x, Object* y) { NOT_IMPLEMENT; }
-		virtual Object* __le__(Object* x, Object* y) { NOT_IMPLEMENT; }
-		virtual Object* __ge__(Object* x, Object* y) { NOT_IMPLEMENT; }
+		virtual Object* __ne__(Object* x, Object* y) { NOT_IMPLEMENT; }
+		virtual Object* __lt__(Object* x, Object* y);
+		virtual Object* __gt__(Object* x, Object* y);
+		virtual Object* __le__(Object* x, Object* y);
+		virtual Object* __ge__(Object* x, Object* y);
 
-		virtual Object* add(Object* x, Object* y);
+		virtual Object* __add__(Object* x, Object* y);
 		virtual Object* __sub__(Object* x, Object* y);
 		virtual Object* __mul__(Object* x, Object* y);
-		virtual Object* div(Object* x, Object* y) { NOT_IMPLEMENT; }
-		virtual Object* mod(Object* x, Object* y) { NOT_IMPLEMENT; }
+		virtual Object* __div__(Object* x, Object* y) { NOT_IMPLEMENT; } //  operator /
+		virtual Object* __floordiv__(Object* x, Object* y) { NOT_IMPLEMENT; } //   operator //
+		virtual Object* __mod__(Object* x, Object* y) { NOT_IMPLEMENT; }
 	
 		virtual Object* subscr(Object* x, Object* y) { NOT_IMPLEMENT; }
-		virtual Object* contains(Object* x, Object* y) { NOT_IMPLEMENT; }
-		virtual Object* to_string(Object* x) { NOT_IMPLEMENT; }
+		virtual Object* __contains__(Object* x, Object* y) { NOT_IMPLEMENT; }
+		virtual Object* __str__(Object* x) { NOT_IMPLEMENT; }
 
 		// Methods not implemented in book
-		virtual Object* __hash__(Object* x) { NOT_IMPLEMENT; }
+		virtual Object* __hash__(Object* x);
 		virtual Object* __deepcopy__(Object* x) { NOT_IMPLEMENT; }
 		virtual Object* __len__(Object* x);
 
 
 		virtual Object* get_klass_attr(Object* x, Object* y);
 
-		virtual Object* getattr(Object* object, Object* attribute_name);
-		virtual Object* setattr(Object* object, Object* key, Object* value);
+		virtual Object* __getattr__(Object* object, Object* attribute_name);
+		virtual Object* __setattr__(Object* object, Object* key, Object* value);
 
 		// gc interface
 		// virtual void oops_do(class Closure*, Object*);

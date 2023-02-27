@@ -72,7 +72,7 @@ namespace python
 		return detail::pyobject_not_equal<Double>(x, y);
 	}
 
-	Object* DoubleKlass::add(Object* x, Object* y)
+	Object* DoubleKlass::__add__(Object* x, Object* y)
 	{
 		return detail::binary_arith_operation_number(std::plus<>(), x, y);
 	}
@@ -87,7 +87,7 @@ namespace python
 		return detail::binary_arith_operation_number(std::multiplies<>(), x, y);
 	}
 
-	Object* DoubleKlass::div(Object* x, Object* y)
+	Object* DoubleKlass::__div__(Object* x, Object* y)
 	{
 		return detail::binary_arith_operation_number(std::divides<>(), x, y);
 	}
@@ -96,7 +96,7 @@ namespace python
 	// 2.5 % 2 = 0.5
 	// 2.5 % -3 = -0.5
 	// 2.5 % -2 = -1.5
-	Object* DoubleKlass::mod(Object* x, Object* y)
+	Object* DoubleKlass::__mod__(Object* x, Object* y)
 	{
 		return detail::binary_arith_operation_number(detail::PythonModulo(), x, y);
 	}
@@ -114,7 +114,7 @@ namespace python
 		return new Double(x->as<Double>()->value());
 	}
 
-    Object* DoubleKlass::to_string(Object* x)
+    Object* DoubleKlass::__str__(Object* x)
     {
 		PYTHON_ASSERT(x && x->is<Double>());
         return new String(std::to_string(x->as<Double>()->value()));

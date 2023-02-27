@@ -91,7 +91,7 @@ namespace python
 		return sizeof(Dict);
     }
 
-    Object *DictKlass::to_string(Object *x)
+    Object *DictKlass::__str__(Object *x)
     {
 		PYTHON_ASSERT(x && x->is<Dict>());
 		std::stringstream ss;
@@ -102,12 +102,18 @@ namespace python
 			if (!first)
 				ss << ", ";
 			first = false;
-			ss << k->to_string()->as<String>()->value();
+			ss << k->__str__()->as<String>()->value();
 			ss << ",";
-			ss << v->to_string()->as<String>()->value();
+			ss << v->__str__()->as<String>()->value();
 		}
 		ss << '}';
 		return new String(ss.str());
+    }
+
+    Object* DictKlass::__contains__(Object* x, Object* y)
+    {
+        PYTHON_ASSERT(x && x->is<Dict>());
+		return x->as<Dict>()->has_key(y) ? Universe::True : Universe::False;
     }
     
 	void DictKlass::print(Object* object)

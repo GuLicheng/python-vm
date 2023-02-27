@@ -25,7 +25,7 @@ namespace python
 		virtual Object* __deepcopy__(Object* x) override;
 		virtual Object* __len__(Object* x) override;
 
-		virtual Object* add(Object* x, Object* y) override;
+		virtual Object* __add__(Object* x, Object* y) override;
 
 		virtual Object* __lt__(Object* x, Object* y) override;
 		virtual Object* __ne__(Object* x, Object* y) override;

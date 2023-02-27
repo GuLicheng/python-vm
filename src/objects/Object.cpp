@@ -18,9 +18,9 @@ namespace python
 		this->klass->print(this);
 	}
 
-	Object* Object::add(Object* x)
+	Object* Object::__add__(Object* x)
 	{
-		return this->klass->add(this, x);
+		return this->klass->__add__(this, x);
 	}
 
 	Object* Object::__sub__(Object* x)
@@ -33,14 +33,14 @@ namespace python
 		return this->klass->__mul__(this, x);
 	}
 
-	Object* Object::div(Object* x)
+	Object* Object::__div__(Object* x)
 	{
-		return this->klass->div(this, x);
+		return this->klass->__div__(this, x);
 	}
 
-	Object* Object::mod(Object* x)
+	Object* Object::__mod__(Object* x)
 	{
-		return this->klass->mod(this, x);
+		return this->klass->__mod__(this, x);
 	}
 
 	Object* Object::__gt__(Object* x)
@@ -78,9 +78,9 @@ namespace python
 		return this->klass->subscr(this, x);
 	}
 
-	Object* Object::contains(Object* x)
+	Object* Object::__contains__(Object* x)
 	{
-		return this->klass->contains(this, x);
+		return this->klass->__contains__(this, x);
 	}
 
 	Object* Object::__hash__()
@@ -98,14 +98,14 @@ namespace python
 		return this->klass->__len__(this);
 	}
 
-    Object* Object::to_string()
+    Object* Object::__str__()
     {
-        return this->klass->to_string(this);
+        return this->klass->__str__(this);
     }
 
-    Object* Object::getattr(Object* attribute)
+    Object* Object::__getattr__(Object* attribute)
     {
-        return this->klass->getattr(this, attribute);
+        return this->klass->__getattr__(this, attribute);
     }
 
     Object* Object::get_klass_attr(Object* attribute)
@@ -113,9 +113,9 @@ namespace python
         return this->klass->get_klass_attr(this, attribute);
     }
 
-    Object* Object::setattr(Object* key, Object* value)
+    Object* Object::__setattr__(Object* key, Object* value)
     {
-        return this->klass->setattr(this, key, value);
+        return this->klass->__setattr__(this, key, value);
     }
     
     void ObjectKlass::print(Object* object)

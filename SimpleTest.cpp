@@ -31,29 +31,29 @@ namespace python::test
 		// int/int
 		Integer* i1 = new Integer(0);
 		Integer* i2 = new Integer(1);
-		Integer* i3 = i1->add(i2)->as<Integer>();
+		Integer* i3 = i1->__add__(i2)->as<Integer>();
 	
 		assert(i3->value() == 1);
 
 		// float/float
 		Double* d1 = new Double(0.5);
 		Double* d2 = new Double(0.5);
-		Double* d3 = d1->add(d2)->as<Double>();
+		Double* d3 = d1->__add__(d2)->as<Double>();
 
 		assert(d3->value() == 1.0);
 
 		// float/int	
-		Double* d4 = d1->add(i1)->as<Double>();
+		Double* d4 = d1->__add__(i1)->as<Double>();
 
 		// int/float  
-		Double* d5 = i1->add(d1)->as<Double>();
+		Double* d5 = i1->__add__(d1)->as<Double>();
 
 		assert(d4->value() == d5->value());
 
 		// string/string
 		String* s1 = new String("Hello");
 		String* s2 = new String("World");
-		String* s3 = s1->add(s2)->as<String>();
+		String* s3 = s1->__add__(s2)->as<String>();
 
 		assert(s3->value() == "HelloWorld");
 
@@ -65,7 +65,7 @@ namespace python::test
 		ls2->append(d1);
 		ls2->append(s1);
 
-		List* ls3 = ls1->add(ls2)->as<List>();
+		List* ls3 = ls1->__add__(ls2)->as<List>();
 
 		assert(ls3->size() == 3);
 		assert(ls3->get(0) == i1);

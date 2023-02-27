@@ -17,7 +17,7 @@ namespace python
         DefineString(init);
         DefineString(getattr);
         DefineString(setattr);
-        DefineString(mod);
+        DefineString(module_);
         DefineString(call);
         DefineString(name);
      
@@ -25,8 +25,16 @@ namespace python
         DefineString(add);
         DefineString(sub);
         DefineString(mul);
+
         DefineString(len);
+        DefineString(hash);
+
         DefineString(le);
+        DefineString(lt);
+        DefineString(gt);
+        DefineString(ge);
+        DefineString(eq);
+        DefineString(ne);
     };
 
     #undef STR

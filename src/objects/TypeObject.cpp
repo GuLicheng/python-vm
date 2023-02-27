@@ -20,7 +20,7 @@ namespace python
         Dict* attr_dict = own_klass->klass_dict;
         if (attr_dict)
         {
-            Object* mod = attr_dict->get(StringTable::mod);
+            Object* mod = attr_dict->get(StringTable::module_);
             if (mod != Universe::None)
             {
                 mod->print();
@@ -33,7 +33,7 @@ namespace python
 
     }
 
-    Object* TypeKlass::setattr(Object* object, Object* key, Object* value)
+    Object* TypeKlass::__setattr__(Object* object, Object* key, Object* value)
     {
         // Add attribute into klass dict
         object->as<TypeObject>()->get_own_klass()->get_klass_dict()->put(key, value);

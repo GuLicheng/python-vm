@@ -181,7 +181,7 @@ namespace python
 			}
 			else
 			{
-				this->closure = (List*)this->closure->add(function->closure);
+				this->closure = (List*)this->closure->__add__(function->closure);
 			}
 		}
 

@@ -140,7 +140,7 @@ namespace python
 			case ByteCode::BINARY_ADD:
 			{
 				auto [v, w] = this->pop_top_two();
-				this->push(w->add(v));
+				this->push(w->__add__(v));
 				break;
 			}
 			case ByteCode::BINARY_SUBTRACT:
@@ -152,7 +152,7 @@ namespace python
 			case ByteCode::BINARY_DIVIDE:
 			{
 				auto [v, w] = this->pop_top_two();
-				this->push(w->div(v));
+				this->push(w->__div__(v));
 				break;
 			}
 			case ByteCode::BINARY_MULTIPLY:
@@ -164,7 +164,7 @@ namespace python
 			case ByteCode::BINARY_MODULO:
 			{
 				auto [v, w] = this->pop_top_two();
-				this->push(w->mod(v));
+				this->push(w->__mod__(v));
 				break;
 			}
 			case ByteCode::RETURN_VALUE:
@@ -393,14 +393,14 @@ namespace python
 				auto u = this->pop();
 				auto v = this->frame->co_names->get(op_arg);
 				auto w = this->pop();
-				u->setattr(v, w);
+				u->__setattr__(v, w);
 				break;
 			}
 			case ByteCode::LOAD_ATTR:
 			{
 				auto v = this->pop();
 				auto w = this->frame->co_names->get(op_arg);
-				auto attr = v->getattr(w);
+				auto attr = v->__getattr__(w);
 				this->push(attr);
 				break;
 			}
@@ -521,7 +521,8 @@ namespace python
 		/* buildin functions */
 		this->buildin->put(new String("len"), new FunctionObject(native::len));
 		this->buildin->put(new String("isinstance"), new FunctionObject(native::isinstance));
-		this->buildin->put(new String("type"), new FunctionObject(native::type_of));
+		this->buildin->put(new String("type"), new FunctionObject(native::type));
+		this->buildin->put(new String("hash"), new FunctionObject(native::hash));
 
 		/* buildin types */
 		this->buildin->put(new String("int"), IntegerKlass::get_instance()->get_type_object());
