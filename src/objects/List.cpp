@@ -148,7 +148,7 @@ namespace python
 		std::cout << ']';
 	}
 
-	Object* ListKlass::subscr(Object* x, Object* y)
+	Object* ListKlass::__getitem__(Object* x, Object* y)
 	{
 		PYTHON_ASSERT(x && x->is<List>());
 		PYTHON_ASSERT(y && y->is<Integer>());

@@ -73,11 +73,6 @@ namespace python
 		return this->klass->__ge__(this, x);
 	}
 
-	Object* Object::subscr(Object* x)
-	{
-		return this->klass->subscr(this, x);
-	}
-
 	Object* Object::__contains__(Object* x)
 	{
 		return this->klass->__contains__(this, x);
@@ -107,6 +102,16 @@ namespace python
     {
         return this->klass->__getattr__(this, attribute);
     }
+
+    void Object::__setitem__(Object* key, Object* value)
+    {
+        this->klass->__setitem__(this, key, value);
+    }
+
+    Object* Object::__getitem__(Object* name)
+	{
+		return this->klass->__getitem__(this, name);
+	}
 
     Object* Object::get_klass_attr(Object* attribute)
     {

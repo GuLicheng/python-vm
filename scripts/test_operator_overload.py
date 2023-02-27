@@ -1,4 +1,3 @@
-
 class Number(object):
 
     def __init__(self, value):
@@ -49,6 +48,30 @@ class Number(object):
     def __deepcopy__(self):
         pass
 
+    def __getitem__(self, key):
+        print("call __getitem__")
+        if key == "value":
+            return self.value
+        else:
+            return None
+        
+    def __setitem__(self, key, value):
+        print("call __setitem__")
+        print([key, value])
+        if key == "value":
+            self.value = value
+        else:
+            print("Error")
+
+    def __call__(self, value):
+        print("call __call__")
+        if value == "value":
+            print(self.value)
+        else:
+            print("Unknown value.")
+
+
+
 a = Number(1)
 b = Number(2)
 
@@ -67,3 +90,13 @@ print(a > b)
 print(a >= b)
 
 print(hash(a))
+
+print(a["value"])
+a["value"] = -1
+print(a.value)
+
+a("value")
+a("unknown")
+
+
+

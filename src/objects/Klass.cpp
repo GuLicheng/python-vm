@@ -220,6 +220,16 @@ namespace python
         return Universe::None;
     }
 
+    Object* Klass::__getitem__(Object* object, Object* name)
+    {
+        return find_magic_method_and_call(StringTable::getitem, object, name);
+    }
+
+    void Klass::__setitem__(Object* object, Object* key, Object* value)
+    {
+        find_magic_method_and_call(StringTable::setitem, object, key, value);
+    }
+
     std::size_t Klass::size()
     {
         return sizeof(Object);
@@ -236,6 +246,15 @@ namespace python
         PYTHON_ASSERT(magic_method_name->is<String>());
         auto args = new List();
         args->append(arg1); 
+        return find_and_call(self, args, magic_method_name);
+    }
+
+    Object* Klass::find_magic_method_and_call(Object* magic_method_name, Object* self, Object* arg1, Object* arg2)
+    {
+        PYTHON_ASSERT(magic_method_name->is<String>());
+        auto args = new List();
+        args->append(arg1); 
+        args->append(arg2); 
         return find_and_call(self, args, magic_method_name);
     }
 

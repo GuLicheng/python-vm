@@ -385,7 +385,7 @@ namespace python
 			case ByteCode::BINARY_SUBSCR:
 			{
 				auto [rhs, lhs] = this->pop_top_two();
-				this->push(lhs->subscr(rhs));
+				this->push(lhs->__getitem__(rhs));
 				break;
 			}
 			case ByteCode::STORE_ATTR:
@@ -454,12 +454,20 @@ namespace python
 				this->push(v);
 				break;
 			}
+			case ByteCode::STORE_SUBSCR:
+			{
+				auto key = this->pop();
+				auto x = this->pop();
+				auto value = this->pop();
+				x->__setitem__(key, value);
+				break;
+			}
 			case ByteCode::UNPACK_SEQUENCE:
 			{
 				auto v = this->pop();
 				while (op_arg--)
 				{
-					this->push(v->subscr(new Integer(op_arg)));
+					this->push(v->__getitem__(new Integer(op_arg)));
 				}
 				break;
 			}

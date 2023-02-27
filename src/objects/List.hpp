@@ -24,7 +24,7 @@ namespace python
 
 		virtual void print(Object* x) override;
 
-		virtual Object* subscr(Object* x, Object* y) override;
+		virtual Object* __getitem__(Object* x, Object* y) override;
 		
 		virtual Object* __contains__(Object* x, Object* y) override;
 		

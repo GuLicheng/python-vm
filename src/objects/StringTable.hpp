@@ -15,8 +15,12 @@ namespace python
         // Magic methods
         DefineString(next);
         DefineString(init);
+        
         DefineString(getattr);
         DefineString(setattr);
+        DefineString(getitem);
+        DefineString(setitem);
+
         DefineString(module_);
         DefineString(call);
         DefineString(name);

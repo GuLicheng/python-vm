@@ -83,6 +83,10 @@ namespace python
 
 		Object* __setattr__(Object* key, Object* value);
 		Object* __getattr__(Object* attribute);
+
+		void __setitem__(Object* key, Object* value);
+		Object* __getitem__(Object* name);
+
 		Object* get_klass_attr(Object* attribute);
 
 	};
