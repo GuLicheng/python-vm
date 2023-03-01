@@ -223,4 +223,35 @@ namespace python
 		index = this->codes->co_varnames->index(cell);
 		return this->fast_local->get(index);
     }
+
+    int FrameObject::lineno()
+    {
+		int pc_offset = 0;
+		int line_no = this->codes->co_firstlineno;
+
+		const char* lnotab = this->codes->co_lnotab->value().data();
+		int length = this->codes->co_lnotab->length();
+
+		for (int i = 0; i < length; i++) {
+			pc_offset += lnotab[i++];
+			if (pc_offset >= this->pc)
+				return line_no;
+
+			line_no += lnotab[i];
+		}
+
+		return line_no;
+    }
+
+    String* FrameObject::file_name()
+    {
+		return this->codes->co_filename;
+    }
+
+    String* FrameObject::func_name()
+    {
+        return this->codes->co_name;
+    }
+
+
 }

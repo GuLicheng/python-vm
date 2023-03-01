@@ -170,9 +170,7 @@ namespace python
 			case ByteCode::RETURN_VALUE:
 			{
 				this->ret_value = this->pop();
-				if (this->frame->is_first_frame() || this->frame->is_entry_frame())
-					return;
-				this->leave_frame();
+				this->status = Status::IS_RETURN;
 				break;
 			}
 			case ByteCode::COMPARE_OP:
@@ -260,6 +258,7 @@ namespace python
 				this->push(Universe::None);
 				break;
 			}
+			case ByteCode::SETUP_FINALLY:
 			case ByteCode::SETUP_LOOP:
 			{
 				this->frame->loop_stack->add(new Block{
@@ -480,6 +479,28 @@ namespace python
 			default:
 				std::cout << "Error byte: " << (int)op_code << "\n";
 				std::terminate();
+			}
+		
+			// If current status is not IS_OK, try recover all operand 
+			// of all blocks. If a block is SETUP_FINALLY, jump to final statement
+			while (this->status != Status::IS_OK && this->frame->loop_stack->size() == 0)
+			{
+				auto block = this->frame->loop_stack->pop();
+				while (this->stack_level() > block->level)
+				{
+					this->pop();
+				}
+
+				if (block->type == ByteCode::SETUP_FINALLY)
+				{
+					if (this->status == Status::IS_RETURN)
+					{
+						this->push(this->ret_value);
+					}
+
+					this->push((Object*)(((long)this->status << 1) | 0x1));
+				}
+
 			}
 		}
 

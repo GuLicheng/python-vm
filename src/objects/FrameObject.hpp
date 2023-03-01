@@ -62,5 +62,12 @@ namespace python
 		bool is_entry_frame() const;
 
 		Object* get_cell_from_parameter(int index);
+
+		int lineno();
+
+		String* file_name();
+
+		String* func_name();
+
 	};
 }
