@@ -38,6 +38,11 @@ namespace python
 		return this->klass->__div__(this, x);
 	}
 
+    Object* Object::__floordiv__(Object* x)
+    {
+        return this->klass->__floordiv__(this, x);
+    }
+
 	Object* Object::__mod__(Object* x)
 	{
 		return this->klass->__mod__(this, x);
@@ -96,6 +101,21 @@ namespace python
     Object* Object::__str__()
     {
         return this->klass->__str__(this);
+    }
+
+    Object* Object::__int__()
+    {
+        return this->klass->__int__(this);
+    }
+
+    Object* Object::__float__()
+    {
+        return this->klass->__float__(this);
+    }
+
+    Object* Object::__bool__()
+    {
+        return this->klass->__bool__(this);
     }
 
     Object* Object::__getattr__(Object* attribute)

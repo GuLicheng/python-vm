@@ -71,6 +71,7 @@ class Number(object):
             print("Unknown value.")
 
 
+print("Starting...")
 
 a = Number(1)
 b = Number(2)

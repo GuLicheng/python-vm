@@ -59,12 +59,8 @@ namespace python
 
 		void print();
 
-		Object* __add__(Object* x);
-		Object* __sub__(Object* x);
-		Object* __mul__(Object* x);
-		Object* __div__(Object* x);
-		Object* __mod__(Object* x);
-
+		// Operators
+		// ==, !=, <, >, <=, >=
 		Object* __gt__(Object* x);
 		Object* __lt__(Object* x);
 		Object* __eq__(Object* x);
@@ -72,13 +68,26 @@ namespace python
 		Object* __le__(Object* x);
 		Object* __ge__(Object* x);
 
-		Object* subscr(Object* x);
+		// +, -, *, /, //, %
+		Object* __add__(Object* x);
+		Object* __sub__(Object* x);
+		Object* __mul__(Object* x);
+		Object* __div__(Object* x);
+		Object* __floordiv__(Object* x);
+		Object* __mod__(Object* x);
+
+
 		Object* __contains__(Object* x);
 
 		Object* __hash__();
 		Object* __deepcopy__();
 		Object* __len__();
+
+		// Type convert str, int, float, bool, ...
 		Object* __str__();
+		Object* __int__();
+		Object* __float__();
+		Object* __bool__();
 
 
 		Object* __setattr__(Object* key, Object* value);

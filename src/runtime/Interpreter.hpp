@@ -24,15 +24,22 @@ namespace python
 			IS_YIELD,
 		};
 
-		FrameObject* frame;
+		FrameObject* frame = nullptr;
 
-		Object* ret_value;
+		Object* ret_value = nullptr;  // Save return value for RETURN_VALUE and start position for CONTINUE
 
-		Dict* buildin;
+		Dict* buildin = nullptr;
 
-		Status status;
+		Status status = Status::IS_OK;
+
+		Object* exception_class = nullptr;  // Record the exception type such as `StopIteration`
+		
+		Object* pending_exception = nullptr;  // Record the exception instance such as `StopIteration()`
+
+		Object* trace_back = nullptr;  
 
 	private:
+	
 		void push(Object* x);
 
 		Object* pop();
@@ -50,6 +57,8 @@ namespace python
 		void destroy_frame();
 
 		void enter_frame(FrameObject* frame);
+
+		Status do_raise(Object* exception_type, Object* exception_instance, Object* traceback);
 
 	public:
 

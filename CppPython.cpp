@@ -21,9 +21,10 @@ void python_main()
         R"(../../test\test_class.pyc)",
         R"(../../test\test_derive.pyc)",
         R"(../../test\test_operator_overload.pyc)",
+        R"(../../test\test_exception.pyc)",
     };
 
-    const char* file = files[9];
+    const char* file = files[10];
     auto stream = BufferedInputStream(file);
 
     std::fstream log { "a.txt" };

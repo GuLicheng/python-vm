@@ -15,6 +15,8 @@
 #include "../objects/Object.hpp"
 #include "../objects/TypeObject.hpp"
 
+#include "Traceback.hpp"
+
 #include <algorithm>
 
 namespace python
@@ -91,8 +93,11 @@ namespace python
 
 	void Interpreter::eval_frame()
 	{
+
 		while (this->frame->has_more_codes())
 		{
+			// PYTHON_ASSERT(this->status == Status::IS_OK);
+
 			unsigned char op_code = this->frame->get_op_code();
 			bool has_argument = (op_code & 0xFF) >= ByteCode::HAVE_ARGUMENT;
 			int op_arg = -1;
@@ -106,6 +111,13 @@ namespace python
 
 			switch (op_code)
 			{
+			case ByteCode::DUP_TOP:
+			{
+				auto v = this->pop();
+				this->push(v);
+				this->push(v);
+				break;
+			}
 			case ByteCode::BUILD_CLASS:
 			{
 				auto v = this->pop();
@@ -203,6 +215,28 @@ namespace python
 				case GREATER_EQUAL:
 					this->push(lhs->__ge__(rhs));
 					break;
+				case ByteCode::EXC_MATCH:
+				{
+					bool found = false;
+					auto klass = lhs->as<TypeObject>()->get_own_klass();
+					if (lhs == rhs)
+					{
+						found = true;
+					}
+					else
+					{
+						for (int i = 0; i < klass->get_mro()->size(); ++i)
+						{
+							if (lhs->get_klass()->get_mro()->get(i) == rhs)
+							{
+								found = true;
+								break;	
+							}
+						}
+					}
+					this->push(found ? Universe::True : Universe::False);
+					break;
+				}
 				default: std::unreachable();
 				}
 				break;
@@ -258,6 +292,15 @@ namespace python
 				this->push(Universe::None);
 				break;
 			}
+			case ByteCode::RAISE_VARARGS:
+			{
+				PYTHON_ASSERT(1 <= op_arg && op_arg <= 3);
+				Object* objs[3] = {};
+				objs[op_arg - 1] = this->pop();
+				this->do_raise(objs[0], objs[1], objs[2]);
+				break;
+			}
+			case ByteCode::SETUP_EXCEPT:
 			case ByteCode::SETUP_FINALLY:
 			case ByteCode::SETUP_LOOP:
 			{
@@ -279,12 +322,7 @@ namespace python
 			}
 			case ByteCode::BREAK_LOOP:
 			{
-				auto b = this->frame->loop_stack->pop();
-				while (this->stack_level() > b->level)
-				{
-					this->pop();
-				}
-				this->frame->pc = b->target;
+				this->status = Status::IS_BREAK;
 				break;
 			}
 			case ByteCode::MAKE_CLOSURE:
@@ -453,6 +491,33 @@ namespace python
 				this->push(v);
 				break;
 			}
+			case ByteCode::CONTINUE_LOOP:
+			{
+				this->status = Status::IS_CONTINUE;
+				this->ret_value = (Object*)((long long) op_arg);
+				break;
+			}
+			case ByteCode::END_FINALLY:
+			{
+				// Restore state before 'finally'
+				auto v = this->pop();
+				if (((long long) v) & 0x1)
+				{
+					this->status = (Status)(((long long)v) >> 1);
+					if (this->status == Status::IS_RETURN)
+						this->ret_value = this->pop();
+					else if (this->status == Status::IS_CONTINUE)
+						this->frame->pc = (int)((long long)this->pop());
+				}
+				else if (v != Universe::None)
+				{
+					this->exception_class = v;
+					this->pending_exception = this->pop();
+					this->trace_back = this->pop();
+					this->status = Status::IS_EXCEPTION;
+				}
+				break;
+			}
 			case ByteCode::STORE_SUBSCR:
 			{
 				auto key = this->pop();
@@ -483,27 +548,84 @@ namespace python
 		
 			// If current status is not IS_OK, try recover all operand 
 			// of all blocks. If a block is SETUP_FINALLY, jump to final statement
-			while (this->status != Status::IS_OK && this->frame->loop_stack->size() == 0)
+
+			// Something like exception, continue or break happened
+			while (this->status != Status::IS_OK && this->frame->loop_stack->size() != 0)
 			{
-				auto block = this->frame->loop_stack->pop();
+				auto block = this->frame->loop_stack->get(this->frame->loop_stack->size() - 1);
+				// Continue block
+				if (this->status == Status::IS_CONTINUE && block->type == ByteCode::SETUP_LOOP)
+				{
+					this->frame->pc = (int) ((long long) this->ret_value);
+					this->status = Status::IS_OK;
+					break;
+				}
+
+				block = this->frame->loop_stack->pop();
 				while (this->stack_level() > block->level)
 				{
 					this->pop();
 				}
 
-				if (block->type == ByteCode::SETUP_FINALLY)
+				if (this->status == Status::IS_BREAK && block->type == ByteCode::SETUP_LOOP)
 				{
-					if (this->status == Status::IS_RETURN)
+					this->frame->pc = block->target;
+					this->status = Status::IS_OK;
+				} 
+				else if (block->type == ByteCode::SETUP_FINALLY || 
+						 (this->status == Status::IS_EXCEPTION && block->type == ByteCode::SETUP_EXCEPT))
+				{
+					if (this->status == Status::IS_EXCEPTION)
 					{
-						this->push(this->ret_value);
+						// Traceback , value and exception class
+						this->push(this->trace_back);
+						this->push(this->pending_exception);
+						this->push(this->exception_class);
+
+						this->trace_back = nullptr;
+						this->pending_exception = nullptr;
+						this->exception_class = nullptr;
+					}
+					else
+					{
+						if (this->status == Status::IS_RETURN || this->status == Status::IS_CONTINUE)
+						{
+							this->push(this->ret_value);
+						}
+						// Use the last bit to mark this is not a pointer
+						this->push((Object *) (((long) this->status << 1) | 0x1));
 					}
 
-					this->push((Object*)(((long)this->status << 1) | 0x1));
+					this->frame->pc = block->target;
+					this->status = Status::IS_OK;
+
+				}
+			}
+
+			// Has pending exception and no handler found, unwind stack.
+			// The status should be IS_OK before handling final block.
+			if (this->status != Status::IS_OK && this->frame->loop_stack->size() == 0)
+			{
+				if (this->status == Status::IS_EXCEPTION)
+				{
+					this->ret_value = nullptr;
+					this->trace_back->as<Traceback>()->record_frame(this->frame);
 				}
 
+				if (this->status == Status::IS_RETURN)
+				{
+					this->status = Status::IS_OK;
+				}
+
+				// In such case, we don not need to remove current frame.
+				if (this->frame->is_first_frame() || this->frame->is_entry_frame())
+				{
+					return;
+				}
+
+				this->leave_frame();
 			}
 		}
-
 	}
 
 	void Interpreter::destroy_frame()
@@ -517,6 +639,37 @@ namespace python
     {
 		frame->sender = this->frame;
 		this->frame = frame;
+    }
+
+    Interpreter::Status Interpreter::do_raise(Object* exception_type, Object* exception_instance, Object* traceback)
+    {
+        PYTHON_ASSERT(exception_type && "exception_type should not be nullptr?");
+		this->status = Status::IS_EXCEPTION;
+		if (!traceback)
+		{
+			traceback = new Traceback();
+		}
+
+		if (exception_instance)
+		{
+			this->exception_class = exception_type;
+			this->pending_exception = exception_instance;
+			this->trace_back = traceback;
+			return Status::IS_EXCEPTION;
+		}
+
+		if (exception_type->get_klass() == TypeKlass::get_instance())
+		{
+			this->pending_exception = this->call_virtual(exception_type, nullptr);
+			this->exception_class = exception_type;
+		}
+		else
+		{
+			this->pending_exception = exception_type;
+			this->exception_class = this->pending_exception->get_klass()->get_type_object();
+		}
+		this->trace_back = traceback;
+		return Status::IS_EXCEPTION;
     }
 
     void Interpreter::initialize()
@@ -536,9 +689,6 @@ namespace python
 
 	Interpreter::Interpreter()
 	{
-		this->frame = nullptr;
-		this->ret_value = nullptr;
-		this->status = Status::IS_OK;
 
 		this->buildin = new Dict();
 
@@ -597,7 +747,17 @@ namespace python
 		this->frame->locals->put(StringTable::name, new String("__main__"));
 		this->eval_frame();
 
-		// TODO: ...
+		if (this->status == Status::IS_EXCEPTION)
+		{
+			this->status = Status::IS_OK;
+			this->trace_back->print();
+			this->pending_exception->print();
+			std::cout << '\n';
+
+			this->trace_back = nullptr;
+			this->pending_exception = nullptr;
+			this->exception_class = nullptr;
+		}
 
 		this->destroy_frame();
 
