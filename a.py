@@ -1,4 +1,18 @@
-tup = (1,2,3)
-print( "First: %d, Second: %d, Third: %d" % tup)
-print( 'First: {}, Second: {}, Third: {}'.format(1,2,3))
-print( 'First: {0[0]}, Second: {0[1]}, Third: {0[2]}'.format(tup))
+d = { 1: "Hello", 2: "World" }
+
+print(d)
+print("===================")
+
+for kv in d.items():
+    print(kv)
+
+for kv in d.keys():
+    print(kv)
+
+for kv in d.values():
+    print(kv)
+
+t = [1, 2, 3, "Wasd"]
+print(t)
+
+# string in range should be quoted

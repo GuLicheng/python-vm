@@ -164,6 +164,16 @@ namespace python
         return find_magic_method_and_call(StringTable::len, x);
     }
 
+    Object* Klass::__iter__(Object* x)
+    {
+        return find_magic_method_and_call(StringTable::iter, x);
+    }
+
+    Object* Klass::__next__(Object* x)
+    {
+        return find_magic_method_and_call(StringTable::next, x);
+    }
+
     Object* Klass::get_klass_attr(Object* x, Object* y)
     {
         auto result = find_in_parent(x, y);

@@ -63,6 +63,18 @@ namespace python::native
 		return args->get(0)->__hash__();
     }
 
+    Object* iter(List* args)
+    {
+		PYTHON_ASSERT(args->size() == 1);
+		return args->get(0)->__iter__();
+    }
+
+    Object* next(List* args)
+    {
+		PYTHON_ASSERT(args->size() == 1);
+		return args->get(0)->__next__();
+    }
+
     Object* string_upper(List* args)
 	{
 		auto arg0 = detail::check_and_get_from_argument_list<String>(args, 0, 1);

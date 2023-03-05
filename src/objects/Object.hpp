@@ -82,6 +82,8 @@ namespace python
 		Object* __hash__();
 		Object* __deepcopy__();
 		Object* __len__();
+		Object* __iter__();
+		Object* __next__();
 
 		// Type convert str, int, float, bool, ...
 		Object* __str__();

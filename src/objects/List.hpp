@@ -3,9 +3,11 @@
 #include "Object.hpp"
 #include "Klass.hpp"
 #include "Singleton.hpp"
+#include "Iterator.hpp"
 
-#include <span>
+#include <array>
 #include <vector>
+
 
 namespace python
 {
@@ -32,6 +34,8 @@ namespace python
 
 		virtual Object* __add__(Object* x, Object* y) override;
 
+		virtual Object* __iter__(Object* x) override;
+
 		// virtual Object* __str__(Object* x) override;
 	};
 
@@ -40,6 +44,8 @@ namespace python
 		std::vector<Object*> inner_list;
 
 		friend class Interpreter;
+
+		friend class ListIterator;
 
 	public:
 
@@ -73,8 +79,32 @@ namespace python
 
 		void insert(int pos, Object* obj);
 
+		std::array<std::vector<Object*>::iterator, 2> get_iterator_pair();
+
 	};
 
+	struct ListIterator : public PyIterator<List, std::vector<Object*>::iterator, std::vector<Object*>::iterator>
+	{
+
+		using base = PyIterator<List, std::vector<Object*>::iterator>;
+		
+		ListIterator(List* list);
+
+	};
+
+	class ListIteratorKlass 
+		: public PyIteratorKlass<ListIterator>, 
+		  public Singleton<ListIteratorKlass>
+	{
+	public:
+
+		ListIteratorKlass();
+
+		void initialize();
+
+		virtual void print(Object* x) override;
+
+	};
 
 }
 

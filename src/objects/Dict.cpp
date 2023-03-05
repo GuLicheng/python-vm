@@ -49,6 +49,11 @@ namespace python
 		return value;
 	}
 
+    std::array<PythonObjectDictionary::iterator, 2> Dict::get_iterator_pair()
+    {
+        return { this->dict.begin(), this->dict.end() };
+    }
+
     DictKlass::DictKlass()
     {
     }
@@ -91,7 +96,7 @@ namespace python
 		return sizeof(Dict);
     }
 
-    Object *DictKlass::__str__(Object *x)
+	Object* DictKlass::__str__(Object* x)
     {
 		PYTHON_ASSERT(x && x->is<Dict>());
 		std::stringstream ss;
@@ -115,6 +120,11 @@ namespace python
         PYTHON_ASSERT(x && x->is<Dict>());
 		return x->as<Dict>()->has_key(y) ? Universe::True : Universe::False;
     }
+
+    Object* DictKlass::__iter__(Object* x)
+    {
+        return new DictIterator<DictIteratorMode::Items>(x->as<Dict>());
+    }
     
 	void DictKlass::print(Object* object)
     {
@@ -127,4 +137,85 @@ namespace python
 			std::cout << ' ';
 		}
     }
+
+    template<DictIteratorMode EMode>
+    inline DictIterator<EMode>::DictIterator(Dict* dict) : base(dict)
+    {
+		this->klass = DictIteratorKlass<EMode>::get_instance();
+    }
+
+    template<DictIteratorMode EMode>
+    inline Object* DictIterator<EMode>::value()
+	{
+		if constexpr (EMode == DictIteratorMode::Items) 
+		{
+			if (this->is_over()) return nullptr;
+			List* ls = new List();
+			ls->append((*(this->iterator)).first);	
+			ls->append((*(this->iterator)).second);
+			return ls;	
+		} 
+		else if constexpr (EMode == DictIteratorMode::Keys)
+		{
+			return this->is_over() ? nullptr : (*(this->iterator)).first;
+		}
+		else
+		{
+			return this->is_over() ? nullptr : (*(this->iterator)).second;
+		} 
+	}
+
+    template<DictIteratorMode EMode>
+    inline DictIteratorKlass<EMode>::DictIteratorKlass()
+    {
+    }
+
+    template<DictIteratorMode EMode>
+    inline void DictIteratorKlass<EMode>::initialize()
+    {
+		Dict* dict = new Dict();
+		
+		this->klass_dict = dict;
+
+		constexpr auto name = [](){
+			if constexpr (EMode == DictIteratorMode::Items)
+				return "dict_item_iterator";
+			else if constexpr (EMode == DictIteratorMode::Keys)
+				return "dict_key_iterator";
+			else 
+				return "dict_value_iterator";
+		}();
+
+		(new TypeObject)->set_own_klass(this);
+		this->set_name(new String(name));
+		this->add_super(ObjectKlass::get_instance());
+    }
+
+    template<DictIteratorMode EMode>
+    void DictIteratorKlass<EMode>::print(Object* x)
+    {
+		constexpr auto info = [](){
+			if constexpr (EMode == DictIteratorMode::Items)
+				return "DictIteratorItems";
+			else if constexpr (EMode == DictIteratorMode::Keys)
+				return "DictIteratorKeys";
+			else 
+				return "DictIteratorValues";
+		}();
+
+		std::cout << info;
+    }
+
+	template class DictIterator<DictIteratorMode::Items>;
+	
+	template class DictIterator<DictIteratorMode::Keys>;
+
+	template class DictIterator<DictIteratorMode::Values>;
+
+	template class DictIteratorKlass<DictIteratorMode::Items>;
+
+	template class DictIteratorKlass<DictIteratorMode::Keys>;
+	
+	template class DictIteratorKlass<DictIteratorMode::Values>;
+
 }

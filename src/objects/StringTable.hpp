@@ -32,6 +32,7 @@ namespace python
 
         DefineString(len);
         DefineString(hash);
+        DefineString(iter);
 
         DefineString(le);
         DefineString(lt);

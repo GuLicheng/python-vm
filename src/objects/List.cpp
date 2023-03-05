@@ -10,7 +10,7 @@
 
 #include <sstream>
 #include <algorithm>
-
+#include <iomanip>
 
 
 
@@ -101,6 +101,11 @@ namespace python
 		this->inner_list.insert(this->inner_list.begin() + pos, obj);
     }
 
+    std::array<std::vector<Object*>::iterator, 2> List::get_iterator_pair()
+    {
+        return { this->inner_list.begin(), this->inner_list.end() };
+    }
+
     ListKlass::ListKlass()
     {
 	}
@@ -138,12 +143,15 @@ namespace python
 		std::cout << '[';
 
 		int size = lx->size();
-		if (size >= 1)
-			lx->get(0)->print();
 
-		for (int i = 1; i < size; i++) {
-			printf(", ");
-			lx->get(i)->print();
+		for (int i = 0; i < size; i++) 
+		{
+			if (i != 0) std::cout << ", ";
+
+			if (lx->get(i)->is<String>())	
+				std::cout << std::quoted(lx->get(i)->as<String>()->value(), '"');
+			else
+				lx->get(i)->print();
 		}
 		std::cout << ']';
 	}
@@ -198,5 +206,51 @@ namespace python
 		return new List(std::move(result));
     }
 
+	ListIteratorKlass::ListIteratorKlass()
+	{
+	}
+
+    void ListIteratorKlass::initialize()
+    {
+		Dict* dict = new Dict();
+		// dict->put(new String("append"), new FunctionObject(native::list_append));
+		
+		this->klass_dict = dict;
+
+		// klass_dict->put(new String("__next__"), new FunctionObject([](List* args) -> Object* {
+		// 	return args->as<
+		// }))
+
+		(new TypeObject)->set_own_klass(this);
+		this->set_name(new String("list_iterator"));
+		this->add_super(ObjectKlass::get_instance());
+    }
+
+    // Object* ListIteratorKlass::__iter__(Object* x)
+    // {
+    //     return x;
+    // }
+
+    // Object* ListIteratorKlass::__next__(Object* x)
+    // {
+	// 	auto val = x->as<ListIterator>()->value();
+    //     x->as<ListIterator>()->increase();
+	// 	return val;
+	// }
+
+    void ListIteratorKlass::print(Object* x)
+    {
+		std::cout << "ListIterator";
+    }
+
+    Object* ListKlass::__iter__(Object* x)
+    {
+        return new ListIterator(x->as<List>());
+    }
+
+	ListIterator::ListIterator(List* list) : base(list)
+	{
+		this->klass = ListIteratorKlass::get_instance();
+	}
 
 }

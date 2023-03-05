@@ -8,6 +8,8 @@ namespace python::native
 	Object* isinstance(List* args);
 	Object* type(List* args);
 	Object* hash(List* args);
+	Object* iter(List* args);
+	Object* next(List* args);
 
 	/* class `string` */
 	Object* string_upper(List* args);

@@ -42,6 +42,7 @@ namespace python
 		ListKlass::get_instance()->initialize();
 		DictKlass::get_instance()->initialize();
 		// ModuleKlass::get_instance()->initialize();
+		ListIteratorKlass::get_instance()->initialize();
 
 		type_klass->set_klass_dict(new Dict());
 		object_klass->set_klass_dict(new Dict());

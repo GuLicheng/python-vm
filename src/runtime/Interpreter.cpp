@@ -32,6 +32,11 @@ namespace python
 		return this->frame->stack->pop();
 	}
 
+    Object* Interpreter::top()
+    {
+        return this->frame->stack->get(-1);
+    }
+
 	std::pair<Object*, Object*> Interpreter::pop_top_two()
 	{
 		auto w = this->frame->stack->pop();
@@ -111,6 +116,54 @@ namespace python
 
 			switch (op_code)
 			{
+			case ByteCode::STORE_MAP:
+			{
+                auto w = this->pop();
+                auto u = this->pop();
+                auto v = this->top();
+                v->as<Dict>()->put(w, u);
+                break;
+			}
+			case ByteCode::BUILD_MAP:
+			{
+				this->push(new Dict());
+				break;
+			}
+			case ByteCode::GET_ITER:
+			{
+				auto v = this->pop();
+				this->push(v->__iter__());
+				break;
+			}
+			case ByteCode::FOR_ITER:
+			{
+				// For-loop in Python will call GET_ITER and FOR_ITER.
+				// for follow code:
+				// >>> for val in [1, 2, 3]:
+				// >>>   print(val)
+				// will generate byte code like:
+				// 		SET_LOOP
+				// 		... 
+				// 		GET_ITER
+				// 		FOR_ITER
+				// 		LOAD_NAME   
+				// If v is list, v.__iter__() should return it's iterator.
+				// If v is iterator, v.__iter__() should return itself.  	 
+				auto v = this->top();
+				auto w = v->__next__();
+				if (!w)
+				{
+					// Throw StopIteration ?
+					this->frame->pc += op_arg;
+					this->status = Status::IS_OK;
+					this->pending_exception = nullptr;
+				}
+				else
+				{
+					this->push(w);
+				}
+				break;
+			}
 			case ByteCode::DUP_TOP:
 			{
 				auto v = this->pop();
@@ -702,6 +755,8 @@ namespace python
 		this->buildin->put(new String("isinstance"), new FunctionObject(native::isinstance));
 		this->buildin->put(new String("type"), new FunctionObject(native::type));
 		this->buildin->put(new String("hash"), new FunctionObject(native::hash));
+		this->buildin->put(new String("iter"), new FunctionObject(native::iter));
+		this->buildin->put(new String("next"), new FunctionObject(native::next));
 
 		/* buildin types */
 		this->buildin->put(new String("int"), IntegerKlass::get_instance()->get_type_object());
@@ -709,6 +764,11 @@ namespace python
 		this->buildin->put(new String("str"), StringKlass::get_instance()->get_type_object());
 		this->buildin->put(new String("list"), ListKlass::get_instance()->get_type_object());
 		this->buildin->put(new String("dict"), DictKlass::get_instance()->get_type_object());
+
+		this->buildin->put(new String("list_iterator"), ListIteratorKlass::get_instance()->get_type_object());
+		this->buildin->put(new String("dict_iterator_item"), DictIteratorKlass<DictIteratorMode::Items>::get_instance()->get_type_object());
+		this->buildin->put(new String("dict_iterator_key"), DictIteratorKlass<DictIteratorMode::Keys>::get_instance()->get_type_object());
+		this->buildin->put(new String("dict_iterator_value"), DictIteratorKlass<DictIteratorMode::Values>::get_instance()->get_type_object());
 
 		// TESTING:
 	}

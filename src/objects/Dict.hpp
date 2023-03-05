@@ -5,7 +5,9 @@
 #include "Singleton.hpp"
 #include "Integer.hpp"
 #include "Universe.hpp"
+#include "Iterator.hpp"
 
+#include <array>
 #include <unordered_map>
 
 namespace python
@@ -57,12 +59,15 @@ namespace python
 
 		virtual Object* __contains__(Object* x, Object* y) override;
 
+		virtual Object* __iter__(Object* x) override;
+
 		virtual void print(Object* object) override;
 		
 	};
 
 	class Dict : public Object
 	{
+
 		friend class DictKlass;
 
 		PythonObjectDictionary dict;
@@ -84,6 +89,40 @@ namespace python
 		int size() const;
 
 		Object* remove(Object* k);
+
+		std::array<PythonObjectDictionary::iterator, 2> get_iterator_pair();
+
+	};
+
+	enum struct DictIteratorMode 
+	{
+		Keys, Values, Items
+	};
+
+	template <DictIteratorMode EMode> 
+	struct DictIterator : PyIterator<Dict, PythonObjectDictionary::iterator>
+	{
+
+		using base = PyIterator<Dict, PythonObjectDictionary::iterator>;
+
+		DictIterator(Dict* dict);
+
+		Object* value();
+	
+	};
+
+	template <DictIteratorMode EMode>
+	class DictIteratorKlass 
+		: public PyIteratorKlass<DictIterator<EMode>>,
+		  public Singleton<DictIteratorKlass<EMode>>
+	{
+	public:
+
+		DictIteratorKlass();
+
+		void initialize();
+
+		virtual void print(Object* x) override;
 
 	};
 

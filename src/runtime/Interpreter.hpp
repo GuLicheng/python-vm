@@ -44,6 +44,8 @@ namespace python
 
 		Object* pop();
 
+		Object* top();
+
 		std::pair<Object*, Object*> pop_top_two();
 
 		int stack_level() const;

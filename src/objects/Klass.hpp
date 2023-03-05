@@ -115,10 +115,12 @@ namespace python
 		virtual Object* __float__(Object* x) { NOT_IMPLEMENT; }
 		virtual Object* __bool__(Object* x) { NOT_IMPLEMENT; }
 
-		// Methods not implemented in book
+
 		virtual Object* __hash__(Object* x);
 		virtual Object* __deepcopy__(Object* x) { NOT_IMPLEMENT; }
 		virtual Object* __len__(Object* x);
+		virtual Object* __iter__(Object* x);
+		virtual Object* __next__(Object* x);
 
 
 		virtual Object* get_klass_attr(Object* x, Object* y);

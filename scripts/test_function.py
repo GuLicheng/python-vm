@@ -67,5 +67,5 @@
 #     return say
 
 # f = closure()()
-
-print("Hello World".upper())
+print(len("Hello World"))
+# print("Hello World".upper())

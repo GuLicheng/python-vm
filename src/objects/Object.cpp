@@ -98,6 +98,16 @@ namespace python
 		return this->klass->__len__(this);
 	}
 
+    Object* Object::__iter__()
+    {
+        return this->klass->__iter__(this);
+    }
+
+    Object* Object::__next__()
+    {
+        return this->klass->__next__(this);
+    }
+
     Object* Object::__str__()
     {
         return this->klass->__str__(this);
