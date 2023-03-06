@@ -4,11 +4,17 @@
 namespace python
 {
 
-    template <typename Derived>
+    template <typename T>
+    concept order_superable = requires (T t)
+    {
+        t.order_supers();
+    };
+
+    template <typename TDerived>
     class Singleton
     {
     public:
-        using single_type = Derived;
+        using single_type = TDerived;
 
         Singleton(const Singleton&) = delete;
         Singleton& operator=(const Singleton&) = delete;

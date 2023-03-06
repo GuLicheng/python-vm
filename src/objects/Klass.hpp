@@ -8,8 +8,6 @@
 
 namespace python
 {
-
-
     class Object;
     class String;
     class Dict;
@@ -37,6 +35,8 @@ namespace python
 
         void build_klass(std::string_view class_name, Klass* super_class, Dict* class_attributes);
 
+        void set_buildin_super();
+
         static Object* find_magic_method_and_call(Object* magic_method_name, Object* self);
 
         static Object* find_magic_method_and_call(Object* magic_method_name, Object* self, Object* arg1);
@@ -49,7 +49,7 @@ namespace python
         
     public:
 
-        Klass() = default;
+        Klass();
 
         Klass(const Klass&) = delete;
 
@@ -67,7 +67,7 @@ namespace python
         void set_super_list(List* x) { this->super = x; }
 
         // Mro
-        List* get_mro() { return this->mro; }
+        List* get_mro();
 
         // Default __init__
         virtual Object* allocate_instance(Object* callable, List* args);
@@ -143,4 +143,5 @@ namespace python
         // void* operator new(std::size_t);
 
     };
+
 }

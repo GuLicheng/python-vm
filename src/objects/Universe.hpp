@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 namespace python
 {
 
@@ -17,7 +19,11 @@ namespace python
 
         inline static Object* None = nullptr;
 
-        inline static List* klasses = nullptr;
+        // inline static List* klasses = nullptr;
+
+        inline static std::vector<Klass*> klasses;
+
+        static void register_klass(Klass* klass);
 
         static void genesis();
 

@@ -3,6 +3,9 @@
 #include "src/runtime/Interpreter.hpp"
 #include "src/objects/Universe.hpp"
 
+#include "src/objects/TypeObject.hpp"
+#include "src/objects/Klass.hpp"
+
 #include <iostream>
 #include <fstream>
 
@@ -26,7 +29,7 @@ void python_main()
     };
 
     // const char* file = files[6];
-    const char* file = files[11];
+    const char* file = files[11-3];
     auto stream = BufferedInputStream(file);
 
     std::fstream log { "a.txt" };
@@ -41,6 +44,30 @@ void python_main()
     interpreter->run(codeobj);
 
     std::cout << "==================End running code==================\n";
+
+    constexpr auto show_detail = [](python::Klass* klass) {
+        std::cout << "Name = " << klass->get_name()->value();
+        if (klass->get_mro())
+        {
+            std::cout << " Super class is : ";
+            for (int i = 0; i < klass->get_mro()->size(); i++) 
+            {
+                auto tp_obj = (python::TypeObject*)(klass->get_mro()->get(i));
+                auto k = tp_obj->get_own_klass();
+                // printf("%s, ", k->name->value());
+                std::cout << k->get_name()->value() << ", ";
+            }
+        }
+        std::cout << '\n';
+    };
+
+    std::ranges::for_each(Universe::klasses, [=](python::Klass* klass) {
+        if (klass->get_name())
+            show_detail(klass);
+        else
+            std::cout << "Unknown class\n";
+    });
+
 }
 
 void exec()

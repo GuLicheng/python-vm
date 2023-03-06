@@ -47,6 +47,22 @@ namespace python
 
     void Klass::order_supers()
     {
+        // Each class will only initialize once, so we directly
+        // return if the mro is not nullptr
+        if (this->mro)
+        {
+            PYTHON_ASSERT(this->super);
+            // std::cout << this->name->value() << "'s mro is ";
+            // for (int i = 0; i < this->mro->size(); i++) 
+            // {
+            //     TypeObject* tp_obj = (TypeObject*)(this->mro->get(i));
+            //     Klass* k = tp_obj->get_own_klass();
+            //     std::cout << k->name->value() << ", ";
+            // }
+            // std::cout << '\n';
+            // return;
+        }
+        
         if (this->super == NULL)
             return;
 
@@ -54,23 +70,27 @@ namespace python
             this->mro = new List();
 
         int cur = -1;
-        for (int i = 0; i < this->super->size(); i++) {
+        for (int i = 0; i < this->super->size(); i++) 
+        {
             TypeObject* tp_obj = (TypeObject*)(this->super->get(i));
             Klass* k = tp_obj->get_own_klass();
             this->mro->append(tp_obj);
             if (k->mro == NULL)
                 continue;
 
-            for (int j = 0; j < k->mro->size(); j++) {
+            for (int j = 0; j < k->mro->size(); j++) 
+            {
                 TypeObject* tp_obj = (TypeObject*)(k->mro->get(j));
                 int index = this->mro->index(tp_obj);
-                if (index < cur) {
-                    printf("Error: method resolution order conflicts.\n");
-                    assert(false);
+                if (index < cur) 
+                {
+                    std::cout << "Error: method resolution order conflicts.\n";
+                    PYTHON_ASSERT(false);
                 }
                 cur = index;
 
-                if (index >= 0) {
+                if (index >= 0) 
+                {
                     this->mro->delete_by_index(index);
                 }
                 this->mro->append(tp_obj);
@@ -81,15 +101,24 @@ namespace python
             return;
 
         // printf("%s's mro is ", this->name->value());
-        std::cout << this->name->value() << "'s mro is ";
-        for (int i = 0; i < this->mro->size(); i++) {
-            TypeObject* tp_obj = (TypeObject*)(this->mro->get(i));
-            Klass* k = tp_obj->get_own_klass();
-            // printf("%s, ", k->name->value());
-            std::cout << k->name->value() << ", ";
-        }
-        std::cout << '\n';
+        // std::cout << this->name->value() << "'s mro is ";
+        // for (int i = 0; i < this->mro->size(); i++) 
+        // {
+        //     TypeObject* tp_obj = (TypeObject*)(this->mro->get(i));
+        //     Klass* k = tp_obj->get_own_klass();
+        //     // printf("%s, ", k->name->value());
+        //     std::cout << k->name->value() << ", ";
+        // }
+        // std::cout << '\n';
+    }
 
+    List* Klass::get_mro()
+    {
+        if (!this->mro && this->super && this != ObjectKlass::get_instance())
+        {
+            this->order_supers();
+        }
+        return this->mro;
     }
 
     Object* Klass::allocate_instance(Object* callable, List* args)
@@ -256,6 +285,14 @@ namespace python
         (new TypeObject)->set_own_klass(this);
         this->set_name(new String(class_name.data(), class_name.size()));
         this->add_super(super_class);
+        // this->set_buildin_super();
+    }
+
+    void Klass::set_buildin_super()
+    {
+        PYTHON_ASSERT(!this->mro);
+        this->mro = new List();
+        this->mro->append(ObjectKlass::get_instance()->get_type_object());
     }
 
     Object* Klass::find_magic_method_and_call(Object* magic_method_name, Object* self)
@@ -315,6 +352,12 @@ namespace python
         }
 
         return result;
+    }
+
+    Klass::Klass()
+    {
+        Universe::register_klass(this);
+        // std::cout << "Klass Created\n";
     }
 
     /*

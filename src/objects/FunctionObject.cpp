@@ -143,8 +143,7 @@ namespace python
 
     void CellKlass::initialize()
     {
-        this->set_klass_dict(new Dict());
-        this->set_name(new String("cell"));
+        this->build_klass("cell", ObjectKlass::get_instance(), nullptr);
     }
 
     void CellKlass::print(Object* object)

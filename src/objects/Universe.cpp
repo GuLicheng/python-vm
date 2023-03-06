@@ -10,16 +10,21 @@
 #include "TypeObject.hpp"
 #include "../runtime/Interpreter.hpp"
 
+#include <vector>
+
 namespace python
 {
+    void Universe::register_klass(Klass* klass)
+    {
+        klasses.emplace_back(klass);
+    }
+
     void Universe::genesis()
     {
-
-        klasses = new List();
-
         True = new Integer(1);
         False = new Integer(0);
         None = new Object();
+
 
         // Initialize type object
         Klass* object_klass = ObjectKlass::get_instance();
@@ -43,8 +48,8 @@ namespace python
         // ModuleKlass::get_instance()->initialize();
 
         FunctionKlass::get_instance()->initialize();
-        NativeFunctionKlass::get_instance()->initialize();
         MemberFunctionKlass::get_instance()->initialize();
+        NativeFunctionKlass::get_instance()->initialize();
         CellKlass::get_instance()->initialize();
 
         
@@ -65,18 +70,9 @@ namespace python
         FunctionKlass::get_instance()->order_supers();
         NativeFunctionKlass::get_instance()->order_supers();
         MemberFunctionKlass::get_instance()->order_supers();
-
+        CellKlass::get_instance()->order_supers();
 
         Interpreter::get_instance()->initialize();
-
-        // std::cout << "ObjectKlass " << ObjectKlass::get_instance() << '\n';
-        // std::cout << "TypeKlass " << TypeKlass::get_instance() << '\n';
-        
-        // std::cout << "IntegerKlass " << IntegerKlass::get_instance() << '\n';
-        // std::cout << "DoubleKlass " << DoubleKlass::get_instance() << '\n';
-        // std::cout << "StringKlass " << StringKlass::get_instance() << '\n';
-        // std::cout << "DictKlass " << DictKlass::get_instance() << '\n';
-        // std::cout << "ListKlass " << ListKlass::get_instance() << '\n';
 
     }
 
