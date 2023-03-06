@@ -81,6 +81,10 @@ namespace python
         {
             PyViewIteratorKlass()
             {
+                // Any iterator will print PyViewIterator.
+                // We can add another template parameter to indicate the name such as 
+                // 1. enum/int type
+                // 2. fixed_basic_string 
                 this->build_klass("PyViewIterator", ObjectKlass::get_instance(), nullptr);
             }
 
