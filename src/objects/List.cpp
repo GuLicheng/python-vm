@@ -197,12 +197,7 @@ namespace python
 
 		return new List(std::move(result));
     }
-		// return new PyView(x, x->as<Dict>()->dict | std::views::transform([](auto pair){
-		// 	List* ls = new List();
-		// 	ls->append(pair.first);
-		// 	ls->append(pair.second);
-		// 	return ls;
-		// }));
+
     Object* ListKlass::__iter__(Object* x)
     {
         // return new ListIterator(x->as<List>());

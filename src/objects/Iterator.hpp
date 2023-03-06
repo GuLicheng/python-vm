@@ -12,12 +12,12 @@ namespace python
     {
     public:
 
-		virtual Object* __iter__(Object* x) override
+        virtual Object* __iter__(Object* x) override
         {
             return x;
         }
-		
-		virtual Object* __next__(Object* x) override
+        
+        virtual Object* __next__(Object* x) override
         {
             auto val = x->as<TIterator>()->value();
             x->as<TIterator>()->increase();
@@ -26,14 +26,14 @@ namespace python
 
     };
 
-	template <typename TObject, typename TIterator, typename TSentinel = TIterator>
-	struct PyIterator : public Object
-	{
-		Object* iterable;    // store object and make it reachable for GC
+    template <typename TObject, typename TIterator, typename TSentinel = TIterator>
+    struct PyIterator : public Object
+    {
+        Object* iterable;    // store object and make it reachable for GC
 
-		TIterator iterator;  // current
+        TIterator iterator;  // current
  
-		TSentinel sentinel;  // end of iterator
+        TSentinel sentinel;  // end of iterator
 
         PyIterator(TObject* object)
         {
@@ -43,22 +43,22 @@ namespace python
             this->sentinel = std::ranges::end(rg);
         }
 
-		void increase() 
+        void increase() 
         {
             // Some container may not support ++end() e.g. std::unordered_map 
             std::ranges::advance(this->iterator, 1, this->sentinel); 
         }
 
-		bool is_over() const 
+        bool is_over() const 
         { 
             return this->iterator == this->sentinel; 
         }
 
-		Object* value() 
+        Object* value() 
         { 
             return is_over() ? nullptr : *(this->iterator); 
         }
-	};
+    };
 
     template <typename TView>
     struct PyViewKlass;
@@ -147,7 +147,7 @@ namespace python
             this->build_klass("PyViewKlass", ObjectKlass::get_instance(), nullptr);
         }
 
-		virtual Object* __iter__(Object* x) override
+        virtual Object* __iter__(Object* x) override
         {
             return x->as<PyView<TView>>()->get_iterator();
         }
