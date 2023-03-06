@@ -12,6 +12,12 @@
 
 namespace python
 {
+
+    void FunctionKlass::initialize()
+    {
+		this->build_klass("function", ObjectKlass::get_instance(), new Dict());
+    }
+
 	void FunctionKlass::print(Object* obj)
 	{
 		std::cout << "<Function: ";
@@ -80,10 +86,15 @@ namespace python
 			std::cout << " Name is " << this->func_name->value();
     }
 
-	MemberFunctionKlass::MemberFunctionKlass()
-	{
-		this->set_klass_dict(new Dict());
-	}
+    void MemberFunctionKlass::initialize()
+    {
+		this->build_klass("method", FunctionKlass::get_instance(), new Dict());
+    }
+
+    void MemberFunctionKlass::print(Object* object)
+    {
+		std::cout << "MemberFunction";
+    }
 
 	MemberFunctionObject::MemberFunctionObject(FunctionObject* func) : owner(nullptr), func(func)
 	{
@@ -117,7 +128,6 @@ namespace python
     {
         NOT_IMPLEMENT;
     }
-	
 
     CellObject::CellObject(List *ls, int i)
     {
@@ -131,7 +141,7 @@ namespace python
         return this->table->get(this->index);
     }
 
-    CellKlass::CellKlass()
+    void CellKlass::initialize()
     {
 		this->set_klass_dict(new Dict());
 		this->set_name(new String("cell"));
@@ -142,7 +152,12 @@ namespace python
 		std::cout << "CellObject";
     }
 
-    void NativeFunctionKlass::print(Object* object)
+    void NativeFunctionKlass::initialize()
+    {
+		this->build_klass("native_function", FunctionKlass::get_instance(), new Dict());
+    }
+
+	void NativeFunctionKlass::print(Object* object)
     {
 		std::cout << "NativeFunctionObject";
 		if (this->name)

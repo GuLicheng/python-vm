@@ -12,7 +12,7 @@ namespace python
 	{
 	public:
 
-		StringKlass();
+		StringKlass() = default;
 
 		void initialize();
 
@@ -64,4 +64,9 @@ namespace python
 
 	};
 
+}
+
+namespace python::native
+{
+	Object* string_upper(List* args);
 }

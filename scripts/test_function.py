@@ -1,71 +1,40 @@
+# Simple function without params 
+def foo():
+    return
 
-# # # LEGB
-
-# # global x
-# # x = 0
-
-# # def foo():
-# #     x = 2
-# #     def bar():
-# #         print(x)
-
-# #     def goo():
-# #         x = 3
-# #         print(x)
-
-# #     return bar, goo
-
-# # def func():
-# #     global x
-# #     x = 1
-
-# # bar, goo = foo()
-
-# # bar() # 2
-# # goo() # 3
-
-# # True, False = 0, 1 # This is not allowed in Python 3.x
+if foo() is None:
+    print(1)
 
 
-# # Simple function without params 
-# def foo():
-#     return
+# Function with simple params
+def add(a, b):
+    return a + b
 
-# if foo() is None:
-#     print(1)
+c = add(1, 0)
+print(c)
 
+# Function with default params
+def add2(a, b = 0):
+    return a + b
 
-# # Function with simple params
-# def add(a, b):
-#     return a + b
+c = add2(1)
+print(c)
 
-# c = add(1, 0)
-# print(c)
+# Native function
+msg = "Hello World"
+c = len(msg)
+print(c - 10)
 
-# # Function with default params
-# def add2(a, b = 0):
-#     return a + b
+# Native class method
+print(msg.upper())
 
-# c = add2(1)
-# print(c)
+# Closure
+def closure():
+    x = 1
 
-# # Native function
-# msg = "Hello World"
-# c = len(msg)
-# print(c - 10)
+    def say():
+        print(x)
 
-# # Native class method
-# print(msg.upper())
+    return say
 
-# # Closure
-# def closure():
-#     x = 1
-
-#     def say():
-#         print(x)
-
-#     return say
-
-# f = closure()()
-print(len("Hello World"))
-# print("Hello World".upper())
+f = closure()()

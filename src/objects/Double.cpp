@@ -18,10 +18,7 @@ namespace python
 
     void DoubleKlass::initialize()
     {
-		this->set_klass_dict(new Dict());
-		this->set_name(new String("double"));
-		(new TypeObject)->set_own_klass(this);
-		this->add_super(ObjectKlass::get_instance());
+		this->build_klass("float", ObjectKlass::get_instance(), new Dict());
 	}
 
     std::size_t DoubleKlass::size()

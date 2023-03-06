@@ -3,6 +3,8 @@
 #include "TypeObject.hpp"
 #include "List.hpp"
 #include "FunctionObject.hpp"
+#include "Iterator.hpp"
+
 #include <sstream>
 
 namespace python
@@ -49,18 +51,17 @@ namespace python
 		return value;
 	}
 
-    std::array<PythonObjectDictionary::iterator, 2> Dict::get_iterator_pair()
+    PythonObjectDictionary& Dict::value()
     {
-        return { this->dict.begin(), this->dict.end() };
-    }
-
-    DictKlass::DictKlass()
-    {
+        return this->dict;
     }
 
     void DictKlass::initialize()
     {
 		Dict* klass_dict = new Dict();
+		klass_dict->put(new String("keys"), new FunctionObject(native::dict_keys2));
+		klass_dict->put(new String("values"), new FunctionObject(native::dict_values2));
+		klass_dict->put(new String("items"), new FunctionObject(native::dict_items2));
 		// klass_dict->put(new String("setdefault"),
 		// 		new FunctionObject(dict_set_default));
 		// klass_dict->put(new String("remove"),
@@ -77,10 +78,7 @@ namespace python
 		// 		new FunctionObject(dict_itervalues));
 		// klass_dict->put(new String("iteritems"),
 		// 		new FunctionObject(dict_iteritems));
-		this->set_klass_dict(klass_dict);
-		this->set_name(new String("dict"));
-		(new TypeObject)->set_own_klass(this);
-		this->add_super(ObjectKlass::get_instance());
+		this->build_klass("dict", ObjectKlass::get_instance(), klass_dict);
     }
 
     Object* DictKlass::allocate_instance(Object* callable, List* args)
@@ -123,7 +121,12 @@ namespace python
 
     Object* DictKlass::__iter__(Object* x)
     {
-        return new DictIterator<DictIteratorMode::Items>(x->as<Dict>());
+		return (new PyView(x, x->as<Dict>()->dict | std::views::transform([](auto pair){
+			List* ls = new List();
+			ls->append(pair.first);
+			ls->append(pair.second);
+			return ls;
+		})))->get_iterator();
     }
     
 	void DictKlass::print(Object* object)
@@ -137,85 +140,32 @@ namespace python
 			std::cout << ' ';
 		}
     }
+}
 
-    template<DictIteratorMode EMode>
-    inline DictIterator<EMode>::DictIterator(Dict* dict) : base(dict)
-    {
-		this->klass = DictIteratorKlass<EMode>::get_instance();
-    }
-
-    template<DictIteratorMode EMode>
-    inline Object* DictIterator<EMode>::value()
+namespace python::native
+{
+	Object* dict_keys2(List* args)
 	{
-		if constexpr (EMode == DictIteratorMode::Items) 
-		{
-			if (this->is_over()) return nullptr;
-			List* ls = new List();
-			ls->append((*(this->iterator)).first);	
-			ls->append((*(this->iterator)).second);
-			return ls;	
-		} 
-		else if constexpr (EMode == DictIteratorMode::Keys)
-		{
-			return this->is_over() ? nullptr : (*(this->iterator)).first;
-		}
-		else
-		{
-			return this->is_over() ? nullptr : (*(this->iterator)).second;
-		} 
+		auto py_dict = detail::check_and_get_from_argument_list<Dict>(args, 0, 1);
+		return new PyView(py_dict, py_dict->as<Dict>()->value() | std::views::keys);
 	}
 
-    template<DictIteratorMode EMode>
-    inline DictIteratorKlass<EMode>::DictIteratorKlass()
-    {
-    }
+	Object* dict_values2(List* args)
+	{
+		auto py_dict = detail::check_and_get_from_argument_list<Dict>(args, 0, 1);
+		return new PyView(py_dict, py_dict->as<Dict>()->value() | std::views::values);
+	}
 
-    template<DictIteratorMode EMode>
-    inline void DictIteratorKlass<EMode>::initialize()
-    {
-		Dict* dict = new Dict();
-		
-		this->klass_dict = dict;
-
-		constexpr auto name = [](){
-			if constexpr (EMode == DictIteratorMode::Items)
-				return "dict_item_iterator";
-			else if constexpr (EMode == DictIteratorMode::Keys)
-				return "dict_key_iterator";
-			else 
-				return "dict_value_iterator";
-		}();
-
-		(new TypeObject)->set_own_klass(this);
-		this->set_name(new String(name));
-		this->add_super(ObjectKlass::get_instance());
-    }
-
-    template<DictIteratorMode EMode>
-    void DictIteratorKlass<EMode>::print(Object* x)
-    {
-		constexpr auto info = [](){
-			if constexpr (EMode == DictIteratorMode::Items)
-				return "DictIteratorItems";
-			else if constexpr (EMode == DictIteratorMode::Keys)
-				return "DictIteratorKeys";
-			else 
-				return "DictIteratorValues";
-		}();
-
-		std::cout << info;
-    }
-
-	template class DictIterator<DictIteratorMode::Items>;
-	
-	template class DictIterator<DictIteratorMode::Keys>;
-
-	template class DictIterator<DictIteratorMode::Values>;
-
-	template class DictIteratorKlass<DictIteratorMode::Items>;
-
-	template class DictIteratorKlass<DictIteratorMode::Keys>;
-	
-	template class DictIteratorKlass<DictIteratorMode::Values>;
-
+	Object* dict_items2(List* args)
+	{
+		auto py_dict = detail::check_and_get_from_argument_list<Dict>(args, 0, 1);
+		return new PyView(py_dict, py_dict->as<Dict>()->value() | std::views::transform([](auto pair){
+			List* ls = new List();
+			ls->append(pair.first);
+			ls->append(pair.second);
+			return ls;
+		}));
+	}	
 }
+
+

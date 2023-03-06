@@ -3,7 +3,6 @@
 #include "Object.hpp"
 #include "Klass.hpp"
 #include "Singleton.hpp"
-#include "Iterator.hpp"
 
 #include <array>
 #include <vector>
@@ -11,12 +10,11 @@
 
 namespace python
 {
-	
 	class ListKlass : public Klass, public Singleton<ListKlass>
 	{
 	public:
 
-		ListKlass();
+		ListKlass() = default;
 
 		void initialize();
 
@@ -46,6 +44,8 @@ namespace python
 		friend class Interpreter;
 
 		friend class ListIterator;
+
+		friend class ListKlass;
 
 	public:
 
@@ -79,11 +79,13 @@ namespace python
 
 		void insert(int pos, Object* obj);
 
-		std::array<std::vector<Object*>::iterator, 2> get_iterator_pair();
+		// std::array<std::vector<Object*>::iterator, 2> get_iterator_pair();
+
+		std::vector<Object*>& value();
 
 	};
-
-	struct ListIterator : public PyIterator<List, std::vector<Object*>::iterator, std::vector<Object*>::iterator>
+#if 0
+	struct ListIterator : public PyIterator<List, std::vector<Object*>::iterator>
 	{
 
 		using base = PyIterator<List, std::vector<Object*>::iterator>;
@@ -98,13 +100,39 @@ namespace python
 	{
 	public:
 
-		ListIteratorKlass();
+		ListIteratorKlass() = default;
 
 		void initialize();
 
 		virtual void print(Object* x) override;
 
 	};
-
+#endif
 }
 
+namespace python::native::detail
+{
+	template <typename T>
+	Object* check_and_get_from_argument_list(List* args, int index, int argc)
+	{
+		PYTHON_ASSERT(args && args->size() == argc && "args should be available");
+		auto arg = args->get(index);
+		PYTHON_ASSERT(arg->is<T>());
+		return arg;
+	}
+}
+
+namespace python::native
+{
+	Object* list_append(List* args);
+
+	Object* list_pop(List* args);
+
+	Object* list_remove(List* args);
+	
+	// Object* list_reverse(List* args);
+	// Object* list_sort(List* args);
+	// Object* list_extend(List* args);
+	// Object* list_index(List* args);
+	// Object* list_getitem(List* args);
+}

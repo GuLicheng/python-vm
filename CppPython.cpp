@@ -25,7 +25,7 @@ void python_main()
         R"(../../test\test_iterator.pyc)",
     };
 
-    // const char* file = files[4];
+    // const char* file = files[6];
     const char* file = files[11];
     auto stream = BufferedInputStream(file);
 

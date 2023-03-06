@@ -12,9 +12,16 @@ namespace python
 	class String;
 	class Closure;
 
+	using NativeFunctionPointer = Object*(*)(List* args);
+	// std::function<Object*(List*)>
+
 	class FunctionKlass : public Klass, public Singleton<FunctionKlass>
 	{
 	public:
+
+		FunctionKlass() = default;
+
+		void initialize();
 
 		virtual void print(Object* object) override;
 
@@ -22,23 +29,25 @@ namespace python
 
 	class NativeFunctionKlass : public Klass, public Singleton<NativeFunctionKlass>
 	{
-		virtual void print(Object* object) override;
-	};
+	public:
 
-	using NativeFunctionPointer = Object*(*)(List* args);
-	// std::function<Object*(List*)>
+		NativeFunctionKlass() = default;
+
+		void initialize();
+
+		virtual void print(Object* object) override;
+
+	};
 
 	class CellKlass : public Klass, public Singleton<CellKlass>
 	{
 	public:
 
-		CellKlass();
+		CellKlass() = default;
+
+		void initialize();
 
 		virtual void print(Object* object) override;
-
-		// virtual void oops_do(Closure* closure, Object* obj);
-
-		// virtual int size();
 
 	};
 
@@ -46,7 +55,12 @@ namespace python
 	{
 	public:
 
-		MemberFunctionKlass();
+		MemberFunctionKlass() = default;
+
+		void initialize();
+
+		virtual void print(Object* object) override;
+		
 	};
 
 

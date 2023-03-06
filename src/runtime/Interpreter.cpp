@@ -765,10 +765,10 @@ namespace python
 		this->buildin->put(new String("list"), ListKlass::get_instance()->get_type_object());
 		this->buildin->put(new String("dict"), DictKlass::get_instance()->get_type_object());
 
-		this->buildin->put(new String("list_iterator"), ListIteratorKlass::get_instance()->get_type_object());
-		this->buildin->put(new String("dict_iterator_item"), DictIteratorKlass<DictIteratorMode::Items>::get_instance()->get_type_object());
-		this->buildin->put(new String("dict_iterator_key"), DictIteratorKlass<DictIteratorMode::Keys>::get_instance()->get_type_object());
-		this->buildin->put(new String("dict_iterator_value"), DictIteratorKlass<DictIteratorMode::Values>::get_instance()->get_type_object());
+
+		// Not necessary
+		// this->buildin->put(new String("list_iterator"), ListIteratorKlass::get_instance()->get_type_object());
+
 
 		// TESTING:
 	}

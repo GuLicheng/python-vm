@@ -101,6 +101,4 @@ namespace python
 		Object* get_klass_attr(Object* attribute);
 
 	};
-
-
 }

@@ -17,10 +17,7 @@ namespace python
 
     void IntegerKlass::initialize()
     {
-		this->set_klass_dict(new Dict());
-		this->set_name(new String("int"));
-		(new TypeObject)->set_own_klass(this);
-		this->add_super(ObjectKlass::get_instance());
+		this->build_klass("int", ObjectKlass::get_instance(), new Dict());
     }
 
     size_t IntegerKlass::size()

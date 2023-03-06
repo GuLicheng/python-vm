@@ -156,9 +156,15 @@ namespace python
     void ObjectKlass::print(Object* object)
     {
 		if (object != Universe::None)
+		{
 			std::cout << "This is a class object";
+			if (object->get_klass() && object->get_klass()->get_name())
+				std::cout << " name is :" << object->get_klass()->get_name();
+		}
 		else
+		{
 			std::cout << "None";
+		}
     }
 
 }

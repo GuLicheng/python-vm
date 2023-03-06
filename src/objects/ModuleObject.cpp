@@ -6,11 +6,7 @@ namespace python
 {
     void ModuleKlass::initialize()
     {
-        Dict* dict = new Dict();
-        this->set_klass_dict(dict);
-        this->set_name(new String("module"));
-        (new Object())->set_klass(this);
-        this->add_super(ObjectKlass::get_instance());
+        this->build_klass("module", ObjectKlass::get_instance(), new Dict());
     }
 
     size_t ModuleKlass::size()

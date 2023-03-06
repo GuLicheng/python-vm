@@ -2,6 +2,8 @@
 
 #include "../Python.hpp"
 
+#include <string_view>
+
 #define NOT_IMPLEMENT PYTHON_ASSERT(false && "not implement"); return 0 
 
 namespace python
@@ -33,6 +35,8 @@ namespace python
 
 		friend class Object;
 
+		void build_klass(std::string_view class_name, Klass* super_class, Dict* class_attributes);
+
 		static Object* find_magic_method_and_call(Object* magic_method_name, Object* self);
 
 		static Object* find_magic_method_and_call(Object* magic_method_name, Object* self, Object* arg1);
@@ -42,7 +46,6 @@ namespace python
 		static Object* find_and_call(Object* x, List* args, Object* function_name);
 
 		static Object* find_in_parent(Object* x, Object* y);
-
 		
 	public:
 

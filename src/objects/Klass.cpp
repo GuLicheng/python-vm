@@ -113,7 +113,7 @@ namespace python
         //     return;            
         // }
 
-        std::cout << "<object of";
+        std::cout << "<object of ";
         obj->get_klass()->get_name()->print();
         std::cout << ", at " << obj << '>';
 
@@ -245,6 +245,19 @@ namespace python
         return sizeof(Object);
     }
 
+    void Klass::build_klass(std::string_view class_name, Klass* super_class, Dict* class_attributes)
+    {
+        // I am not sure whether it is necessary to initialize class_attributes.
+        // Is nullptr OK for some special class ?
+        if (!class_attributes)
+            class_attributes = new Dict();
+
+        this->klass_dict = class_attributes;
+        (new TypeObject)->set_own_klass(this);
+		this->set_name(new String(class_name.data(), class_name.size()));
+		this->add_super(super_class);
+    }
+
     Object* Klass::find_magic_method_and_call(Object* magic_method_name, Object* self)
     {
         PYTHON_ASSERT(magic_method_name->is<String>());
@@ -288,6 +301,9 @@ namespace python
 
         if (result != Universe::None)
             return result;
+
+        // if (!x->klass->mro)
+        //     return result;
 
         // Find attribute in all parents
         for (int i = 0; i < x->klass->mro->size(); ++i)

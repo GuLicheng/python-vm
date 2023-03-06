@@ -1,13 +1,28 @@
-# vals = [1, "Hello", 2]
+vals = [1, "Hello", 2]
 
-# print(vals)
+print(vals)
 
-# for val in vals:
-#     print(val)
+for val in vals:
+    print(val)
 
-# print("===================")
-
+print("===================")
 d = { 1: "Hello", 2: "World" }
 
 for val in d:
     print(val)
+
+for val in d.items():
+    print(val)
+
+for val in d.keys():
+    print(val)
+
+for val in d.values():
+    print(val)
+
+
+print("==================")
+
+print(iter(d))
+print(iter(vals))
+

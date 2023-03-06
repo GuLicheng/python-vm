@@ -10,6 +10,8 @@ namespace python
 	{
 	public:
 
+		IntegerKlass() = default;
+
 		void initialize();
 
 		virtual size_t size() override;

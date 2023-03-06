@@ -4,7 +4,7 @@ print(t)
 t = type(1)
 print(1)
 print(t)
-print(type(t))
+print(type([]))
 
 i = 0
 while i < 5:

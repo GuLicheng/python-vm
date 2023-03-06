@@ -3,7 +3,6 @@
 #include "Operation.hpp"
 #include "TypeObject.hpp"
 #include "Dict.hpp"
-#include "NativeFunction.hpp"
 #include "FunctionObject.hpp"
 
 namespace python
@@ -39,20 +38,13 @@ namespace python
 		return std::string_view(this->str);
 	}
 
-    StringKlass::StringKlass()
-    {
-    }
-
     void StringKlass::initialize()
     {
-		(new TypeObject())->set_own_klass(this);
 		Dict* klass_dict = new Dict();
 
 		klass_dict->put(new String("upper"), new FunctionObject(native::string_upper));
 
-		this->set_klass_dict(klass_dict);
-		this->set_name(new String("str"));
-		this->add_super(ObjectKlass::get_instance());
+		this->build_klass("str", ObjectKlass::get_instance(), klass_dict);
     }
 
     Object* StringKlass::allocate_instance(Object* callable, List* args)
@@ -132,4 +124,24 @@ namespace python
 		return detail::binary_arith_operation<String>(std::plus<>(), x, y);
 	}
 
+}
+
+namespace python::native
+{
+	Object* string_upper(List* args)
+	{
+		auto arg0 = detail::check_and_get_from_argument_list<String>(args, 0, 1);
+
+		// auto sv = arg0->as<String>()->value()
+		// 	| std::views::transform(std::toupper)
+		// 	| std::ranges::to<std::string>();
+
+		auto sv = arg0->as<String>()->value();
+		std::string result;
+		for (char c : sv)
+		{
+			result += std::toupper(c);
+		}
+		return new String(std::move(result));
+	}
 }

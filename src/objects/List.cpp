@@ -3,10 +3,10 @@
 #include "Dict.hpp"
 #include "Universe.hpp"
 #include "Integer.hpp"
-#include "NativeFunction.hpp"
 #include "FunctionObject.hpp"
 #include "String.hpp"
 #include "TypeObject.hpp"
+#include "Iterator.hpp"
 
 #include <sstream>
 #include <algorithm>
@@ -101,25 +101,17 @@ namespace python
 		this->inner_list.insert(this->inner_list.begin() + pos, obj);
     }
 
-    std::array<std::vector<Object*>::iterator, 2> List::get_iterator_pair()
+    std::vector<Object*>& List::value()
     {
-        return { this->inner_list.begin(), this->inner_list.end() };
+        return this->inner_list;
     }
-
-    ListKlass::ListKlass()
-    {
-	}
 
     void ListKlass::initialize()
     {
 		Dict* dict = new Dict();
 		dict->put(new String("append"), new FunctionObject(native::list_append));
 		
-		this->klass_dict = dict;
-
-		(new TypeObject)->set_own_klass(this);
-		this->set_name(new String("list"));
-		this->add_super(ObjectKlass::get_instance());
+		this->build_klass("list", ObjectKlass::get_instance(), dict);
     }
 
     Object* ListKlass::allocate_instance(Object* callable, List* args)
@@ -205,52 +197,54 @@ namespace python
 
 		return new List(std::move(result));
     }
-
-	ListIteratorKlass::ListIteratorKlass()
-	{
-	}
-
+		// return new PyView(x, x->as<Dict>()->dict | std::views::transform([](auto pair){
+		// 	List* ls = new List();
+		// 	ls->append(pair.first);
+		// 	ls->append(pair.second);
+		// 	return ls;
+		// }));
+    Object* ListKlass::__iter__(Object* x)
+    {
+        // return new ListIterator(x->as<List>());
+		return (new PyView(x, x->as<List>()->inner_list | std::views::all))->get_iterator();
+    }	
+#if 0
     void ListIteratorKlass::initialize()
     {
-		Dict* dict = new Dict();
-		// dict->put(new String("append"), new FunctionObject(native::list_append));
-		
-		this->klass_dict = dict;
-
-		// klass_dict->put(new String("__next__"), new FunctionObject([](List* args) -> Object* {
-		// 	return args->as<
-		// }))
-
-		(new TypeObject)->set_own_klass(this);
-		this->set_name(new String("list_iterator"));
-		this->add_super(ObjectKlass::get_instance());
+		this->build_klass("list_iterator", ObjectKlass::get_instance(), new Dict());
     }
-
-    // Object* ListIteratorKlass::__iter__(Object* x)
-    // {
-    //     return x;
-    // }
-
-    // Object* ListIteratorKlass::__next__(Object* x)
-    // {
-	// 	auto val = x->as<ListIterator>()->value();
-    //     x->as<ListIterator>()->increase();
-	// 	return val;
-	// }
 
     void ListIteratorKlass::print(Object* x)
     {
 		std::cout << "ListIterator";
     }
 
-    Object* ListKlass::__iter__(Object* x)
-    {
-        return new ListIterator(x->as<List>());
-    }
-
 	ListIterator::ListIterator(List* list) : base(list)
 	{
 		this->klass = ListIteratorKlass::get_instance();
 	}
+#endif
+}
 
+namespace python::native
+{
+	Object* list_append(List* args) 
+	{
+		auto arg0 = detail::check_and_get_from_argument_list<List>(args, 0, 1);
+		arg0->as<List>()->append(args->get(1));
+		return Universe::None;
+	}
+    
+	Object* list_pop(List* args)
+	{
+		auto arg0 = detail::check_and_get_from_argument_list<List>(args, 0, 1);
+		return arg0->as<List>()->pop();
+	}
+
+	Object* list_remove(List* args)
+	{
+		auto arg0 = detail::check_and_get_from_argument_list<List>(args, 0, 1);
+		arg0->as<List>()->delete_by_object(args->get(1));
+		return Universe::None;
+	}
 }
