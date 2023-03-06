@@ -8,143 +8,143 @@
 
 namespace python
 {
-	class CodeObject;
-	class String;
-	class Closure;
+    class CodeObject;
+    class String;
+    class Closure;
 
-	using NativeFunctionPointer = Object*(*)(List* args);
-	// std::function<Object*(List*)>
+    using NativeFunctionPointer = Object*(*)(List* args);
+    // std::function<Object*(List*)>
 
-	class FunctionKlass : public Klass, public Singleton<FunctionKlass>
-	{
-	public:
+    class FunctionKlass : public Klass, public Singleton<FunctionKlass>
+    {
+    public:
 
-		FunctionKlass() = default;
+        FunctionKlass() = default;
 
-		void initialize();
+        void initialize();
 
-		virtual void print(Object* object) override;
+        virtual void print(Object* object) override;
 
-	};
+    };
 
-	class NativeFunctionKlass : public Klass, public Singleton<NativeFunctionKlass>
-	{
-	public:
+    class NativeFunctionKlass : public Klass, public Singleton<NativeFunctionKlass>
+    {
+    public:
 
-		NativeFunctionKlass() = default;
+        NativeFunctionKlass() = default;
 
-		void initialize();
+        void initialize();
 
-		virtual void print(Object* object) override;
+        virtual void print(Object* object) override;
 
-	};
+    };
 
-	class CellKlass : public Klass, public Singleton<CellKlass>
-	{
-	public:
+    class CellKlass : public Klass, public Singleton<CellKlass>
+    {
+    public:
 
-		CellKlass() = default;
+        CellKlass() = default;
 
-		void initialize();
+        void initialize();
 
-		virtual void print(Object* object) override;
+        virtual void print(Object* object) override;
 
-	};
+    };
 
-	class MemberFunctionKlass : public Klass, public Singleton<MemberFunctionKlass>
-	{
-	public:
+    class MemberFunctionKlass : public Klass, public Singleton<MemberFunctionKlass>
+    {
+    public:
 
-		MemberFunctionKlass() = default;
+        MemberFunctionKlass() = default;
 
-		void initialize();
+        void initialize();
 
-		virtual void print(Object* object) override;
-		
-	};
+        virtual void print(Object* object) override;
+        
+    };
 
 
-	class FunctionObject : public Object
-	{
-		friend class FunctionKlass;
-		friend class FrameObject;
-		friend class Interpreter;
+    class FunctionObject : public Object
+    {
+        friend class FunctionKlass;
+        friend class FrameObject;
+        friend class Interpreter;
 
-		CodeObject* func_code;
+        CodeObject* func_code;
 
-		String* func_name;
+        String* func_name;
 
-		Dict* globals;  // global variable
+        Dict* globals;  // global variable
 
-		unsigned int flags;
+        unsigned int flags;
 
-		List* defaults; // default params
+        List* defaults; // default params
 
-		List* closure;
+        List* closure;
 
-		NativeFunctionPointer native_func;
+        NativeFunctionPointer native_func;
 
-	public:
+    public:
 
-		constexpr static int CO_VARARGS = 0x4;
-		constexpr static int CO_VARKEYWORDS = 0x8;
-		constexpr static int CO_GENERATOR = 0x20;
+        constexpr static int CO_VARARGS = 0x4;
+        constexpr static int CO_VARKEYWORDS = 0x8;
+        constexpr static int CO_GENERATOR = 0x20;
 
-		FunctionObject(Object* code_object);
+        FunctionObject(Object* code_object);
 
-		FunctionObject(Klass* code_object);
-	
-		FunctionObject(NativeFunctionPointer nfp);
+        FunctionObject(Klass* code_object);
+    
+        FunctionObject(NativeFunctionPointer nfp);
 
-		//String* function_name() const { return this->func_name; }
+        //String* function_name() const { return this->func_name; }
 
-		//int flags() const { return this->flags; }
+        //int flags() const { return this->flags; }
 
-		Object* call(List* args);
+        Object* call(List* args);
 
-		virtual void print();
+        virtual void print();
 
-	};
+    };
 
-	class MemberFunctionObject : public Object
-	{
-		friend class MemberFunctionKlass;
-		friend class Interpreter;
+    class MemberFunctionObject : public Object
+    {
+        friend class MemberFunctionKlass;
+        friend class Interpreter;
 
-		Object* owner;
+        Object* owner;
 
-		FunctionObject* func; // For member function, the first argument is object 
+        FunctionObject* func; // For member function, the first argument is object 
 
-	public:
+    public:
 
-		using KlassType = MemberFunctionKlass;
+        using KlassType = MemberFunctionKlass;
 
-		explicit MemberFunctionObject(FunctionObject* func);
+        explicit MemberFunctionObject(FunctionObject* func);
 
-		MemberFunctionObject(FunctionObject* func, Object* owner);
+        MemberFunctionObject(FunctionObject* func, Object* owner);
 
-		static bool is_function(Object* x);
+        static bool is_function(Object* x);
 
-		static bool is_yield_function(Object* x);
+        static bool is_yield_function(Object* x);
 
-	};
+    };
 
-	class CellObject : public Object
-	{
-		friend class CellKlass;
+    class CellObject : public Object
+    {
+        friend class CellKlass;
 
-		List* table;   // the closure that this cell belong to
+        List* table;   // the closure that this cell belong to
 
-		int index;		 // cell location
-		
-	public:
+        int index;         // cell location
+        
+    public:
 
-		using KlassType = CellKlass;
+        using KlassType = CellKlass;
 
-		CellObject(List* ls, int i);
+        CellObject(List* ls, int i);
 
-		Object* value();
-	
-	};
+        Object* value();
+    
+    };
 
 }

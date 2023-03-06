@@ -12,103 +12,103 @@
 
 namespace python
 {
-	// Helper class 
-	namespace detail
-	{
-		struct ObjectKeyEqual
-		{
-			using is_transparent = void;
+    // Helper class 
+    namespace detail
+    {
+        struct ObjectKeyEqual
+        {
+            using is_transparent = void;
 
-			/* static */ size_t operator()(Object* x) const
-			{
-				PYTHON_ASSERT(x && "x should not be nullptr");
-				auto py_int = x->__hash__();
-				auto cpp_int = py_int->as<Integer>()->value();
-				return static_cast<size_t>(cpp_int);
-			}
+            /* static */ size_t operator()(Object* x) const
+            {
+                PYTHON_ASSERT(x && "x should not be nullptr");
+                auto py_int = x->__hash__();
+                auto cpp_int = py_int->as<Integer>()->value();
+                return static_cast<size_t>(cpp_int);
+            }
 
-			bool operator()(Object* x, Object* y) const
-			{
-				auto py_boolean = x->__eq__(y);
-				return py_boolean == Universe::True ? true : false;
-			}
-		};
-	}
+            bool operator()(Object* x, Object* y) const
+            {
+                auto py_boolean = x->__eq__(y);
+                return py_boolean == Universe::True ? true : false;
+            }
+        };
+    }
 
-	using PythonObjectDictionary = std::unordered_map<
-		Object*,
-		Object*,
-		detail::ObjectKeyEqual,
-		detail::ObjectKeyEqual
-	>;
+    using PythonObjectDictionary = std::unordered_map<
+        Object*,
+        Object*,
+        detail::ObjectKeyEqual,
+        detail::ObjectKeyEqual
+    >;
 
 
-	class DictKlass : public Klass, public Singleton<DictKlass>
-	{
-	public:
+    class DictKlass : public Klass, public Singleton<DictKlass>
+    {
+    public:
 
-		DictKlass() = default;
+        DictKlass() = default;
 
-		void initialize();
+        void initialize();
 
-    	virtual Object* allocate_instance(Object* callable, List* args) override;
+        virtual Object* allocate_instance(Object* callable, List* args) override;
 
-		virtual size_t size() override;
+        virtual size_t size() override;
 
-		virtual Object* __str__(Object* x) override;
+        virtual Object* __str__(Object* x) override;
 
-		virtual Object* __contains__(Object* x, Object* y) override;
+        virtual Object* __contains__(Object* x, Object* y) override;
 
-		virtual Object* __iter__(Object* x) override;
+        virtual Object* __iter__(Object* x) override;
 
-		virtual void print(Object* object) override;
-		
-	};
+        virtual void print(Object* object) override;
+        
+    };
 
-	class Dict : public Object
-	{
+    class Dict : public Object
+    {
 
-		friend class DictKlass;
+        friend class DictKlass;
 
-		PythonObjectDictionary dict;
+        PythonObjectDictionary dict;
 
-	public:
+    public:
 
-		using KlassType = DictKlass;
+        using KlassType = DictKlass;
 
-		Dict();
+        Dict();
 
-		Dict(PythonObjectDictionary d);
+        Dict(PythonObjectDictionary d);
 
-		void put(Object* key, Object* value);
+        void put(Object* key, Object* value);
 
-		Object* get(Object* key);
+        Object* get(Object* key);
 
-		bool has_key(Object* key);
+        bool has_key(Object* key);
 
-		int size() const;
+        int size() const;
 
-		Object* remove(Object* k);
+        Object* remove(Object* k);
 
-		PythonObjectDictionary& value();
+        PythonObjectDictionary& value();
 
-	};
+    };
 
 }
 
 
 namespace python::native
 {
-	// native function
-	// An alternative way to implement iterator which is much simpler by using 
-	// STL range adaptors
-	// Is the garbage collection can work correct if we do not store the
-	// reference of Object ?
+    // native function
+    // An alternative way to implement iterator which is much simpler by using 
+    // STL range adaptors
+    // Is the garbage collection can work correct if we do not store the
+    // reference of Object ?
 
-	Object* dict_keys2(List* args);
+    Object* dict_keys2(List* args);
 
-	Object* dict_values2(List* args);
+    Object* dict_values2(List* args);
 
-	Object* dict_items2(List* args);
+    Object* dict_items2(List* args);
 } 
 

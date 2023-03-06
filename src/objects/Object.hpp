@@ -10,95 +10,95 @@
 namespace python
 {
 
-	class ObjectKlass : public Klass, public Singleton<ObjectKlass>
-	{
-	public:
-		virtual void print(Object* object) override;
-	};
+    class ObjectKlass : public Klass, public Singleton<ObjectKlass>
+    {
+    public:
+        virtual void print(Object* object) override;
+    };
 
-	class Object 
-	{
-		friend class Klass;
+    class Object 
+    {
+        friend class Klass;
 
-	protected:
-	
-		Klass* klass = ObjectKlass::get_instance();
+    protected:
+    
+        Klass* klass = ObjectKlass::get_instance();
 
-		Dict* obj_dict = nullptr;
+        Dict* obj_dict = nullptr;
 
-	public:
+    public:
 
-		using KlassType = ObjectKlass;
+        using KlassType = ObjectKlass;
 
-		Object() = default;
+        Object() = default;
 
-		Object(const Object&) = delete;
+        Object(const Object&) = delete;
 
-		void init_dict();
+        void init_dict();
 
-		virtual void show() { std::cout << "Object(None?)"; };
+        virtual void show() { std::cout << "Object(None?)"; };
 
-		Klass* get_klass()  
-		{ 
-			PYTHON_ASSERT(this->klass); 
-			return this->klass; 
-		}
+        Klass* get_klass()  
+        { 
+            PYTHON_ASSERT(this->klass); 
+            return this->klass; 
+        }
 
-		void set_klass(Klass* k) { this->klass = k; }
+        void set_klass(Klass* k) { this->klass = k; }
 
-		template <typename T>
-		T* as() 
-		{
-			static_assert(std::is_base_of_v<Object, T>); 
-			return static_cast<T*>(this); 
-		}
+        template <typename T>
+        T* as() 
+        {
+            static_assert(std::is_base_of_v<Object, T>); 
+            return static_cast<T*>(this); 
+        }
 
-		template <typename T>
-		bool is() { return this->get_klass() == T::KlassType::get_instance(); }
-
-
-		void print();
-
-		// Operators
-		// ==, !=, <, >, <=, >=
-		Object* __gt__(Object* x);
-		Object* __lt__(Object* x);
-		Object* __eq__(Object* x);
-		Object* __ne__(Object* x);
-		Object* __le__(Object* x);
-		Object* __ge__(Object* x);
-
-		// +, -, *, /, //, %
-		Object* __add__(Object* x);
-		Object* __sub__(Object* x);
-		Object* __mul__(Object* x);
-		Object* __div__(Object* x);
-		Object* __floordiv__(Object* x);
-		Object* __mod__(Object* x);
+        template <typename T>
+        bool is() { return this->get_klass() == T::KlassType::get_instance(); }
 
 
-		Object* __contains__(Object* x);
+        void print();
 
-		Object* __hash__();
-		Object* __deepcopy__();
-		Object* __len__();
-		Object* __iter__();
-		Object* __next__();
+        // Operators
+        // ==, !=, <, >, <=, >=
+        Object* __gt__(Object* x);
+        Object* __lt__(Object* x);
+        Object* __eq__(Object* x);
+        Object* __ne__(Object* x);
+        Object* __le__(Object* x);
+        Object* __ge__(Object* x);
 
-		// Type convert str, int, float, bool, ...
-		Object* __str__();
-		Object* __int__();
-		Object* __float__();
-		Object* __bool__();
+        // +, -, *, /, //, %
+        Object* __add__(Object* x);
+        Object* __sub__(Object* x);
+        Object* __mul__(Object* x);
+        Object* __div__(Object* x);
+        Object* __floordiv__(Object* x);
+        Object* __mod__(Object* x);
 
 
-		Object* __setattr__(Object* key, Object* value);
-		Object* __getattr__(Object* attribute);
+        Object* __contains__(Object* x);
 
-		void __setitem__(Object* key, Object* value);
-		Object* __getitem__(Object* name);
+        Object* __hash__();
+        Object* __deepcopy__();
+        Object* __len__();
+        Object* __iter__();
+        Object* __next__();
 
-		Object* get_klass_attr(Object* attribute);
+        // Type convert str, int, float, bool, ...
+        Object* __str__();
+        Object* __int__();
+        Object* __float__();
+        Object* __bool__();
 
-	};
+
+        Object* __setattr__(Object* key, Object* value);
+        Object* __getattr__(Object* attribute);
+
+        void __setitem__(Object* key, Object* value);
+        Object* __getitem__(Object* name);
+
+        Object* get_klass_attr(Object* attribute);
+
+    };
 }

@@ -10,129 +10,129 @@
 
 namespace python
 {
-	class ListKlass : public Klass, public Singleton<ListKlass>
-	{
-	public:
+    class ListKlass : public Klass, public Singleton<ListKlass>
+    {
+    public:
 
-		ListKlass() = default;
+        ListKlass() = default;
 
-		void initialize();
+        void initialize();
 
-    	virtual Object* allocate_instance(Object* callable, List* args) override;
+        virtual Object* allocate_instance(Object* callable, List* args) override;
 
-		virtual size_t size() override;
+        virtual size_t size() override;
 
-		virtual void print(Object* x) override;
+        virtual void print(Object* x) override;
 
-		virtual Object* __getitem__(Object* x, Object* y) override;
-		
-		virtual Object* __contains__(Object* x, Object* y) override;
-		
-		virtual Object* __len__(Object* x) override;
+        virtual Object* __getitem__(Object* x, Object* y) override;
+        
+        virtual Object* __contains__(Object* x, Object* y) override;
+        
+        virtual Object* __len__(Object* x) override;
 
-		virtual Object* __add__(Object* x, Object* y) override;
+        virtual Object* __add__(Object* x, Object* y) override;
 
-		virtual Object* __iter__(Object* x) override;
+        virtual Object* __iter__(Object* x) override;
 
-		// virtual Object* __str__(Object* x) override;
-	};
+        // virtual Object* __str__(Object* x) override;
+    };
 
-	class List : public Object
-	{
-		std::vector<Object*> inner_list;
+    class List : public Object
+    {
+        std::vector<Object*> inner_list;
 
-		friend class Interpreter;
+        friend class Interpreter;
 
-		friend class ListIterator;
+        friend class ListIterator;
 
-		friend class ListKlass;
+        friend class ListKlass;
 
-	public:
+    public:
 
-		using KlassType = ListKlass;
+        using KlassType = ListKlass;
 
-		List();
+        List();
 
-		explicit List(int size);
+        explicit List(int size);
 
-		explicit List(std::vector<Object*> obj_list);
+        explicit List(std::vector<Object*> obj_list);
 
-		int size() const;
+        int size() const;
 
-		void append(Object* obj);
+        void append(Object* obj);
 
-		Object* get(int index);
+        Object* get(int index);
 
-		void set(int index, Object* o);
+        void set(int index, Object* o);
 
-		Object* top();
+        Object* top();
 
-		Object* pop();
+        Object* pop();
 
-		int index(Object* object);
+        int index(Object* object);
 
-		void delete_by_index(int index);
+        void delete_by_index(int index);
 
-		void delete_by_object(Object* obj);
+        void delete_by_object(Object* obj);
 
-		void reverse();
+        void reverse();
 
-		void insert(int pos, Object* obj);
+        void insert(int pos, Object* obj);
 
-		// std::array<std::vector<Object*>::iterator, 2> get_iterator_pair();
+        // std::array<std::vector<Object*>::iterator, 2> get_iterator_pair();
 
-		std::vector<Object*>& value();
+        std::vector<Object*>& value();
 
-	};
+    };
 #if 0
-	struct ListIterator : public PyIterator<List, std::vector<Object*>::iterator>
-	{
+    struct ListIterator : public PyIterator<List, std::vector<Object*>::iterator>
+    {
 
-		using base = PyIterator<List, std::vector<Object*>::iterator>;
-		
-		ListIterator(List* list);
+        using base = PyIterator<List, std::vector<Object*>::iterator>;
+        
+        ListIterator(List* list);
 
-	};
+    };
 
-	class ListIteratorKlass 
-		: public PyIteratorKlass<ListIterator>, 
-		  public Singleton<ListIteratorKlass>
-	{
-	public:
+    class ListIteratorKlass 
+        : public PyIteratorKlass<ListIterator>, 
+          public Singleton<ListIteratorKlass>
+    {
+    public:
 
-		ListIteratorKlass() = default;
+        ListIteratorKlass() = default;
 
-		void initialize();
+        void initialize();
 
-		virtual void print(Object* x) override;
+        virtual void print(Object* x) override;
 
-	};
+    };
 #endif
 }
 
 namespace python::native::detail
 {
-	template <typename T>
-	Object* check_and_get_from_argument_list(List* args, int index, int argc)
-	{
-		PYTHON_ASSERT(args && args->size() == argc && "args should be available");
-		auto arg = args->get(index);
-		PYTHON_ASSERT(arg->is<T>());
-		return arg;
-	}
+    template <typename T>
+    Object* check_and_get_from_argument_list(List* args, int index, int argc)
+    {
+        PYTHON_ASSERT(args && args->size() == argc && "args should be available");
+        auto arg = args->get(index);
+        PYTHON_ASSERT(arg->is<T>());
+        return arg;
+    }
 }
 
 namespace python::native
 {
-	Object* list_append(List* args);
+    Object* list_append(List* args);
 
-	Object* list_pop(List* args);
+    Object* list_pop(List* args);
 
-	Object* list_remove(List* args);
-	
-	// Object* list_reverse(List* args);
-	// Object* list_sort(List* args);
-	// Object* list_extend(List* args);
-	// Object* list_index(List* args);
-	// Object* list_getitem(List* args);
+    Object* list_remove(List* args);
+    
+    // Object* list_reverse(List* args);
+    // Object* list_sort(List* args);
+    // Object* list_extend(List* args);
+    // Object* list_index(List* args);
+    // Object* list_getitem(List* args);
 }

@@ -9,65 +9,65 @@
 namespace python
 {
 
-	struct Block
-	{
-		unsigned char type;   // block type
-		int target;  // save argument
-		int level;			  // block depth
-	};
+    struct Block
+    {
+        unsigned char type;   // block type
+        int target;  // save argument
+        int level;              // block depth
+    };
 
-	class FrameObject
-	{
+    class FrameObject
+    {
 
-		ArrayList<Object*>* stack;
+        ArrayList<Object*>* stack;
 
-		ArrayList<Block*>* loop_stack;
+        ArrayList<Block*>* loop_stack;
 
-		ArrayList<Object*>* co_consts;
+        ArrayList<Object*>* co_consts;
 
-		ArrayList<Object*>* co_names;
+        ArrayList<Object*>* co_names;
 
-		Dict* locals;
+        Dict* locals;
 
-		Dict* globals;
+        Dict* globals;
 
-		CodeObject* codes;
+        CodeObject* codes;
 
-		List* fast_local; // save parameters 
+        List* fast_local; // save parameters 
 
-		List* closure;
+        List* closure;
 
-		FrameObject* sender;
+        FrameObject* sender;
 
-		int pc;
+        int pc;
 
-		bool entry_frame;
+        bool entry_frame;
 
-		friend class Interpreter;
+        friend class Interpreter;
 
-	public:
+    public:
 
-		FrameObject(CodeObject* codes);
+        FrameObject(CodeObject* codes);
 
-		FrameObject(FunctionObject* function, List* args, int op_arg);
+        FrameObject(FunctionObject* function, List* args, int op_arg);
 
-		bool has_more_codes() const;
+        bool has_more_codes() const;
 
-		unsigned char get_op_code();
+        unsigned char get_op_code();
 
-		int get_op_arg();
+        int get_op_arg();
 
-		bool is_first_frame() const;
+        bool is_first_frame() const;
 
-		bool is_entry_frame() const;
+        bool is_entry_frame() const;
 
-		Object* get_cell_from_parameter(int index);
+        Object* get_cell_from_parameter(int index);
 
-		int lineno();
+        int lineno();
 
-		String* file_name();
+        String* file_name();
 
-		String* func_name();
+        String* func_name();
 
-	};
+    };
 }

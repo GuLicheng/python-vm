@@ -15,125 +15,125 @@ namespace python
 
     void FunctionKlass::initialize()
     {
-		this->build_klass("function", ObjectKlass::get_instance(), new Dict());
+        this->build_klass("function", ObjectKlass::get_instance(), new Dict());
     }
 
-	void FunctionKlass::print(Object* obj)
-	{
-		std::cout << "<Function: ";
+    void FunctionKlass::print(Object* obj)
+    {
+        std::cout << "<Function: ";
 
-		FunctionObject* fo = (FunctionObject*)obj;
+        FunctionObject* fo = (FunctionObject*)obj;
 
-		// PYTHON_ASSERT(fo && fo->is<FunctionObject>());
-		PYTHON_ASSERT(fo);
+        // PYTHON_ASSERT(fo && fo->is<FunctionObject>());
+        PYTHON_ASSERT(fo);
 
-		fo->func_name->print();
+        fo->func_name->print();
 
-		std::cout << ">";
+        std::cout << ">";
 
-	}
-	
-	FunctionObject::FunctionObject(Object* code_object)
-	{
-		CodeObject* co = (CodeObject*)code_object;
+    }
+    
+    FunctionObject::FunctionObject(Object* code_object)
+    {
+        CodeObject* co = (CodeObject*)code_object;
 
-		this->func_code = co;
-		this->func_name = co->co_name;
-		this->flags = co->co_flags;
-		this->globals = nullptr;
-		this->native_func = nullptr;
-		this->defaults = nullptr;
-		this->closure = nullptr;
+        this->func_code = co;
+        this->func_name = co->co_name;
+        this->flags = co->co_flags;
+        this->globals = nullptr;
+        this->native_func = nullptr;
+        this->defaults = nullptr;
+        this->closure = nullptr;
 
-		this->klass = FunctionKlass::get_instance();
-	}
+        this->klass = FunctionKlass::get_instance();
+    }
 
-	FunctionObject::FunctionObject(Klass* klass)
-	{
-		this->func_code = nullptr;
-		this->func_name = nullptr;
-		this->flags = 0;
-		this->globals = nullptr;
-		this->defaults = nullptr;
-		this->native_func = nullptr;
-		this->closure = nullptr;
+    FunctionObject::FunctionObject(Klass* klass)
+    {
+        this->func_code = nullptr;
+        this->func_name = nullptr;
+        this->flags = 0;
+        this->globals = nullptr;
+        this->defaults = nullptr;
+        this->native_func = nullptr;
+        this->closure = nullptr;
 
-		this->klass = klass;
-	}
+        this->klass = klass;
+    }
 
-	FunctionObject::FunctionObject(NativeFunctionPointer nfp)
-	{
-		this->func_code = nullptr;
-		this->func_name = nullptr;
-		this->flags = 0;
-		this->globals = nullptr;
-		this->native_func = nfp;
-		this->defaults = nullptr;
-		this->closure = nullptr;
+    FunctionObject::FunctionObject(NativeFunctionPointer nfp)
+    {
+        this->func_code = nullptr;
+        this->func_name = nullptr;
+        this->flags = 0;
+        this->globals = nullptr;
+        this->native_func = nfp;
+        this->defaults = nullptr;
+        this->closure = nullptr;
 
-		this->klass = NativeFunctionKlass::get_instance();
-	}
+        this->klass = NativeFunctionKlass::get_instance();
+    }
 
-	Object* FunctionObject::call(List* args)
-	{
-		return std::invoke(this->native_func, args);
-	}
+    Object* FunctionObject::call(List* args)
+    {
+        return std::invoke(this->native_func, args);
+    }
 
     void FunctionObject::print()
     {
-		std::cout << "FunctionObject";
-		if (this->func_name)
-			std::cout << " Name is " << this->func_name->value();
+        std::cout << "FunctionObject";
+        if (this->func_name)
+            std::cout << " Name is " << this->func_name->value();
     }
 
     void MemberFunctionKlass::initialize()
     {
-		this->build_klass("method", FunctionKlass::get_instance(), new Dict());
+        this->build_klass("method", FunctionKlass::get_instance(), new Dict());
     }
 
     void MemberFunctionKlass::print(Object* object)
     {
-		std::cout << "MemberFunction";
+        std::cout << "MemberFunction";
     }
 
-	MemberFunctionObject::MemberFunctionObject(FunctionObject* func) : owner(nullptr), func(func)
-	{
-		this->klass = MemberFunctionKlass::get_instance();
-	}
+    MemberFunctionObject::MemberFunctionObject(FunctionObject* func) : owner(nullptr), func(func)
+    {
+        this->klass = MemberFunctionKlass::get_instance();
+    }
 
-	MemberFunctionObject::MemberFunctionObject(FunctionObject* func, Object* owner) : owner(owner), func(func)
-	{
-		this->klass = MemberFunctionKlass::get_instance();
-	}
+    MemberFunctionObject::MemberFunctionObject(FunctionObject* func, Object* owner) : owner(owner), func(func)
+    {
+        this->klass = MemberFunctionKlass::get_instance();
+    }
 
     bool MemberFunctionObject::is_function(Object* x)
     {
         Klass* k = x->get_klass();
-		if (k == (Klass*) FunctionKlass::get_instance())
-			return true;
-		
-		if (!k->get_mro())
-			return false;
+        if (k == (Klass*) FunctionKlass::get_instance())
+            return true;
+        
+        if (!k->get_mro())
+            return false;
 
-		for (int i = 0; i < k->get_mro()->size(); ++i)
-		{
-			if (k->get_mro()->get(i) == FunctionKlass::get_instance()->get_type_object())
-				return true;
-		}
+        for (int i = 0; i < k->get_mro()->size(); ++i)
+        {
+            if (k->get_mro()->get(i) == FunctionKlass::get_instance()->get_type_object())
+                return true;
+        }
 
-		return false;
+        return false;
     }
 
-	bool MemberFunctionObject::is_yield_function(Object* x)
+    bool MemberFunctionObject::is_yield_function(Object* x)
     {
         NOT_IMPLEMENT;
     }
 
     CellObject::CellObject(List *ls, int i)
     {
-		this->table = ls;
-		this->index = i;
-		this->klass = CellKlass::get_instance();
+        this->table = ls;
+        this->index = i;
+        this->klass = CellKlass::get_instance();
     }
 
     Object *CellObject::value()
@@ -143,25 +143,25 @@ namespace python
 
     void CellKlass::initialize()
     {
-		this->set_klass_dict(new Dict());
-		this->set_name(new String("cell"));
+        this->set_klass_dict(new Dict());
+        this->set_name(new String("cell"));
     }
 
     void CellKlass::print(Object* object)
     {
-		std::cout << "CellObject";
+        std::cout << "CellObject";
     }
 
     void NativeFunctionKlass::initialize()
     {
-		this->build_klass("native_function", FunctionKlass::get_instance(), new Dict());
+        this->build_klass("native_function", FunctionKlass::get_instance(), new Dict());
     }
 
-	void NativeFunctionKlass::print(Object* object)
+    void NativeFunctionKlass::print(Object* object)
     {
-		std::cout << "NativeFunctionObject";
-		if (this->name)
-			std::cout << " Name is " << this->name;
+        std::cout << "NativeFunctionObject";
+        if (this->name)
+            std::cout << " Name is " << this->name;
     }
 
 }

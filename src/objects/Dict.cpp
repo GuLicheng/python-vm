@@ -63,21 +63,21 @@ namespace python
         klass_dict->put(new String("values"), new FunctionObject(native::dict_values2));
         klass_dict->put(new String("items"), new FunctionObject(native::dict_items2));
         // klass_dict->put(new String("setdefault"),
-        // 		new FunctionObject(dict_set_default));
+        //         new FunctionObject(dict_set_default));
         // klass_dict->put(new String("remove"),
-        // 		new FunctionObject(dict_remove));
+        //         new FunctionObject(dict_remove));
         // klass_dict->put(new String("keys"),
-        // 		new FunctionObject(dict_keys));
+        //         new FunctionObject(dict_keys));
         // klass_dict->put(new String("values"),
-        // 		new FunctionObject(dict_values));
+        //         new FunctionObject(dict_values));
         // klass_dict->put(new String("items"),
-        // 		new FunctionObject(dict_items));
+        //         new FunctionObject(dict_items));
         // klass_dict->put(new String("iterkeys"),
-        // 		new FunctionObject(dict_iterkeys));
+        //         new FunctionObject(dict_iterkeys));
         // klass_dict->put(new String("itervalues"),
-        // 		new FunctionObject(dict_itervalues));
+        //         new FunctionObject(dict_itervalues));
         // klass_dict->put(new String("iteritems"),
-        // 		new FunctionObject(dict_iteritems));
+        //         new FunctionObject(dict_iteritems));
         this->build_klass("dict", ObjectKlass::get_instance(), klass_dict);
     }
 
@@ -165,7 +165,7 @@ namespace python::native
             ls->append(pair.second);
             return ls;
         }));
-    }	
+    }    
 }
 
 

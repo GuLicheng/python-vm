@@ -9,41 +9,41 @@
 
 namespace python
 {
-	class BinaryFileParser
-	{
-		BufferedInputStream* file_stream;
+    class BinaryFileParser
+    {
+        BufferedInputStream* file_stream;
 
-		ArrayList<String*> string_table;
+        ArrayList<String*> string_table;
 
-		CodeObject* get_code_object();
+        CodeObject* get_code_object();
 
-		String* get_byte_codes();
+        String* get_byte_codes();
 
-		String* get_string();
+        String* get_string();
 
-		ArrayList<Object*>* get_consts();
+        ArrayList<Object*>* get_consts();
 
-		ArrayList<Object*>* get_tuple();
+        ArrayList<Object*>* get_tuple();
 
-		ArrayList<Object*>* get_cell_vars();
+        ArrayList<Object*>* get_cell_vars();
 
-		ArrayList<Object*>* get_free_vars();
+        ArrayList<Object*>* get_free_vars();
 
-		ArrayList<Object*>* get_var_names();
+        ArrayList<Object*>* get_var_names();
 
-		ArrayList<Object*>* get_names();
+        ArrayList<Object*>* get_names();
 
-		String* get_no_table();
+        String* get_no_table();
 
-		String* get_file_name();
+        String* get_file_name();
 
-		String* get_name();
+        String* get_name();
 
-	public:
+    public:
 
-		BinaryFileParser(BufferedInputStream* stream);
+        BinaryFileParser(BufferedInputStream* stream);
 
-		CodeObject* parse();
+        CodeObject* parse();
 
-	};
+    };
 }

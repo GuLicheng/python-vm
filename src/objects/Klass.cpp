@@ -254,8 +254,8 @@ namespace python
 
         this->klass_dict = class_attributes;
         (new TypeObject)->set_own_klass(this);
-		this->set_name(new String(class_name.data(), class_name.size()));
-		this->add_super(super_class);
+        this->set_name(new String(class_name.data(), class_name.size()));
+        this->add_super(super_class);
     }
 
     Object* Klass::find_magic_method_and_call(Object* magic_method_name, Object* self)
