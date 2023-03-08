@@ -70,6 +70,8 @@ namespace python
 
         Object* call_virtual(Object* func, List* args);
 
+        Object* eval_generator(class Generator* g);
+
         void run(CodeObject* codes);
 
     };

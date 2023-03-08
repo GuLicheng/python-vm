@@ -7,7 +7,7 @@ DST = "test"
 
 def build():
 
-    assert platform.python_version() < "3.0"
+    assert "2.7" <= platform.python_version() < "3.0"
 
     for file in os.listdir(SRC):
         src = os.path.join(SRC, file)

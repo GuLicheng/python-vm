@@ -12,8 +12,7 @@
 
 namespace python
 {
-
-    void FunctionKlass::initialize()
+    FunctionKlass::FunctionKlass()
     {
         this->build_klass("function", ObjectKlass::get_instance(), new Dict());
     }
@@ -86,7 +85,7 @@ namespace python
             std::cout << " Name is " << this->func_name->value();
     }
 
-    void MemberFunctionKlass::initialize()
+    MemberFunctionKlass::MemberFunctionKlass()
     {
         this->build_klass("method", FunctionKlass::get_instance(), new Dict());
     }
@@ -126,7 +125,10 @@ namespace python
 
     bool MemberFunctionObject::is_yield_function(Object* x)
     {
-        NOT_IMPLEMENT;
+        if (x->get_klass() != FunctionKlass::get_instance())
+            return false;
+        
+        return (x->as<FunctionObject>()->flags & FunctionObject::CO_GENERATOR) != 0;
     }
 
     CellObject::CellObject(List *ls, int i)
@@ -141,7 +143,7 @@ namespace python
         return this->table->get(this->index);
     }
 
-    void CellKlass::initialize()
+    CellKlass::CellKlass()
     {
         this->build_klass("cell", ObjectKlass::get_instance(), nullptr);
     }
@@ -151,7 +153,7 @@ namespace python
         std::cout << "CellObject";
     }
 
-    void NativeFunctionKlass::initialize()
+    NativeFunctionKlass::NativeFunctionKlass()
     {
         this->build_klass("native_function", FunctionKlass::get_instance(), new Dict());
     }

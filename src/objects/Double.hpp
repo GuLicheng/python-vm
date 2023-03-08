@@ -10,7 +10,7 @@ namespace python
     {
     public:
 
-        DoubleKlass() = default;
+        DoubleKlass();
 
         void initialize();
 

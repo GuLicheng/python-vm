@@ -19,9 +19,7 @@ namespace python
     {
     public:
 
-        FunctionKlass() = default;
-
-        void initialize();
+        FunctionKlass();
 
         virtual void print(Object* object) override;
 
@@ -31,9 +29,7 @@ namespace python
     {
     public:
 
-        NativeFunctionKlass() = default;
-
-        void initialize();
+        NativeFunctionKlass();
 
         virtual void print(Object* object) override;
 
@@ -43,9 +39,7 @@ namespace python
     {
     public:
 
-        CellKlass() = default;
-
-        void initialize();
+        CellKlass();
 
         virtual void print(Object* object) override;
 
@@ -55,9 +49,7 @@ namespace python
     {
     public:
 
-        MemberFunctionKlass() = default;
-
-        void initialize();
+        MemberFunctionKlass();
 
         virtual void print(Object* object) override;
         
@@ -69,6 +61,7 @@ namespace python
         friend class FunctionKlass;
         friend class FrameObject;
         friend class Interpreter;
+        friend class MemberFunctionObject;
 
         CodeObject* func_code;
 

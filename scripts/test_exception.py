@@ -1,7 +1,3 @@
-class Exception(object):
-    
-    def __init__(self, info):
-        self.info = info
 
 # def foo():
 #     try:
@@ -14,7 +10,8 @@ class Exception(object):
 
 # foo()
 
-
+class Exception(object): pass
+    
 
 def foo(a):
     b = a - 1
@@ -22,8 +19,13 @@ def foo(a):
 
 
 def bar(a, b):
-    raise Exception("something wrong")
+    # raise Exception("something wrong")
+    raise 0
 
-
-foo(1)
+try:
+    foo(1)
+except Exception:
+    print("E1")
+except int:
+    print("E2")
 

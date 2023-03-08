@@ -29,11 +29,37 @@ namespace python
             return 1;
     }
 
+    void Klass::show_klass_info()
+    {
+        if (!this->name)
+        {
+            std::cout << "Unknown class\n";
+            return;
+        }
+        std::cout << "class name: " << this->name->value() << '\n';
+        std::cout << "{\n";
+
+        std::cout << "\tsupers: ";
+        // for (auto s : this->klass_super)
+        for (auto s : this->klass_mro)
+        {
+            std::cout << '\t' << s->name->value() << ',';
+        }
+        std::cout << "\n}\n";
+
+    }
+
+
     void Klass::add_super(Klass* x)
     {
         if (!this->super)
             this->super = new List();
         this->super->append(x->type_object);
+        
+        // This function only called for build-in type.
+        // We make sure that all of buildin's type only have one base class.
+        this->klass_super.emplace_back(x);
+        collect_super_klass(this->klass_mro, x);
     }
 
     Object* Klass::get_super()
@@ -97,8 +123,6 @@ namespace python
             }
         }
 
-        if (this->mro == NULL)
-            return;
 
         // printf("%s's mro is ", this->name->value());
         // std::cout << this->name->value() << "'s mro is ";
@@ -110,6 +134,19 @@ namespace python
         //     std::cout << k->name->value() << ", ";
         // }
         // std::cout << '\n';
+    }
+
+    // This function only used by user-defined class.
+    void Klass::set_super_list(List* x)
+    {
+        this->super = x; 
+        PYTHON_ASSERT(x && "x should not be nullptr");
+        for (int i = 0; i < x->size(); ++i)
+        {
+            auto klass = this->super->get(i)->as<TypeObject>()->get_own_klass(); 
+            this->klass_super.emplace_back(klass);
+            collect_super_klass(this->klass_mro, klass);
+        }
     }
 
     List* Klass::get_mro()
@@ -284,15 +321,8 @@ namespace python
         this->klass_dict = class_attributes;
         (new TypeObject)->set_own_klass(this);
         this->set_name(new String(class_name.data(), class_name.size()));
+        PYTHON_ASSERT(super_class);
         this->add_super(super_class);
-        // this->set_buildin_super();
-    }
-
-    void Klass::set_buildin_super()
-    {
-        PYTHON_ASSERT(!this->mro);
-        this->mro = new List();
-        this->mro->append(ObjectKlass::get_instance()->get_type_object());
     }
 
     Object* Klass::find_magic_method_and_call(Object* magic_method_name, Object* self)
@@ -343,13 +373,24 @@ namespace python
         //     return result;
 
         // Find attribute in all parents
-        for (int i = 0; i < x->klass->mro->size(); ++i)
+        // for (int i = 0; i < x->klass->mro->size(); ++i)
+        // {
+        //     // Father class methods: x->klass->mro->get(i)->as<TypeObject>()->get_own_klass()
+        //     result = x->klass->mro->get(i)->as<TypeObject>()->get_own_klass()->klass_dict->get(y);
+        //     if (result != Universe::None)
+        //         break;
+        // }
+
+        // Replace above code with follow:
+        for (size_t i = 0; i < x->klass->klass_super.size(); ++i)
         {
             // Father class methods: x->klass->mro->get(i)->as<TypeObject>()->get_own_klass()
-            result = x->klass->mro->get(i)->as<TypeObject>()->get_own_klass()->klass_dict->get(y);
+            auto own_klass = x->klass->klass_super[i];
+            result = own_klass->klass_dict->get(y);
             if (result != Universe::None)
                 break;
         }
+
 
         return result;
     }
@@ -358,6 +399,28 @@ namespace python
     {
         Universe::register_klass(this);
         // std::cout << "Klass Created\n";
+    }
+
+    // FIXME:
+    // This function only called by `add_super` and `set_super_list`
+    void Klass::collect_super_klass(std::vector<Klass*>& result, Klass* klass)
+    {
+        if (std::ranges::find(result, klass) == result.end())
+            result.emplace_back(klass);
+
+        for (auto k : klass->klass_mro)
+        {
+            auto location = std::ranges::find(result, k);
+            if (location == result.end())
+            {
+                result.emplace_back(k);
+                collect_super_klass(result, k);
+            }    
+            else
+            {
+                std::ranges::rotate(location, location + 1, result.end());
+            }
+        }
     }
 
     /*

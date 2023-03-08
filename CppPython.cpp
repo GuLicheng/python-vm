@@ -26,10 +26,11 @@ void python_main()
         R"(../../test\test_operator_overload.pyc)",
         R"(../../test\test_exception.pyc)",
         R"(../../test\test_iterator.pyc)",
+        R"(../../test\test_generator.pyc)",
     };
 
-    // const char* file = files[6];
-    const char* file = files[11-3];
+    // const char* file = files[11];
+    const char* file = files[12];
     auto stream = BufferedInputStream(file);
 
     std::fstream log { "a.txt" };
@@ -62,10 +63,11 @@ void python_main()
     };
 
     std::ranges::for_each(Universe::klasses, [=](python::Klass* klass) {
-        if (klass->get_name())
-            show_detail(klass);
-        else
-            std::cout << "Unknown class\n";
+        klass->show_klass_info();
+        // if (klass->get_name())
+        //     show_detail(klass);
+        // else
+        //     std::cout << "Unknown class\n";
     });
 
 }

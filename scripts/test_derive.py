@@ -6,7 +6,6 @@ class X(Z):
     def say(self):
         print("I am X")
 
-
 class Y(Z):
     def say(self):
         print("I am Y")       
@@ -24,3 +23,16 @@ class C(B, A):
 
 c = C()
 c.say()
+
+
+class F1(object): pass
+
+class F2(object): pass
+
+class F3(F1, F2): pass
+
+class E(F3, F1): pass
+
+
+
+

@@ -15,9 +15,14 @@ namespace python
         this->klass = IntegerKlass::get_instance();
     }
 
+    IntegerKlass::IntegerKlass()
+    {
+        this->initialize();
+    }
+
     void IntegerKlass::initialize()
     {
-        this->build_klass("int", ObjectKlass::get_instance(), new Dict());
+        this->build_klass("int", ObjectKlass::get_instance(), nullptr);
     }
 
     size_t IntegerKlass::size()

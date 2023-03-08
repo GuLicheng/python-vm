@@ -70,7 +70,10 @@ namespace python
 
         TView view;
 
-        PyView(Object* u, TView v) : underlying(u), view(std::move(v)) 
+        std::string_view name;
+
+        PyView(Object* u, TView v, std::string_view n) 
+            : underlying(u), view(std::move(v)), name(n) 
         {
             this->klass = PyViewKlass<TView>::get_instance();
         }
@@ -99,6 +102,11 @@ namespace python
                 auto val = x->as<PyViewIterator>()->value();
                 x->as<PyViewIterator>()->increase();
                 return val;
+            }
+
+            virtual void print(Object* x) override
+            {
+                std::cout << x->as<PyViewIterator>()->parent->name;
             }
         };
 
@@ -154,8 +162,9 @@ namespace python
 
         virtual void print(Object* x) override
         {
-            std::cout << "PyView";
+            std::cout << x->as<PyView<TView>>()->name;
         }
     };
+
 }
 

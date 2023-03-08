@@ -6,6 +6,11 @@
 
 namespace python
 {
+    StackElementKlass::StackElementKlass()
+    {
+        this->build_klass("StackElement", ObjectKlass::get_instance(), nullptr);
+    }
+
     void StackElementKlass::print(Object* x)
     {
         StackElement* xse = x->as<StackElement>();
@@ -26,6 +31,11 @@ namespace python
         : file_name(fname), function_name(mname), line_no(lineno)
     {
         this->set_klass(StackElementKlass::get_instance());
+    }
+
+    TracebackKlass::TracebackKlass()
+    {
+        this->build_klass("Traceback", ObjectKlass::get_instance(), nullptr);
     }
 
     void TracebackKlass::print(Object* x)

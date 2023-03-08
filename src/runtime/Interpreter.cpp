@@ -3,6 +3,7 @@
 #include "../reader/BinaryFileParser.hpp"
 #include "../objects/ByteCode.hpp"
 #include "../objects/FunctionObject.hpp"
+#include "../objects/Generator.hpp"
 #include "../objects/Integer.hpp"
 #include "../objects/Universe.hpp"
 #include "../Python.hpp"
@@ -66,6 +67,18 @@ namespace python
             args->insert(0, method->owner);
             this->build_frame(method->func, args, op_arg + 1);
         }
+        else if (callable->get_klass() == TypeKlass::get_instance())
+        {
+            auto own_class = callable->as<TypeObject>()->get_own_klass();
+            Object* instance = own_class->allocate_instance(callable, args);
+            this->push(instance);
+        }
+        else if (MemberFunctionObject::is_yield_function(callable))
+        {
+            auto generator = new Generator(callable->as<FunctionObject>(), args, op_arg);
+            this->push(generator);
+            return;
+        }
         else if (callable->get_klass() == FunctionKlass::get_instance())
         {
             FrameObject* fo = new FrameObject((FunctionObject*)callable, args, op_arg);
@@ -73,12 +86,6 @@ namespace python
             // Push front f to linklist
             fo->sender = this->frame;
             this->frame = fo;
-        }
-        else if (callable->get_klass() == TypeKlass::get_instance())
-        {
-            auto own_class = callable->as<TypeObject>()->get_own_klass();
-            Object* inst = own_class->allocate_instance(callable, args);
-            this->push(inst);
         }
         else
         {
@@ -116,6 +123,12 @@ namespace python
 
             switch (op_code)
             {
+            case ByteCode::YIELD_VALUE:
+            {
+                this->status = Status::IS_YIELD;
+                this->ret_value = this->top();
+                return;  // Directory return for `yield`
+            }
             case ByteCode::STORE_MAP:
             {
                 auto w = this->pop();
@@ -799,6 +812,27 @@ namespace python
         }
 
         return Universe::None;
+    }
+
+    Object* Interpreter::eval_generator(Generator* g)
+    {
+        // Eval frame of Generator
+        this->enter_frame(g->frame);
+        g->frame->entry_frame = true;
+        this->eval_frame();
+
+        if (this->status != Status::IS_YIELD)
+        {
+            this->status = Status::IS_OK;
+            this->leave_frame();
+            g->frame = nullptr;
+            return nullptr;
+        }
+
+        this->status = Status::IS_OK;
+        this->frame = this->frame->sender;
+        
+        return this->ret_value;
     }
 
     void Interpreter::run(CodeObject* codes)

@@ -14,8 +14,13 @@ namespace python
     class StackElementKlass : public Klass, public Singleton<StackElementKlass>
     {
     public:
+        
+        StackElementKlass();
+        
         virtual void print(Object* x) override;
+
         virtual std::size_t size() override;
+
     };
 
     class StackElement : public Object
@@ -39,8 +44,13 @@ namespace python
     class TracebackKlass : public Klass, public Singleton<TracebackKlass>
     {
     public:
+
+        TracebackKlass();
+
         virtual void print(Object* x) override;
+    
         virtual std::size_t size() override;
+    
     };
 
     class Traceback : public Object

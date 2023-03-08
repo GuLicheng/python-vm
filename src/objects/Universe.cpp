@@ -40,17 +40,18 @@ namespace python
         // do nothing for object klass
         //object_klass->add_super(NULL);
 
-        IntegerKlass::get_instance()->initialize();
-        DoubleKlass::get_instance()->initialize();
+        // IntegerKlass::get_instance()->initialize();
+        // DoubleKlass::get_instance()->initialize();
         StringKlass::get_instance()->initialize();
         ListKlass::get_instance()->initialize();
         DictKlass::get_instance()->initialize();
         // ModuleKlass::get_instance()->initialize();
 
-        FunctionKlass::get_instance()->initialize();
-        MemberFunctionKlass::get_instance()->initialize();
-        NativeFunctionKlass::get_instance()->initialize();
-        CellKlass::get_instance()->initialize();
+        // Initialize in their constructors
+        // FunctionKlass::get_instance()->initialize();
+        // MemberFunctionKlass::get_instance()->initialize();
+        // NativeFunctionKlass::get_instance()->initialize();
+        // CellKlass::get_instance()->initialize();
 
         
         type_klass->set_klass_dict(new Dict());
@@ -59,18 +60,18 @@ namespace python
         type_klass->set_name(new String("type"));
         object_klass->set_name(new String("object"));
 
-        IntegerKlass::get_instance()->order_supers();
-        DoubleKlass::get_instance()->order_supers();
-        StringKlass::get_instance()->order_supers();
-        DictKlass::get_instance()->order_supers();
-        ListKlass::get_instance()->order_supers();
+        // IntegerKlass::get_instance()->order_supers();
+        // DoubleKlass::get_instance()->order_supers();
+        // StringKlass::get_instance()->order_supers();
+        // DictKlass::get_instance()->order_supers();
+        // ListKlass::get_instance()->order_supers();
 
         type_klass->order_supers();
 
-        FunctionKlass::get_instance()->order_supers();
-        NativeFunctionKlass::get_instance()->order_supers();
-        MemberFunctionKlass::get_instance()->order_supers();
-        CellKlass::get_instance()->order_supers();
+        // FunctionKlass::get_instance()->order_supers();
+        // NativeFunctionKlass::get_instance()->order_supers();
+        // MemberFunctionKlass::get_instance()->order_supers();
+        // CellKlass::get_instance()->order_supers();
 
         Interpreter::get_instance()->initialize();
 

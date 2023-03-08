@@ -10,7 +10,7 @@ namespace python
     {
     public:
 
-        IntegerKlass() = default;
+        IntegerKlass();
 
         void initialize();
 

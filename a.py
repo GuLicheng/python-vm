@@ -1,18 +1,12 @@
-d = { 1: "Hello", 2: "World" }
+class F1(object): pass
 
-print(d)
-print("===================")
+class F2(object): pass
 
-for kv in d.items():
-    print(kv)
+class F3(F1, F2): pass
 
-for kv in d.keys():
-    print(kv)
+class E(F3, F1): pass
 
-for kv in d.values():
-    print(kv)
+# 打印C类的调用路径顺序(注意要类名.__mro__)
+print(E.__mro__)
 
-t = [1, 2, 3, "Wasd"]
-print(t)
-
-# string in range should be quoted
+print(tuple(reversed(E.__mro__)))

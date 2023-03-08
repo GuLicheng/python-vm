@@ -126,7 +126,7 @@ namespace python
             ls->append(pair.first);
             ls->append(pair.second);
             return ls;
-        })))->get_iterator();
+        }), "dict_iterator"))->get_iterator();
     }
     
     void DictKlass::print(Object* object)
@@ -147,13 +147,13 @@ namespace python::native
     Object* dict_keys2(List* args)
     {
         auto py_dict = detail::check_and_get_from_argument_list<Dict>(args, 0, 1);
-        return new PyView(py_dict, py_dict->as<Dict>()->value() | std::views::keys);
+        return new PyView(py_dict, py_dict->as<Dict>()->value() | std::views::keys, "dict_key");
     }
 
     Object* dict_values2(List* args)
     {
         auto py_dict = detail::check_and_get_from_argument_list<Dict>(args, 0, 1);
-        return new PyView(py_dict, py_dict->as<Dict>()->value() | std::views::values);
+        return new PyView(py_dict, py_dict->as<Dict>()->value() | std::views::values, "dict_value");
     }
 
     Object* dict_items2(List* args)
@@ -164,7 +164,7 @@ namespace python::native
             ls->append(pair.first);
             ls->append(pair.second);
             return ls;
-        }));
+        }), "dict_view");
     }    
 }
 

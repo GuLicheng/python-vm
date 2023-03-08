@@ -4,12 +4,6 @@
 namespace python
 {
 
-    template <typename T>
-    concept order_superable = requires (T t)
-    {
-        t.order_supers();
-    };
-
     template <typename TDerived>
     class Singleton
     {

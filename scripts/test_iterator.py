@@ -24,5 +24,7 @@ for val in d.values():
 print("==================")
 
 print(iter(d))
+print(iter(d.items()))
+print(iter(d.keys()))
+print(iter(d.values()))
 print(iter(vals))
-

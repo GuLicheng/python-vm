@@ -3,6 +3,7 @@
 #include "../Python.hpp"
 
 #include <string_view>
+#include <vector>
 
 #define NOT_IMPLEMENT PYTHON_ASSERT(false && "not implement"); return 0 
 
@@ -21,9 +22,15 @@ namespace python
 
     protected:
 
+        // Since each class only have one Klass, so
+        // we use a vector to save it's super 
+        std::vector<Klass*> klass_super;
+
+        std::vector<Klass*> klass_mro;
+
         List* super = nullptr;  // super classes
 
-        List* mro = nullptr;  // memory resolution order, control the process of methods searching
+        List* mro = nullptr;    // memory resolution order, control the process of methods searching
 
         TypeObject* type_object = nullptr;
 
@@ -35,8 +42,6 @@ namespace python
 
         void build_klass(std::string_view class_name, Klass* super_class, Dict* class_attributes);
 
-        void set_buildin_super();
-
         static Object* find_magic_method_and_call(Object* magic_method_name, Object* self);
 
         static Object* find_magic_method_and_call(Object* magic_method_name, Object* self, Object* arg1);
@@ -47,6 +52,8 @@ namespace python
 
         static Object* find_in_parent(Object* x, Object* y);
         
+        static void collect_super_klass(std::vector<Klass*>& result, Klass* klass);
+
     public:
 
         Klass();
@@ -57,6 +64,8 @@ namespace python
 
         static int compare_klass(Klass* x, Klass* y);
 
+        void show_klass_info();
+
         // Super
         void add_super(Klass* x);
         
@@ -64,7 +73,7 @@ namespace python
         
         void order_supers();
 
-        void set_super_list(List* x) { this->super = x; }
+        void set_super_list(List* x);
 
         // Mro
         List* get_mro();

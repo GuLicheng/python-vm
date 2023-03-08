@@ -201,7 +201,7 @@ namespace python
     Object* ListKlass::__iter__(Object* x)
     {
         // return new ListIterator(x->as<List>());
-        return (new PyView(x, x->as<List>()->inner_list | std::views::all))->get_iterator();
+        return (new PyView(x, x->as<List>()->inner_list | std::views::all, "list_iterator"))->get_iterator();
     }    
 #if 0
     void ListIteratorKlass::initialize()

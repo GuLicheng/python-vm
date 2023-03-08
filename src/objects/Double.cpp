@@ -16,6 +16,11 @@ namespace python
         this->klass = DoubleKlass::get_instance();
     }
 
+    DoubleKlass::DoubleKlass()
+    {
+        this->initialize();
+    }
+
     void DoubleKlass::initialize()
     {
         this->build_klass("float", ObjectKlass::get_instance(), new Dict());
