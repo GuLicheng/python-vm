@@ -7,70 +7,17 @@
 
 namespace python
 {
-    template <typename TIterator>
-    class PyIteratorKlass : public Klass
-    {
-    public:
-
-        virtual Object* __iter__(Object* x) override
-        {
-            return x;
-        }
-        
-        virtual Object* __next__(Object* x) override
-        {
-            auto val = x->as<TIterator>()->value();
-            x->as<TIterator>()->increase();
-            return val;
-        }
-
-    };
-
-    template <typename TObject, typename TIterator, typename TSentinel = TIterator>
-    struct PyIterator : public Object
-    {
-        Object* iterable;    // store object and make it reachable for GC
-
-        TIterator iterator;  // current
- 
-        TSentinel sentinel;  // end of iterator
-
-        PyIterator(TObject* object)
-        {
-            this->iterable = object;
-            auto& rg = object->value();
-            this->iterator = std::ranges::begin(rg);
-            this->sentinel = std::ranges::end(rg);
-        }
-
-        void increase() 
-        {
-            // Some container may not support ++end() e.g. std::unordered_map 
-            std::ranges::advance(this->iterator, 1, this->sentinel); 
-        }
-
-        bool is_over() const 
-        { 
-            return this->iterator == this->sentinel; 
-        }
-
-        Object* value() 
-        { 
-            return is_over() ? nullptr : *(this->iterator); 
-        }
-    };
-
     template <typename TView>
     struct PyViewKlass;
 
     template <typename TView>
     struct PyView : public Object
     {
-        Object* underlying;  // Save list/dict to make it reachable for GC?
+        Object* underlying;     // save list/dict to make it reachable for GC?
 
         TView view;
 
-        std::string_view name;
+        std::string_view name;  // name for print
 
         PyView(Object* u, TView v, std::string_view n) 
             : underlying(u), view(std::move(v)), name(n) 
@@ -84,11 +31,6 @@ namespace python
         {
             PyViewIteratorKlass()
             {
-                // Any iterator will print PyViewIterator.
-                // We can add another template parameter such as:
-                // 1. enum/int type
-                // 2. fixed_basic_string 
-                // to indicate the name. 
                 this->build_klass("PyViewIterator", ObjectKlass::get_instance(), nullptr);
             }
 
@@ -165,6 +107,5 @@ namespace python
             std::cout << x->as<PyView<TView>>()->name;
         }
     };
-
 }
 
