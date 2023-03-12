@@ -33,7 +33,7 @@ namespace python
 
     }
 
-    Object* TypeKlass::__setattr__(Object* object, Object* key, Object* value)
+    Object* TypeKlass::py__setattr__(Object* object, Object* key, Object* value)
     {
         // Add attribute into klass dict
         object->as<TypeObject>()->get_own_klass()->get_klass_dict()->put(key, value);

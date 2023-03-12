@@ -23,7 +23,7 @@ namespace python
         else if (y == IntegerKlass::get_instance())
             return 1;
 
-        if (x->get_name()->__lt__(y->get_name()) == (Object*)Universe::True)
+        if (x->get_name()->py__lt__(y->get_name()) == (Object*)Universe::True)
             return -1;
         else
             return 1;
@@ -48,7 +48,6 @@ namespace python
         std::cout << "\n}\n";
 
     }
-
 
     void Klass::add_super(Klass* x)
     {
@@ -147,15 +146,27 @@ namespace python
             this->klass_super.emplace_back(klass);
             collect_super_klass(this->klass_mro, klass);
         }
+        // In python 2.x, the usd-define class will not inherit from object. 
+        // So we add this to make sure each usd-define class is inherited from object.
+        if (this->klass_mro.empty())
+        {
+            this->klass_mro.emplace_back(ObjectKlass::get_instance());
+        }
     }
 
     List* Klass::get_mro()
     {
+        PYTHON_ASSERT(false && "deprecated function");
         if (!this->mro && this->super && this != ObjectKlass::get_instance())
         {
             this->order_supers();
         }
         return this->mro;
+    }
+
+    bool Klass::contains_mro(Klass* k)
+    {
+        return std::ranges::find(this->klass_mro, k) != this->klass_mro.end();
     }
 
     Object* Klass::allocate_instance(Object* callable, List* args)
@@ -185,57 +196,57 @@ namespace python
 
     }
 
-    Object* Klass::__lt__(Object* x, Object* y)
+    Object* Klass::py__lt__(Object* x, Object* y)
     {
         return find_magic_method_and_call(StringTable::lt, x, y);
     }
 
-    Object* Klass::__gt__(Object* x, Object* y)
+    Object* Klass::py__gt__(Object* x, Object* y)
     {
         return find_magic_method_and_call(StringTable::gt, x, y);
     }
 
-    Object* Klass::__le__(Object* x, Object* y)
+    Object* Klass::py__le__(Object* x, Object* y)
     {
         return find_magic_method_and_call(StringTable::le, x, y);
     }
 
-    Object* Klass::__ge__(Object* x, Object* y)
+    Object* Klass::py__ge__(Object* x, Object* y)
     {
         return find_magic_method_and_call(StringTable::ge, x, y);
     }
 
-    Object* Klass::__add__(Object* x, Object* y)
+    Object* Klass::py__add__(Object* x, Object* y)
     {
         return find_magic_method_and_call(StringTable::add, x, y);
     }
 
-    Object* Klass::__sub__(Object* x, Object* y)
+    Object* Klass::py__sub__(Object* x, Object* y)
     {
         return find_magic_method_and_call(StringTable::sub, x, y);
     }
 
-    Object* Klass::__mul__(Object* x, Object* y)
+    Object* Klass::py__mul__(Object* x, Object* y)
     {
         return find_magic_method_and_call(StringTable::mul, x, y);
     }
 
-    Object* Klass::__hash__(Object* x)
+    Object* Klass::py__hash__(Object* x)
     {
         return find_magic_method_and_call(StringTable::hash, x);
     }
 
-    Object* Klass::__len__(Object* x)
+    Object* Klass::py__len__(Object* x)
     {
         return find_magic_method_and_call(StringTable::len, x);
     }
 
-    Object* Klass::__iter__(Object* x)
+    Object* Klass::py__iter__(Object* x)
     {
         return find_magic_method_and_call(StringTable::iter, x);
     }
 
-    Object* Klass::__next__(Object* x)
+    Object* Klass::py__next__(Object* x)
     {
         return find_magic_method_and_call(StringTable::next, x);
     }
@@ -248,11 +259,11 @@ namespace python
         return result;
     }
 
-    Object* Klass::__getattr__(Object* object, Object* attribute_name)
+    Object* Klass::py__getattr__(Object* object, Object* attribute_name)
     {
         auto func = find_in_parent(object, StringTable::getattr);
 
-        // Invoke __getattr__(self, attribute_name)
+        // Invoke py__getattr__(self, attribute_name)
         if (func->klass == FunctionKlass::get_instance())
         {
             func = new MemberFunctionObject(func->as<FunctionObject>(), object);
@@ -273,7 +284,7 @@ namespace python
 
     }
 
-    Object* Klass::__setattr__(Object* object, Object* key, Object* value)
+    Object* Klass::py__setattr__(Object* object, Object* key, Object* value)
     {
         auto func = object->klass->klass_dict->get(StringTable::setattr);
 
@@ -284,7 +295,7 @@ namespace python
             auto args = new List();
             args->append(key);
             args->append(value);
-            // call __setattr__(self, key, value) 
+            // call py__setattr__(self, key, value) 
             return Interpreter::get_instance()->call_virtual(func, args);
         }
 
@@ -296,12 +307,12 @@ namespace python
         return Universe::None;
     }
 
-    Object* Klass::__getitem__(Object* object, Object* name)
+    Object* Klass::py__getitem__(Object* object, Object* name)
     {
         return find_magic_method_and_call(StringTable::getitem, object, name);
     }
 
-    void Klass::__setitem__(Object* object, Object* key, Object* value)
+    void Klass::py__setitem__(Object* object, Object* key, Object* value)
     {
         find_magic_method_and_call(StringTable::setitem, object, key, value);
     }

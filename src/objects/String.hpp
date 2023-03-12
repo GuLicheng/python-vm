@@ -21,18 +21,18 @@ namespace python
         virtual size_t size() override;
 
         virtual void print(Object* x) override;
-        virtual Object* __hash__(Object* x) override;
-        virtual Object* __deepcopy__(Object* x) override;
-        virtual Object* __len__(Object* x) override;
+        virtual Object* py__hash__(Object* x) override;
+        virtual Object* py__deepcopy__(Object* x) override;
+        virtual Object* py__len__(Object* x) override;
 
-        virtual Object* __add__(Object* x, Object* y) override;
+        virtual Object* py__add__(Object* x, Object* y) override;
 
-        virtual Object* __lt__(Object* x, Object* y) override;
-        virtual Object* __ne__(Object* x, Object* y) override;
-        virtual Object* __eq__(Object* x, Object* y) override;
-        virtual Object* __gt__(Object* x, Object* y) override;
-        virtual Object* __le__(Object* x, Object* y) override;
-        virtual Object* __ge__(Object* x, Object* y) override;
+        virtual Object* py__lt__(Object* x, Object* y) override;
+        virtual Object* py__ne__(Object* x, Object* y) override;
+        virtual Object* py__eq__(Object* x, Object* y) override;
+        virtual Object* py__gt__(Object* x, Object* y) override;
+        virtual Object* py__le__(Object* x, Object* y) override;
+        virtual Object* py__ge__(Object* x, Object* y) override;
 
     };
 

@@ -2,6 +2,7 @@
 
 #include "Object.hpp"
 
+#include <ranges>
 #include <iterator>
 #include <iostream>
 
@@ -34,12 +35,12 @@ namespace python
                 this->build_klass("PyViewIterator", ObjectKlass::get_instance(), nullptr);
             }
 
-            virtual Object* __iter__(Object* x) override
+            virtual Object* py__iter__(Object* x) override
             {
                 return x;
             }
             
-            virtual Object* __next__(Object* x) override
+            virtual Object* py__next__(Object* x) override
             {
                 auto val = x->as<PyViewIterator>()->value();
                 x->as<PyViewIterator>()->increase();
@@ -97,7 +98,7 @@ namespace python
             this->build_klass("PyViewKlass", ObjectKlass::get_instance(), nullptr);
         }
 
-        virtual Object* __iter__(Object* x) override
+        virtual Object* py__iter__(Object* x) override
         {
             return x->as<PyView<TView>>()->get_iterator();
         }
@@ -107,5 +108,105 @@ namespace python
             std::cout << x->as<PyView<TView>>()->name;
         }
     };
+
+
+    // Make Object become iterable
+
+    class ObjectViewKlass : public Klass, public Singleton<ObjectViewKlass>
+    {
+    public:
+        ObjectViewKlass() 
+        {
+            this->build_klass("ObjectViewKlass", ObjectKlass::get_instance(), nullptr);
+        }
+    };
+
+    class ObjectView : public Object, public std::ranges::view_interface<ObjectView>
+    {
+        Object* iterable;
+
+        struct ObjectIterator
+        {
+            using value_type = Object*;
+            using reference = Object*; 
+            using difference_type = std::ptrdiff_t;
+            using iterator_category = std::input_iterator_tag;
+
+            ObjectView* parent;
+
+            Object* iterator;
+
+            Object* value; // store current value
+
+            ObjectIterator() = default;
+            
+            ObjectIterator(std::default_sentinel_t) : ObjectIterator() { }
+
+            ObjectIterator(ObjectView* parent) : parent(parent) 
+            {
+                this->iterator = this->parent->iterable->py__iter__();
+                this->read();
+            }
+
+            ObjectIterator(const ObjectIterator&) = default;
+
+            ObjectIterator& operator=(const ObjectIterator&) = default;
+
+            reference operator*() const
+            {
+                return this->value;
+            } 
+
+            ObjectIterator& operator++()
+            {
+                if (!this->is_over())
+                    this->read();
+                return *this;
+            }
+
+            ObjectIterator operator++(int)
+            {
+                auto old = *this;
+                ++*this;
+                return old;
+            }
+
+            bool operator==(std::default_sentinel_t) const
+            {
+                return this->is_over();
+            }
+
+            bool is_over() const
+            {
+                return this->iterator == nullptr || this->value == nullptr;
+            }
+
+            void read()
+            {
+                this->value = this->iterator->py__next__();
+            }
+
+        };
+
+    public:
+
+        ObjectView(Object* iterable) : iterable(iterable) 
+        {
+            this->klass = ObjectKlass::get_instance();
+        }
+
+        ObjectIterator begin()
+        {
+            return ObjectIterator(this);
+        }
+
+        std::default_sentinel_t end()
+        {
+            return std::default_sentinel;
+        }
+
+    };
+
+
 }
 

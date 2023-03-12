@@ -18,19 +18,20 @@ void python_main()
         R"(../../test\test_if.pyc)",
         R"(../../test\test_loop.pyc)",
         R"(../../test\test_float.pyc)",
-        R"(../../test\test_function.pyc)",
+        R"(../../test\test_function.pyc)",  // 4
         R"(../../test\test.pyc)",
         R"(../../test\test_type.pyc)",
         R"(../../test\test_class.pyc)",
-        R"(../../test\test_derive.pyc)",
+        R"(../../test\test_derive.pyc)",     // 8
         R"(../../test\test_operator_overload.pyc)",
         R"(../../test\test_exception.pyc)",
         R"(../../test\test_iterator.pyc)",
-        R"(../../test\test_generator.pyc)",
+        R"(../../test\test_generator.pyc)", // 12
+        R"(D:\code\CppPython\test\test.pyc)",
     };
 
-    // const char* file = files[11];
-    const char* file = files[12];
+    // const char* file = files[10];
+    const char* file = files[12+1];
     auto stream = BufferedInputStream(file);
 
     std::fstream log { "a.txt" };

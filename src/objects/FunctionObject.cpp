@@ -85,6 +85,15 @@ namespace python
             std::cout << " Name is " << this->func_name->value();
     }
 
+    FunctionObject* FunctionObject::make_builtin_function(std::string_view fname, unsigned int fflag, List* default_params, NativeFunctionPointer ffunc)
+    {
+        auto f = new FunctionObject(ffunc);
+        f->func_name = new String(fname.data(), fname.size());
+        f->defaults = default_params;
+        f->flags = fflag;
+        return f;
+    }
+
     MemberFunctionKlass::MemberFunctionKlass()
     {
         this->build_klass("method", FunctionKlass::get_instance(), new Dict());
@@ -111,16 +120,18 @@ namespace python
         if (k == (Klass*) FunctionKlass::get_instance())
             return true;
         
-        if (!k->get_mro())
-            return false;
+        // if (!k->get_mro())
+        //     return false;
 
-        for (int i = 0; i < k->get_mro()->size(); ++i)
-        {
-            if (k->get_mro()->get(i) == FunctionKlass::get_instance()->get_type_object())
-                return true;
-        }
+        // for (int i = 0; i < k->get_mro()->size(); ++i)
+        // {
+        //     if (k->get_mro()->get(i) == FunctionKlass::get_instance()->get_type_object())
+        //         return true;
+        // }
 
-        return false;
+        // return false;
+
+        return x->get_klass()->contains_mro(FunctionKlass::get_instance());
     }
 
     bool MemberFunctionObject::is_yield_function(Object* x)

@@ -3,20 +3,22 @@
 #include <tuple>
 #include <algorithm>
 #include <array>
+#include <iterator>
 
-template <int X, typename T> 
-struct S
+
+struct View
 {
-    S(T) { }
+    int* cur;
+    int* sen;
+
+    struct iterator
+    {
+    };
+
 };
 
-template <int X, typename T>
-auto Make(T t)
-{
-    return S<X, T>(t);
-}
 
 int main(int argc, const char** argv)
 {
-    auto s = Make<1>(2);    
+    // std::istream_iterator<
 }

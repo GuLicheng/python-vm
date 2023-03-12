@@ -57,10 +57,12 @@ namespace python
         int argcnt = this->codes->co_argcount;
         int kw_pos = argcnt;
 
-        for (int i = 0; i < argcnt; ++i)
-        {
-            this->fast_local->append(nullptr);
-        }
+
+        this->fast_local->fill_nullptr(argcnt - 1);
+        // for (int i = 0; i < argcnt; ++i)
+        // {
+        //     this->fast_local->append(nullptr);
+        // }
 
         // Put default parameters to their position first.
         if (function->defaults)
@@ -131,6 +133,7 @@ namespace python
             {
                 alist = new List();
             }
+            this->fast_local->fill_nullptr(argcnt); // CO_VARARGS may cause overflow
             this->fast_local->set(argcnt, alist);
             kw_pos++;
         }
@@ -181,7 +184,7 @@ namespace python
             }
             else
             {
-                this->closure = (List*)this->closure->__add__(function->closure);
+                this->closure = (List*)this->closure->py__add__(function->closure);
             }
         }
 

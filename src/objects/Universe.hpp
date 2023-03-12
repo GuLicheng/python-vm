@@ -13,6 +13,9 @@ namespace python
     struct Universe
     {
 
+        // In python, True and False is type bool
+        // and None is NoneType
+
         inline static Integer* True = nullptr;
 
         inline static Integer* False = nullptr;

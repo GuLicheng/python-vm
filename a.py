@@ -1,12 +1,10 @@
-class F1(object): pass
+import os
 
-class F2(object): pass
+def adb_shell(cmd):
+    exit_code = os.system(cmd)
+    return exit_code>>8
 
-class F3(F1, F2): pass
 
-class E(F3, F1): pass
+adb_shell("cd bin/debug && ./CppPython.exe")
 
-# 打印C类的调用路径顺序(注意要类名.__mro__)
-print(E.__mro__)
-
-print(tuple(reversed(E.__mro__)))
+from typing import Iterable

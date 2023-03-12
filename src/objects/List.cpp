@@ -58,6 +58,13 @@ namespace python
         this->inner_list[index] = o;
     }
 
+    void List::fill_nullptr(int index)
+    {
+        if (index < this->size())
+            return;
+        this->inner_list.resize(index + 1);
+    }
+
     Object* List::top()
     {
         PYTHON_ASSERT(!this->inner_list.empty());
@@ -109,7 +116,10 @@ namespace python
     void ListKlass::initialize()
     {
         Dict* dict = new Dict();
+        
         dict->put(new String("append"), new FunctionObject(native::list_append));
+        dict->put(new String("erase"), new FunctionObject(native::list_erase));
+        dict->put(new String("pop"), new FunctionObject(native::list_pop));
         
         this->build_klass("list", ObjectKlass::get_instance(), dict);
     }
@@ -148,7 +158,7 @@ namespace python
         std::cout << ']';
     }
 
-    Object* ListKlass::__getitem__(Object* x, Object* y)
+    Object* ListKlass::py__getitem__(Object* x, Object* y)
     {
         PYTHON_ASSERT(x && x->is<List>());
         PYTHON_ASSERT(y && y->is<Integer>());
@@ -157,7 +167,7 @@ namespace python
         return ((List*)x)->get(index);
     }
 
-    Object* ListKlass::__contains__(Object* x, Object* y)
+    Object* ListKlass::py__contains__(Object* x, Object* y)
     {
         PYTHON_ASSERT(x && y && "x and y should not be nullptr.");
 
@@ -166,20 +176,20 @@ namespace python
 
         for (int i = 0; i < ls->size(); ++i)
         {
-            if (ls->get(i)->__eq__(y))
+            if (ls->get(i)->py__eq__(y))
                 return Universe::True;
         }
         return Universe::False;
     }
 
-    Object* ListKlass::__len__(Object* x)
+    Object* ListKlass::py__len__(Object* x)
     {
         PYTHON_ASSERT(x && x->is<List>());
         List* ls = x->as<List>();
         return new Integer(static_cast<int64_t>(ls->size()));
     }
 
-    Object* ListKlass::__add__(Object* x, Object* y)
+    Object* ListKlass::py__add__(Object* x, Object* y)
     {
         PYTHON_ASSERT(x && y && x->is<List>() && y->is<List>());
         
@@ -198,34 +208,19 @@ namespace python
         return new List(std::move(result));
     }
 
-    Object* ListKlass::__iter__(Object* x)
+    Object* ListKlass::py__iter__(Object* x)
     {
         // return new ListIterator(x->as<List>());
         return (new PyView(x, x->as<List>()->inner_list | std::views::all, "list_iterator"))->get_iterator();
     }    
-#if 0
-    void ListIteratorKlass::initialize()
-    {
-        this->build_klass("list_iterator", ObjectKlass::get_instance(), new Dict());
-    }
 
-    void ListIteratorKlass::print(Object* x)
-    {
-        std::cout << "ListIterator";
-    }
-
-    ListIterator::ListIterator(List* list) : base(list)
-    {
-        this->klass = ListIteratorKlass::get_instance();
-    }
-#endif
 }
 
 namespace python::native
 {
     Object* list_append(List* args) 
     {
-        auto arg0 = detail::check_and_get_from_argument_list<List>(args, 0, 1);
+        auto arg0 = detail::check_and_get_from_argument_list<List>(args, 0, 2);
         arg0->as<List>()->append(args->get(1));
         return Universe::None;
     }
@@ -238,8 +233,20 @@ namespace python::native
 
     Object* list_remove(List* args)
     {
-        auto arg0 = detail::check_and_get_from_argument_list<List>(args, 0, 1);
+        auto arg0 = detail::check_and_get_from_argument_list<List>(args, 0, 2);
         arg0->as<List>()->delete_by_object(args->get(1));
         return Universe::None;
     }
+
+    Object* list_erase(List* args)
+    {
+        auto arg0 = detail::check_and_get_from_argument_list<List>(args, 0, 2);
+        auto index = args->get(1)->as<Integer>()->value();
+        auto ret = arg0->as<List>()->get(index);
+        arg0->as<List>()->delete_by_index(index);
+        return ret;
+    }
+
+
+
 }

@@ -3,7 +3,6 @@
 
 namespace python
 {
-
     template <typename TDerived>
     class Singleton
     {
@@ -25,5 +24,17 @@ namespace python
 
     };
 
-} // namespace leviathan
+    template <typename T>
+    class Factory
+    {
+    public:
+
+        static T* instance()
+        {
+            static T m_instance;
+            return &m_instance;
+        }
+
+    };
+} 
 

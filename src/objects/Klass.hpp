@@ -19,6 +19,7 @@ namespace python
     {
 
         friend class TypeKlass;
+        friend class MemberFunctionObject;
 
     protected:
 
@@ -78,6 +79,8 @@ namespace python
         // Mro
         List* get_mro();
 
+        bool contains_mro(Klass* k);
+
         // Default __init__
         virtual Object* allocate_instance(Object* callable, List* args);
 
@@ -104,43 +107,43 @@ namespace python
 
         // Operators
         // ==, !=, <, >, <=, >=
-        virtual Object* __eq__(Object* x, Object* y) { NOT_IMPLEMENT; }
-        virtual Object* __ne__(Object* x, Object* y) { NOT_IMPLEMENT; }
-        virtual Object* __lt__(Object* x, Object* y);
-        virtual Object* __gt__(Object* x, Object* y);
-        virtual Object* __le__(Object* x, Object* y);
-        virtual Object* __ge__(Object* x, Object* y);
+        virtual Object* py__eq__(Object* x, Object* y) { NOT_IMPLEMENT; }
+        virtual Object* py__ne__(Object* x, Object* y) { NOT_IMPLEMENT; }
+        virtual Object* py__lt__(Object* x, Object* y);
+        virtual Object* py__gt__(Object* x, Object* y);
+        virtual Object* py__le__(Object* x, Object* y);
+        virtual Object* py__ge__(Object* x, Object* y);
 
         // +, -, *, /, //, %
-        virtual Object* __add__(Object* x, Object* y);
-        virtual Object* __sub__(Object* x, Object* y);
-        virtual Object* __mul__(Object* x, Object* y);
-        virtual Object* __div__(Object* x, Object* y) { NOT_IMPLEMENT; } //  operator /
-        virtual Object* __floordiv__(Object* x, Object* y) { NOT_IMPLEMENT; } //   operator //
-        virtual Object* __mod__(Object* x, Object* y) { NOT_IMPLEMENT; }
+        virtual Object* py__add__(Object* x, Object* y);
+        virtual Object* py__sub__(Object* x, Object* y);
+        virtual Object* py__mul__(Object* x, Object* y);
+        virtual Object* py__div__(Object* x, Object* y) { NOT_IMPLEMENT; } //  operator /
+        virtual Object* py__floordiv__(Object* x, Object* y) { NOT_IMPLEMENT; } //   operator //
+        virtual Object* py__mod__(Object* x, Object* y) { NOT_IMPLEMENT; }
     
-        virtual Object* __contains__(Object* x, Object* y) { NOT_IMPLEMENT; }
+        virtual Object* py__contains__(Object* x, Object* y) { NOT_IMPLEMENT; }
 
         // Type convert str, int, float, bool, ...
-        virtual Object* __str__(Object* x) { NOT_IMPLEMENT; }
-        virtual Object* __int__(Object* x) { NOT_IMPLEMENT; }
-        virtual Object* __float__(Object* x) { NOT_IMPLEMENT; }
-        virtual Object* __bool__(Object* x) { NOT_IMPLEMENT; }
+        virtual Object* py__str__(Object* x) { NOT_IMPLEMENT; }
+        virtual Object* py__int__(Object* x) { NOT_IMPLEMENT; }
+        virtual Object* py__float__(Object* x) { NOT_IMPLEMENT; }
+        virtual Object* py__bool__(Object* x) { NOT_IMPLEMENT; }
 
 
-        virtual Object* __hash__(Object* x);
-        virtual Object* __deepcopy__(Object* x) { NOT_IMPLEMENT; }
-        virtual Object* __len__(Object* x);
-        virtual Object* __iter__(Object* x);
-        virtual Object* __next__(Object* x);
+        virtual Object* py__hash__(Object* x);
+        virtual Object* py__deepcopy__(Object* x) { NOT_IMPLEMENT; }
+        virtual Object* py__len__(Object* x);
+        virtual Object* py__iter__(Object* x);
+        virtual Object* py__next__(Object* x);
 
 
         virtual Object* get_klass_attr(Object* x, Object* y);
 
-        virtual Object* __getattr__(Object* object, Object* attribute_name);
-        virtual Object* __setattr__(Object* object, Object* key, Object* value);
-        virtual Object* __getitem__(Object* object, Object* name);
-        virtual void __setitem__(Object* object, Object* key, Object* value);
+        virtual Object* py__getattr__(Object* object, Object* attribute_name);
+        virtual Object* py__setattr__(Object* object, Object* key, Object* value);
+        virtual Object* py__getitem__(Object* object, Object* name);
+        virtual void py__setitem__(Object* object, Object* key, Object* value);
 
         // gc interface
         // virtual void oops_do(class Closure*, Object*);

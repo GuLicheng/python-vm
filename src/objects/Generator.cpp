@@ -13,12 +13,12 @@ namespace python
         this->build_klass("generator", ObjectKlass::get_instance(), nullptr);
     }
 
-    Object* GeneratorKlass::__iter__(Object* x)
+    Object* GeneratorKlass::py__iter__(Object* x)
     {
         return x;
     }
 
-    Object* GeneratorKlass::__next__(Object* x)
+    Object* GeneratorKlass::py__next__(Object* x)
     {
         PYTHON_ASSERT(x->is<Generator>());
         return Interpreter::get_instance()->eval_generator(x->as<Generator>());
@@ -39,5 +39,4 @@ namespace python
     {
         this->frame = f;
     }
-
 }

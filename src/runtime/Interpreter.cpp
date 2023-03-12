@@ -15,7 +15,7 @@
 #include "../objects/Dict.hpp"
 #include "../objects/Object.hpp"
 #include "../objects/TypeObject.hpp"
-
+#include "../objects/NativeClass.hpp"
 #include "Traceback.hpp"
 
 #include <algorithm>
@@ -145,7 +145,7 @@ namespace python
             case ByteCode::GET_ITER:
             {
                 auto v = this->pop();
-                this->push(v->__iter__());
+                this->push(v->py__iter__());
                 break;
             }
             case ByteCode::FOR_ITER:
@@ -160,10 +160,10 @@ namespace python
                 //         GET_ITER
                 //         FOR_ITER
                 //         LOAD_NAME   
-                // If v is list, v.__iter__() should return it's iterator.
-                // If v is iterator, v.__iter__() should return itself.       
+                // If v is list, v.py__iter__() should return it's iterator.
+                // If v is iterator, v.py__iter__() should return itself.       
                 auto v = this->top();
-                auto w = v->__next__();
+                auto w = v->py__next__();
                 if (!w)
                 {
                     // Throw StopIteration ?
@@ -215,34 +215,36 @@ namespace python
                 std::cout << '\n';
                 break;
             }
+            case ByteCode::INPLACE_ADD:
             case ByteCode::BINARY_ADD:
             {
                 auto [v, w] = this->pop_top_two();
-                this->push(w->__add__(v));
+                this->push(w->py__add__(v));
                 break;
             }
+            case ByteCode::INPLACE_SUBSTRACT:
             case ByteCode::BINARY_SUBTRACT:
             {
                 auto [v, w] = this->pop_top_two();
-                this->push(w->__sub__(v));
+                this->push(w->py__sub__(v));
                 break;
             }
             case ByteCode::BINARY_DIVIDE:
             {
                 auto [v, w] = this->pop_top_two();
-                this->push(w->__div__(v));
+                this->push(w->py__div__(v));
                 break;
             }
             case ByteCode::BINARY_MULTIPLY:
             {
                 auto [v, w] = this->pop_top_two();
-                this->push(w->__mul__(v));
+                this->push(w->py__mul__(v));
                 break;
             }
             case ByteCode::BINARY_MODULO:
             {
                 auto [v, w] = this->pop_top_two();
-                this->push(w->__mod__(v));
+                this->push(w->py__mod__(v));
                 break;
             }
             case ByteCode::RETURN_VALUE:
@@ -264,47 +266,58 @@ namespace python
                     this->push((lhs != rhs ? Universe::True : Universe::False));
                     break;
                 case GREATER:
-                    this->push(lhs->__gt__(rhs));
+                    this->push(lhs->py__gt__(rhs));
                     break;
                 case LESS:
-                    this->push(lhs->__lt__(rhs));
+                    this->push(lhs->py__lt__(rhs));
                     break;
                 case EQUAL:
-                    this->push(lhs->__eq__(rhs));
+                    this->push(lhs->py__eq__(rhs));
                     break;
                 case NOT_EQUAL:
-                    this->push(lhs->__ne__(rhs));
+                    this->push(lhs->py__ne__(rhs));
                     break;
                 case LESS_EQUAL:
-                    this->push(lhs->__le__(rhs));
+                    this->push(lhs->py__le__(rhs));
                     break;
                 case GREATER_EQUAL:
-                    this->push(lhs->__ge__(rhs));
+                    this->push(lhs->py__ge__(rhs));
                     break;
                 case ByteCode::EXC_MATCH:
                 {
-                    bool found = false;
-                    auto klass = lhs->as<TypeObject>()->get_own_klass();
-                    if (lhs == rhs)
-                    {
-                        found = true;
-                    }
-                    else
-                    {
-                        for (int i = 0; i < klass->get_mro()->size(); ++i)
-                        {
-                            if (lhs->get_klass()->get_mro()->get(i) == rhs)
-                            {
-                                found = true;
-                                break;    
-                            }
-                        }
-                    }
+                    // bool found = false;
+                    // auto klass = lhs->as<TypeObject>()->get_own_klass();
+                    // if (lhs == rhs)
+                    // {
+                    //     found = true;
+                    // }
+                    // else
+                    // {
+                    //     for (int i = 0; i < klass->get_mro()->size(); ++i)
+                    //     {
+                    //         if (lhs->get_klass()->get_mro()->get(i) == rhs)
+                    //         {
+                    //             found = true;
+                    //             break;    
+                    //         }
+                    //     }
+                    // }
+                    bool found = lhs == rhs ? 
+                        true :
+                        lhs->get_klass()->contains_mro(rhs->get_klass());
+
                     this->push(found ? Universe::True : Universe::False);
                     break;
                 }
                 default: std::unreachable();
                 }
+                break;
+            }
+            case ByteCode::POP_JUMP_IF_TRUE:
+            {
+                auto v = pop();
+                if (((Integer*)v)->value() == 1)
+                    this->frame->pc = op_arg;
                 break;
             }
             case ByteCode::POP_JUMP_IF_FALSE:
@@ -488,7 +501,7 @@ namespace python
             case ByteCode::BINARY_SUBSCR:
             {
                 auto [rhs, lhs] = this->pop_top_two();
-                this->push(lhs->__getitem__(rhs));
+                this->push(lhs->py__getitem__(rhs));
                 break;
             }
             case ByteCode::STORE_ATTR:
@@ -496,14 +509,14 @@ namespace python
                 auto u = this->pop();
                 auto v = this->frame->co_names->get(op_arg);
                 auto w = this->pop();
-                u->__setattr__(v, w);
+                u->py__setattr__(v, w);
                 break;
             }
             case ByteCode::LOAD_ATTR:
             {
                 auto v = this->pop();
                 auto w = this->frame->co_names->get(op_arg);
-                auto attr = v->__getattr__(w);
+                auto attr = v->py__getattr__(w);
                 this->push(attr);
                 break;
             }
@@ -589,7 +602,7 @@ namespace python
                 auto key = this->pop();
                 auto x = this->pop();
                 auto value = this->pop();
-                x->__setitem__(key, value);
+                x->py__setitem__(key, value);
                 break;
             }
             case ByteCode::UNPACK_SEQUENCE:
@@ -597,7 +610,7 @@ namespace python
                 auto v = this->pop();
                 while (op_arg--)
                 {
-                    this->push(v->__getitem__(new Integer(op_arg)));
+                    this->push(v->py__getitem__(new Integer(op_arg)));
                 }
                 break;
             }
@@ -770,6 +783,10 @@ namespace python
         this->buildin->put(new String("hash"), new FunctionObject(native::hash));
         this->buildin->put(new String("iter"), new FunctionObject(native::iter));
         this->buildin->put(new String("next"), new FunctionObject(native::next));
+        this->buildin->put(new String("map"), new FunctionObject(native::map));
+        this->buildin->put(new String("filter"), new FunctionObject(native::filter));
+        this->buildin->put(new String("take"), new FunctionObject(native::take));
+        this->buildin->put(new String("drop"), new FunctionObject(native::drop));
 
         /* buildin types */
         this->buildin->put(new String("int"), IntegerKlass::get_instance()->get_type_object());
@@ -778,6 +795,9 @@ namespace python
         this->buildin->put(new String("list"), ListKlass::get_instance()->get_type_object());
         this->buildin->put(new String("dict"), DictKlass::get_instance()->get_type_object());
 
+        this->buildin->put(new String("BaseException"), BaseExceptionKlass::get_instance()->get_type_object());
+        this->buildin->put(new String("Exception"), ExceptionKlass::get_instance()->get_type_object());
+        this->buildin->put(new String("StopIteration"), StopIterationKlass::get_instance()->get_type_object());
 
         // Not necessary
         // this->buildin->put(new String("list_iterator"), ListIteratorKlass::get_instance()->get_type_object());

@@ -60,13 +60,13 @@ namespace python
 
         void enter_frame(FrameObject* frame);
 
-        Status do_raise(Object* exception_type, Object* exception_instance, Object* traceback);
-
     public:
 
         Interpreter();
 
         void initialize();
+
+        Status do_raise(Object* exception_type, Object* exception_instance, Object* traceback);
 
         Object* call_virtual(Object* func, List* args);
 

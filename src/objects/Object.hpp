@@ -61,42 +61,42 @@ namespace python
 
         // Operators
         // ==, !=, <, >, <=, >=
-        Object* __gt__(Object* x);
-        Object* __lt__(Object* x);
-        Object* __eq__(Object* x);
-        Object* __ne__(Object* x);
-        Object* __le__(Object* x);
-        Object* __ge__(Object* x);
+        Object* py__gt__(Object* x);
+        Object* py__lt__(Object* x);
+        Object* py__eq__(Object* x);
+        Object* py__ne__(Object* x);
+        Object* py__le__(Object* x);
+        Object* py__ge__(Object* x);
 
         // +, -, *, /, //, %
-        Object* __add__(Object* x);
-        Object* __sub__(Object* x);
-        Object* __mul__(Object* x);
-        Object* __div__(Object* x);
-        Object* __floordiv__(Object* x);
-        Object* __mod__(Object* x);
+        Object* py__add__(Object* x);
+        Object* py__sub__(Object* x);
+        Object* py__mul__(Object* x);
+        Object* py__div__(Object* x);
+        Object* py__floordiv__(Object* x);
+        Object* py__mod__(Object* x);
 
 
-        Object* __contains__(Object* x);
+        Object* py__contains__(Object* x);
 
-        Object* __hash__();
-        Object* __deepcopy__();
-        Object* __len__();
-        Object* __iter__();
-        Object* __next__();
+        Object* py__hash__();
+        Object* py__deepcopy__();
+        Object* py__len__();
+        Object* py__iter__();
+        Object* py__next__();
 
         // Type convert str, int, float, bool, ...
-        Object* __str__();
-        Object* __int__();
-        Object* __float__();
-        Object* __bool__();
+        Object* py__str__();
+        Object* py__int__();
+        Object* py__float__();
+        Object* py__bool__();
 
 
-        Object* __setattr__(Object* key, Object* value);
-        Object* __getattr__(Object* attribute);
+        Object* py__setattr__(Object* key, Object* value);
+        Object* py__getattr__(Object* attribute);
 
-        void __setitem__(Object* key, Object* value);
-        Object* __getitem__(Object* name);
+        void py__setitem__(Object* key, Object* value);
+        Object* py__getitem__(Object* name);
 
         Object* get_klass_attr(Object* attribute);
 

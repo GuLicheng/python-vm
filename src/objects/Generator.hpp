@@ -15,9 +15,9 @@ namespace python
 
         GeneratorKlass();
 
-        virtual Object* __iter__(Object* x) override;
+        virtual Object* py__iter__(Object* x) override;
 
-        virtual Object* __next__(Object* x) override;
+        virtual Object* py__next__(Object* x) override;
 
         virtual std::size_t size() override;
 

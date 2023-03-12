@@ -18,129 +18,129 @@ namespace python
         this->klass->print(this);
     }
 
-    Object* Object::__add__(Object* x)
+    Object* Object::py__add__(Object* x)
     {
-        return this->klass->__add__(this, x);
+        return this->klass->py__add__(this, x);
     }
 
-    Object* Object::__sub__(Object* x)
+    Object* Object::py__sub__(Object* x)
     {
-        return this->klass->__sub__(this, x);
+        return this->klass->py__sub__(this, x);
     }
 
-    Object* Object::__mul__(Object* x)
+    Object* Object::py__mul__(Object* x)
     {
-        return this->klass->__mul__(this, x);
+        return this->klass->py__mul__(this, x);
     }
 
-    Object* Object::__div__(Object* x)
+    Object* Object::py__div__(Object* x)
     {
-        return this->klass->__div__(this, x);
+        return this->klass->py__div__(this, x);
     }
 
-    Object* Object::__floordiv__(Object* x)
+    Object* Object::py__floordiv__(Object* x)
     {
-        return this->klass->__floordiv__(this, x);
+        return this->klass->py__floordiv__(this, x);
     }
 
-    Object* Object::__mod__(Object* x)
+    Object* Object::py__mod__(Object* x)
     {
-        return this->klass->__mod__(this, x);
+        return this->klass->py__mod__(this, x);
     }
 
-    Object* Object::__gt__(Object* x)
+    Object* Object::py__gt__(Object* x)
     {
-        return this->klass->__gt__(this, x);
+        return this->klass->py__gt__(this, x);
     }
 
-    Object* Object::__lt__(Object* x)
+    Object* Object::py__lt__(Object* x)
     {
-        return this->klass->__lt__(this, x);
+        return this->klass->py__lt__(this, x);
     }
 
-    Object* Object::__eq__(Object* x)
+    Object* Object::py__eq__(Object* x)
     {
-        return this->klass->__eq__(this, x);
+        return this->klass->py__eq__(this, x);
     }
 
-    Object* Object::__ne__(Object* x)
+    Object* Object::py__ne__(Object* x)
     {
-        return this->klass->__ne__(this, x);
+        return this->klass->py__ne__(this, x);
     }
 
-    Object* Object::__le__(Object* x)
+    Object* Object::py__le__(Object* x)
     {
-        return this->klass->__le__(this, x);
+        return this->klass->py__le__(this, x);
     }
 
-    Object* Object::__ge__(Object* x)
+    Object* Object::py__ge__(Object* x)
     {
-        return this->klass->__ge__(this, x);
+        return this->klass->py__ge__(this, x);
     }
 
-    Object* Object::__contains__(Object* x)
+    Object* Object::py__contains__(Object* x)
     {
-        return this->klass->__contains__(this, x);
+        return this->klass->py__contains__(this, x);
     }
 
-    Object* Object::__hash__()
+    Object* Object::py__hash__()
     {
-        return this->klass->__hash__(this);
+        return this->klass->py__hash__(this);
     }
 
-    Object* Object::__deepcopy__()
+    Object* Object::py__deepcopy__()
     {
-        return this->klass->__deepcopy__(this);
+        return this->klass->py__deepcopy__(this);
     }
 
-    Object* Object::__len__()
+    Object* Object::py__len__()
     {
-        return this->klass->__len__(this);
+        return this->klass->py__len__(this);
     }
 
-    Object* Object::__iter__()
+    Object* Object::py__iter__()
     {
-        return this->klass->__iter__(this);
+        return this->klass->py__iter__(this);
     }
 
-    Object* Object::__next__()
+    Object* Object::py__next__()
     {
-        return this->klass->__next__(this);
+        return this->klass->py__next__(this);
     }
 
-    Object* Object::__str__()
+    Object* Object::py__str__()
     {
-        return this->klass->__str__(this);
+        return this->klass->py__str__(this);
     }
 
-    Object* Object::__int__()
+    Object* Object::py__int__()
     {
-        return this->klass->__int__(this);
+        return this->klass->py__int__(this);
     }
 
-    Object* Object::__float__()
+    Object* Object::py__float__()
     {
-        return this->klass->__float__(this);
+        return this->klass->py__float__(this);
     }
 
-    Object* Object::__bool__()
+    Object* Object::py__bool__()
     {
-        return this->klass->__bool__(this);
+        return this->klass->py__bool__(this);
     }
 
-    Object* Object::__getattr__(Object* attribute)
+    Object* Object::py__getattr__(Object* attribute)
     {
-        return this->klass->__getattr__(this, attribute);
+        return this->klass->py__getattr__(this, attribute);
     }
 
-    void Object::__setitem__(Object* key, Object* value)
+    void Object::py__setitem__(Object* key, Object* value)
     {
-        this->klass->__setitem__(this, key, value);
+        this->klass->py__setitem__(this, key, value);
     }
 
-    Object* Object::__getitem__(Object* name)
+    Object* Object::py__getitem__(Object* name)
     {
-        return this->klass->__getitem__(this, name);
+        return this->klass->py__getitem__(this, name);
     }
 
     Object* Object::get_klass_attr(Object* attribute)
@@ -148,9 +148,9 @@ namespace python
         return this->klass->get_klass_attr(this, attribute);
     }
 
-    Object* Object::__setattr__(Object* key, Object* value)
+    Object* Object::py__setattr__(Object* key, Object* value)
     {
-        return this->klass->__setattr__(this, key, value);
+        return this->klass->py__setattr__(this, key, value);
     }
     
     void ObjectKlass::print(Object* object)

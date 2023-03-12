@@ -89,13 +89,11 @@ namespace python
     
         FunctionObject(NativeFunctionPointer nfp);
 
-        //String* function_name() const { return this->func_name; }
-
-        //int flags() const { return this->flags; }
-
         Object* call(List* args);
 
         virtual void print();
+
+        static FunctionObject* make_builtin_function(std::string_view fname, unsigned int fflag, List* default_params, NativeFunctionPointer ffunc); 
 
     };
 

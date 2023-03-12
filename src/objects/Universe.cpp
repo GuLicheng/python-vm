@@ -62,9 +62,9 @@ namespace python
 
         // IntegerKlass::get_instance()->order_supers();
         // DoubleKlass::get_instance()->order_supers();
-        // StringKlass::get_instance()->order_supers();
-        // DictKlass::get_instance()->order_supers();
-        // ListKlass::get_instance()->order_supers();
+        StringKlass::get_instance()->order_supers();
+        DictKlass::get_instance()->order_supers();
+        ListKlass::get_instance()->order_supers();
 
         type_klass->order_supers();
 

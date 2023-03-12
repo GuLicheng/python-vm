@@ -22,14 +22,14 @@ namespace python
             /* static */ size_t operator()(Object* x) const
             {
                 PYTHON_ASSERT(x && "x should not be nullptr");
-                auto py_int = x->__hash__();
+                auto py_int = x->py__hash__();
                 auto cpp_int = py_int->as<Integer>()->value();
                 return static_cast<size_t>(cpp_int);
             }
 
             bool operator()(Object* x, Object* y) const
             {
-                auto py_boolean = x->__eq__(y);
+                auto py_boolean = x->py__eq__(y);
                 return py_boolean == Universe::True ? true : false;
             }
         };
@@ -55,11 +55,11 @@ namespace python
 
         virtual size_t size() override;
 
-        virtual Object* __str__(Object* x) override;
+        virtual Object* py__str__(Object* x) override;
 
-        virtual Object* __contains__(Object* x, Object* y) override;
+        virtual Object* py__contains__(Object* x, Object* y) override;
 
-        virtual Object* __iter__(Object* x) override;
+        virtual Object* py__iter__(Object* x) override;
 
         virtual void print(Object* object) override;
         

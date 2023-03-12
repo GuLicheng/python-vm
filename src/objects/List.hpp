@@ -24,17 +24,17 @@ namespace python
 
         virtual void print(Object* x) override;
 
-        virtual Object* __getitem__(Object* x, Object* y) override;
+        virtual Object* py__getitem__(Object* x, Object* y) override;
         
-        virtual Object* __contains__(Object* x, Object* y) override;
+        virtual Object* py__contains__(Object* x, Object* y) override;
         
-        virtual Object* __len__(Object* x) override;
+        virtual Object* py__len__(Object* x) override;
 
-        virtual Object* __add__(Object* x, Object* y) override;
+        virtual Object* py__add__(Object* x, Object* y) override;
 
-        virtual Object* __iter__(Object* x) override;
+        virtual Object* py__iter__(Object* x) override;
 
-        // virtual Object* __str__(Object* x) override;
+        // virtual Object* py__str__(Object* x) override;
     };
 
     class List : public Object
@@ -65,6 +65,8 @@ namespace python
 
         void set(int index, Object* o);
 
+        void fill_nullptr(int index);
+
         Object* top();
 
         Object* pop();
@@ -84,30 +86,7 @@ namespace python
         std::vector<Object*>& value();
 
     };
-#if 0
-    struct ListIterator : public PyIterator<List, std::vector<Object*>::iterator>
-    {
 
-        using base = PyIterator<List, std::vector<Object*>::iterator>;
-        
-        ListIterator(List* list);
-
-    };
-
-    class ListIteratorKlass 
-        : public PyIteratorKlass<ListIterator>, 
-          public Singleton<ListIteratorKlass>
-    {
-    public:
-
-        ListIteratorKlass() = default;
-
-        void initialize();
-
-        virtual void print(Object* x) override;
-
-    };
-#endif
 }
 
 namespace python::native::detail
@@ -129,6 +108,8 @@ namespace python::native
     Object* list_pop(List* args);
 
     Object* list_remove(List* args);
+
+    Object* list_erase(List* args);
     
     // Object* list_reverse(List* args);
     // Object* list_sort(List* args);
