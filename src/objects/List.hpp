@@ -99,6 +99,16 @@ namespace python::native::detail
         PYTHON_ASSERT(arg->is<T>());
         return arg;
     }
+
+    // If argc > 0, then the size of argument-list must be equal to argc.
+    // Otherwise, there are at least argc arguments in argument-list.
+    inline void check_argument_count(List* args, int argc)
+    {
+        if (argc > 0)
+            PYTHON_ASSERT(args && args->size() == argc);
+        else
+            PYTHON_ASSERT(args && args->size() >= -argc);
+    }
 }
 
 namespace python::native

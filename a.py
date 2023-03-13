@@ -1,8 +1,11 @@
 
+from typing import Iterable, Iterator
 
+print(issubclass(Iterator, Iterable))
+print(issubclass(Iterable, Iterator))
 
-e = StopIteration()
+def seq():
+    yield from [1, 2, 3]
 
-print(isinstance(e, StopIteration))
-print(isinstance(e, Exception))
-print(issubclass(StopIteration, Exception))
+for val in seq():
+    print(val)

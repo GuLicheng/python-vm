@@ -1,5 +1,3 @@
-class Exception(object): pass
-
 def range(start, end, step):
 
     if step == 0:

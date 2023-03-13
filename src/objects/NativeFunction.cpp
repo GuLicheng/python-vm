@@ -27,23 +27,25 @@ namespace python::native
 
     Object* isinstance(List *args)
     {
-        Object* instance = args->get(0);
-        Object* types = args->get(1);
+        NOT_IMPLEMENT;
+        // detail::check_argument_count(args, -2);
 
-        PYTHON_ASSERT(types->is<TypeObject>());
+        // Object* instance = args->get(0);
+        // Object* types = args->get(1);
 
-        Klass* k = instance->get_klass();
+        // auto& inner_list = args->value();
 
-        if (k->get_type_object() == types)
-            return Universe::True;
 
-        // for (int i = 0; i < k->mro()->size(); i++) {
-        //     if (k->mro()->get(i) == y) {
-        //         return Universe::HiTrue;
-        //     }
+        // auto klass = instance->get_klass();
+
+        // for (int i = 1; i < args->size(); ++i)
+        // {
+        //     auto type_klass = args->get(i)->get_klass();
+        //     if (type_klass->contains_mro(klass))
+        //         return Universe::True; 
         // }
 
-        return Universe::False;
+        // return Universe::False;
     }
 
     Object* type(List* args)

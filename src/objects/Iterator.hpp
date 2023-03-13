@@ -115,13 +115,14 @@ namespace python
     class ObjectViewKlass : public Klass, public Singleton<ObjectViewKlass>
     {
     public:
+
         ObjectViewKlass() 
         {
             this->build_klass("ObjectViewKlass", ObjectKlass::get_instance(), nullptr);
         }
     };
 
-    class ObjectView : public Object, public std::ranges::view_interface<ObjectView>
+    class ObjectView : public Object
     {
         Object* iterable;
 
@@ -168,7 +169,7 @@ namespace python
             {
                 auto old = *this;
                 ++*this;
-                return old;
+                return old; 
             }
 
             bool operator==(std::default_sentinel_t) const
@@ -185,7 +186,6 @@ namespace python
             {
                 this->value = this->iterator->py__next__();
             }
-
         };
 
     public:
@@ -204,9 +204,6 @@ namespace python
         {
             return std::default_sentinel;
         }
-
     };
-
-
 }
 

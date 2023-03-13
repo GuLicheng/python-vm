@@ -27,6 +27,7 @@ void python_main()
         R"(../../test\test_exception.pyc)",
         R"(../../test\test_iterator.pyc)",
         R"(../../test\test_generator.pyc)", // 12
+        R"(../../test\test_builtin.pyc)", 
         R"(D:\code\CppPython\test\test.pyc)",
     };
 

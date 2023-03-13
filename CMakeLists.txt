@@ -30,6 +30,4 @@ set(
 
 add_executable(CppPython ${RESOURCE_FILES} "CppPython.cpp")
 
-add_executable(SimpleTest ${RESOURCE_FILES} "SimpleTest.cpp")
-
 add_executable(a "a.cpp")

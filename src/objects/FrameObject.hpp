@@ -11,8 +11,8 @@ namespace python
 
     struct Block
     {
-        unsigned char type;   // block type
-        int target;  // save argument
+        unsigned char type;     // block type
+        int target;             // save argument
         int level;              // block depth
     };
 

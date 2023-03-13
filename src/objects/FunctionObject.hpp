@@ -55,7 +55,6 @@ namespace python
         
     };
 
-
     class FunctionObject : public Object
     {
         friend class FunctionKlass;
@@ -79,9 +78,18 @@ namespace python
 
     public:
 
-        constexpr static int CO_VARARGS = 0x4;
-        constexpr static int CO_VARKEYWORDS = 0x8;
-        constexpr static int CO_GENERATOR = 0x20;
+        /*
+            For function definition such as:
+                def function(*args, **kwargs):
+                    ...
+                    yield ...
+            Variadic arguments => args
+            Variadic keyword => kwargs
+            Generator => yield 
+        */
+        constexpr static int CO_VARARGS = 0x4;      
+        constexpr static int CO_VARKEYWORDS = 0x8;  
+        constexpr static int CO_GENERATOR = 0x20;   
 
         FunctionObject(Object* code_object);
 
