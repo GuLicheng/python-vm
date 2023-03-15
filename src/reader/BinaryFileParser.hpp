@@ -4,6 +4,7 @@
 #include "BufferedInputStream.hpp"
 #include "../objects/CodeObject.hpp"
 #include "../objects/Object.hpp"
+#include "../objects/List.hpp"
 #include "../ArrayList.hpp"
 
 
@@ -46,4 +47,58 @@ namespace python
         CodeObject* parse();
 
     };
+}
+
+
+namespace pythonV2
+{
+    using python::BufferedInputStream;
+    using python::String;
+    using python::PythonList;
+    using python::CodeObject;
+    using PyString = std::string;
+
+    class BinaryFileParser
+    {
+        BufferedInputStream file_stream;
+
+        PythonList string_table;
+
+        CodeObject* get_code_object();
+
+        PyString get_byte_codes();
+
+        PyString get_string();
+
+        PythonList get_consts();
+
+        PythonList get_tuple();
+
+        PythonList get_cell_vars();
+
+        PythonList get_free_vars();
+
+        PythonList get_var_names();
+
+        PythonList get_names();
+
+        PyString get_no_table();
+
+        PyString get_file_name();
+
+        PyString get_name();
+
+    public:
+
+        BinaryFileParser(BufferedInputStream* stream);
+
+        CodeObject* parse();
+
+    };
+
+
+
+
+
+
 }

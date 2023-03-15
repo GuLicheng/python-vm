@@ -74,6 +74,7 @@ namespace python
 
         void run(CodeObject* codes);
 
+        Status do_raise_stop_iteration_exception(std::string message);
     };
 }
 

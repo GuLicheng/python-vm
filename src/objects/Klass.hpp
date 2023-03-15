@@ -122,6 +122,16 @@ namespace python
         virtual Object* py__floordiv__(Object* x, Object* y) { NOT_IMPLEMENT; } //   operator //
         virtual Object* py__mod__(Object* x, Object* y) { NOT_IMPLEMENT; }
     
+        // logic 
+        virtual Object* py__and__(Object* self, Object* other) { NOT_IMPLEMENT; }
+        virtual Object* py__rand__(Object* self, Object* other) { NOT_IMPLEMENT; }
+        virtual Object* py__xor__(Object* self, Object* other) { NOT_IMPLEMENT; }
+        virtual Object* py__rxor__(Object* self, Object* other) { NOT_IMPLEMENT; }
+        virtual Object* py__or__(Object* self, Object* other) { NOT_IMPLEMENT; }
+        virtual Object* py__ror__(Object* self, Object* other) { NOT_IMPLEMENT; }
+
+
+
         virtual Object* py__contains__(Object* x, Object* y) { NOT_IMPLEMENT; }
 
         // Type convert str, int, float, bool, ...
@@ -136,6 +146,10 @@ namespace python
         virtual Object* py__len__(Object* x);
         virtual Object* py__iter__(Object* x);
         virtual Object* py__next__(Object* x);
+
+
+        virtual Object* py__repr__(Object* self) { NOT_IMPLEMENT; }
+
 
 
         virtual Object* get_klass_attr(Object* x, Object* y);

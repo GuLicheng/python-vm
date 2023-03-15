@@ -30,4 +30,6 @@ set(
 
 add_executable(CppPython ${RESOURCE_FILES} "CppPython.cpp")
 
+add_executable(show_hex "show_hex.cpp")
+
 add_executable(a "a.cpp")

@@ -70,3 +70,30 @@ namespace python::native
 {
     Object* string_upper(List* args);
 }
+
+/*
+['__repr__',
+ '__hash__',
+ '__str__',
+ '__getattribute__',
+ '__lt__',
+ '__le__',
+ '__eq__',
+ '__ne__',
+ '__gt__',
+ '__ge__',
+ '__iter__',
+ '__mod__',
+ '__rmod__',
+ '__len__',
+ '__getitem__',
+ '__add__',
+ '__mul__',
+ '__rmul__',
+ '__contains__',
+ '__new__',
+ '__format__',
+ '__sizeof__',
+ '__getnewargs__',
+ '__doc__']
+*/

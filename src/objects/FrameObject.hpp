@@ -8,17 +8,15 @@
 
 namespace python
 {
-
     struct Block
     {
-        unsigned char type;     // block type
-        int target;             // save argument
-        int level;              // block depth
+        unsigned char type;     // Block type, such as WHILE_BLOCK, EXCEPTION_BLOCK and so on.
+        int target;             // Destination after executing the BREAK_LOOP
+        int level;              // Block depth
     };
 
     class FrameObject
     {
-
         ArrayList<Object*>* stack;
 
         ArrayList<Block*>* loop_stack;

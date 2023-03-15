@@ -13,7 +13,6 @@ namespace python
     struct StringTable
     {
         // Magic methods
-        DefineString(next);
         DefineString(init);
         
         DefineString(getattr);
@@ -21,7 +20,7 @@ namespace python
         DefineString(getitem);
         DefineString(setitem);
 
-        DefineString(module_);
+        DefineString(module);
         DefineString(call);
         DefineString(name);
      
@@ -33,6 +32,7 @@ namespace python
         DefineString(len);
         DefineString(hash);
         DefineString(iter);
+        DefineString(next);
 
         DefineString(le);
         DefineString(lt);

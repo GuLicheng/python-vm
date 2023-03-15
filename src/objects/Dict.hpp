@@ -7,7 +7,6 @@
 #include "Universe.hpp"
 #include "List.hpp"
 
-#include <ranges>
 #include <unordered_map>
 
 namespace python
@@ -112,3 +111,25 @@ namespace python::native
     Object* dict_items2(List* args);
 } 
 
+/*
+['__repr__',
+ '__hash__',
+ '__getattribute__',
+ '__lt__',
+ '__le__',
+ '__eq__',
+ '__ne__',
+ '__gt__',
+ '__ge__',
+ '__iter__',
+ '__init__',
+ '__len__',
+ '__getitem__',
+ '__setitem__',
+ '__delitem__',
+ '__contains__',
+ '__new__',
+ '__sizeof__',
+ '__reversed__',
+ '__doc__']
+*/

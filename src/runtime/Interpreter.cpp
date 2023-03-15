@@ -98,7 +98,10 @@ namespace python
             else
             {
                 callable->print();
-                PYTHON_ASSERT(false && "cannot call a normal object.");
+                if (callable != Universe::None)
+                    PYTHON_ASSERT(false && "cannot call a normal object.");
+                else
+                    PYTHON_ASSERT(false && "None object is not callable.");
             }
         }
     }
@@ -166,7 +169,7 @@ namespace python
                 auto w = v->py__next__();
                 if (!w)
                 {
-                    // Throw StopIteration ?
+                    // We throw StopIteration in `py__next__` or `next`.
                     this->frame->pc += op_arg;
                     this->status = Status::IS_OK;
                     this->pending_exception = nullptr;
@@ -875,6 +878,19 @@ namespace python
 
         this->destroy_frame();
 
+    }
+
+    Interpreter::Status Interpreter::do_raise_stop_iteration_exception(std::string message)
+    {
+        auto args = new List();
+        args->append(new String(std::move(message)));
+        auto stop_iteration = StopIterationKlass::get_instance()->get_type_object();
+        auto instance = this->call_virtual(stop_iteration, args);
+        return this->do_raise(
+            stop_iteration,
+            instance, 
+            nullptr
+        );
     }
 
 }

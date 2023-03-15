@@ -20,7 +20,7 @@ namespace python
         Dict* attr_dict = own_klass->klass_dict;
         if (attr_dict)
         {
-            Object* mod = attr_dict->get(StringTable::module_);
+            Object* mod = attr_dict->get(StringTable::module);
             if (mod != Universe::None)
             {
                 mod->print();

@@ -1,13 +1,13 @@
 #include "BufferedInputStream.hpp"
-#include <iterator>
 #include "../Python.hpp"
+
+#include <iterator>
 #include <bit>
 
 static_assert(std::endian::native == std::endian::little);
 
 namespace python
 {
-
     template <typename T>
     T read_basic_type(const char* buffer, int& index)
     {
@@ -39,10 +39,6 @@ namespace python
         this->index = 0;
     }
 
-    BufferedInputStream::~BufferedInputStream()
-    {
-    }
-
     char BufferedInputStream::read()
     {
         return this->sz_buffer[this->index++];
@@ -62,5 +58,4 @@ namespace python
     {
         this->index--;
     }
-
 }

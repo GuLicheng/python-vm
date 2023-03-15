@@ -55,8 +55,48 @@ namespace python
         {
             std::cout << val;
         }
-
     };
 
 
 }
+/*
+['__repr__',
+ '__hash__',
+ '__getattribute__',
+ '__lt__',
+ '__le__',
+ '__eq__',
+ '__ne__',
+ '__gt__',
+ '__ge__',
+ '__add__',
+ '__radd__',
+ '__sub__',
+ '__rsub__',
+ '__mul__',
+ '__rmul__',
+ '__mod__',
+ '__rmod__',
+ '__divmod__',
+ '__rdivmod__',
+ '__pow__',
+ '__rpow__',
+ '__neg__',
+ '__pos__',
+ '__abs__',
+ '__bool__',
+ '__int__',
+ '__float__',
+ '__floordiv__',
+ '__rfloordiv__',
+ '__truediv__',
+ '__rtruediv__',
+ '__new__',
+ '__trunc__',
+ '__round__',
+ '__getnewargs__',
+ '__getformat__',
+ '__set_format__',
+ '__format__',
+ '__doc__']
+*/

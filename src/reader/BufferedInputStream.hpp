@@ -1,14 +1,13 @@
 #pragma once
 
+#include "../PrettyPrint.hpp"
+
 #include <fstream>
 #include <string>
 #include <iostream>
 
-#include "../PrettyPrint.hpp"
-
 namespace python
 {
-
     class BufferedInputStream
     {
         std::ifstream ifs;
@@ -27,7 +26,7 @@ namespace python
 
         BufferedInputStream(const char* filename);
 
-        ~BufferedInputStream();
+        ~BufferedInputStream() = default;
 
         char read();
 
@@ -37,14 +36,11 @@ namespace python
 
         void unread();
 
-        //void close();
-
         friend std::ostream& operator<<(std::ostream& os, const BufferedInputStream& stream)
         {
             print_hex_code<>(stream.sz_buffer.data(), stream.sz_buffer.size());
             return os;
         }
-
     };
 
 }

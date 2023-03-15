@@ -8,14 +8,66 @@
 #include "Dict.hpp"
 #include "Iterator.hpp"
 #include "NativeClass.hpp"
+#include "StringTable.hpp"
 #include "../runtime/Interpreter.hpp"
 #include "../Python.hpp"
-
 #include <cctype>
 #include <algorithm>
 #include <ranges>
 
+// Some functions that not exported
+namespace python::native
+{
+    // Binary Arithmetic Op
+    Object* add(List* args)
+    {
+        PYTHON_ASSERT(args->size() == 2);
+        return args->get(0)->py__add__(args->get(1));
+    }
 
+    Object* sub(List* args)
+    {
+        PYTHON_ASSERT(args->size() == 2);
+        return args->get(0)->py__sub__(args->get(1));
+    }
+
+    Object* mul(List* args)
+    {
+        PYTHON_ASSERT(args->size() == 2);
+        return args->get(0)->py__mul__(args->get(1));
+    }
+
+    Object* div(List* args)
+    {
+        PYTHON_ASSERT(args->size() == 2);
+        return args->get(0)->py__div__(args->get(1));
+    }
+
+    Object* mod(List* args)
+    {
+        PYTHON_ASSERT(args->size() == 2);
+        return args->get(0)->py__mod__(args->get(1));
+    }
+
+    // Convert
+    Object* to_int(List* args)
+    {
+        PYTHON_ASSERT(args->size() == 1);
+        return args->get(0)->py__int__();
+    }
+
+    Object* to_str(List* args)
+    {
+        PYTHON_ASSERT(args->size() == 1);
+        return args->get(0)->py__str__();
+    }
+
+    Object* to_float(List* args)
+    {
+        PYTHON_ASSERT(args->size() == 1);
+        return args->get(0)->py__float__();
+    }
+}
 
 namespace python::native
 {
@@ -149,6 +201,26 @@ namespace python::native
             (*view) | std::views::drop(count),
             "drop_iterator"
         );
+    }
+
+    void add_magic(Dict* dict, std::initializer_list<MagicID> magic_ids)
+    {
+        using enum MagicID;
+        static std::unordered_map<MagicID, std::pair<String*, FunctionObject*>> magics = {
+            { PY__LEN__,  { StringTable::len,  new FunctionObject(native::len)  } },
+            { PY__HASH__, { StringTable::hash, new FunctionObject(native::hash) } },
+            { PY__ITER__, { StringTable::iter, new FunctionObject(native::iter) } },
+            { PY__NEXT__, { StringTable::next, new FunctionObject(native::next) } },
+        };
+
+        PYTHON_ASSERT(dict);
+
+        for (auto magic_id : magic_ids)
+        {
+            PYTHON_ASSERT(magics.contains(magic_id));
+            auto& entry = magics[magic_id];
+            dict->put(entry.first, entry.second);
+        }
     }
 
 }

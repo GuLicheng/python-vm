@@ -1,10 +1,15 @@
 #pragma once
 
 #include "Object.hpp"
+#include "Dict.hpp"
+#include "String.hpp"
+#include "NativeFunction.hpp"
+#include "FunctionObject.hpp"
 
 #include <ranges>
 #include <iterator>
 #include <iostream>
+
 
 namespace python
 {
@@ -32,6 +37,11 @@ namespace python
         {
             PyViewIteratorKlass()
             {
+                // auto builtin_magic = new Dict();
+                // builtin_magic->put(new String("__iter__"), new FunctionObject(native::iter));
+                // builtin_magic->put(new String("__next__"), new FunctionObject(native::next));
+                // this->build_klass("PyViewIterator", ObjectKlass::get_instance(), builtin_magic);
+                // Some magic methods should be register automatically.
                 this->build_klass("PyViewIterator", ObjectKlass::get_instance(), nullptr);
             }
 

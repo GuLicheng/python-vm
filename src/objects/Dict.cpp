@@ -6,6 +6,8 @@
 #include "Iterator.hpp"
 
 #include <sstream>
+#include <ranges>
+
 
 namespace python
 {

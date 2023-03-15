@@ -10,9 +10,14 @@
 
 namespace python
 {
-    Integer::Integer(int64_t x) : val(x)
+    Integer::Integer(int64_t value) : m_value(value)
     {
         this->klass = IntegerKlass::get_instance();
+    }
+
+    int64_t Integer::value() const
+    {
+        return this->m_value;
     }
 
     IntegerKlass::IntegerKlass()

@@ -31,13 +31,10 @@ void print_label_style_fn(const char* label_name, Fn fn, int tab_cnt = 0, bool e
 }
 
 
-template <int N = 16>
+template <int BytesPerRow = 16, bool ShowDecodedText = true>
 void print_hex_code(const char* bytes, int length)
 {
-    // std::string ascii;
-    // ascii.resize(N);
-
-    char ascii[N];
+    char ascii[BytesPerRow];
 
     int j;
 
@@ -47,23 +44,23 @@ void print_hex_code(const char* bytes, int length)
         std::cout.width(2);
         std::cout.fill('0');
         std::cout << (bytes[i] & 0xFF) << ' ';
-        ascii[i % N] = bytes[i];
-    
-        if (i % N == (N - 1))
+
+        ascii[i % BytesPerRow] = bytes[i];
+        if (i % BytesPerRow == (BytesPerRow - 1))
         {
-            for (j = 0; j < N; ++j)
+            for (j = 0; j < BytesPerRow; ++j)
             {
                 char c = ::isprint(ascii[j]) ? ascii[j] : '.';
-                std::cout << std::dec << c;
+                if constexpr (ShowDecodedText)
+                {
+                    std::cout << std::dec << c;
+                }
             }
-
             std::cout << '\n';
         }
     }
 
-    int rest = N - (length % N);
-
-    // std::cout << "rest" << rest << '\n';
+    int rest = BytesPerRow - (length % BytesPerRow);
 
     if (rest)
     {
@@ -71,11 +68,13 @@ void print_hex_code(const char* bytes, int length)
         {
             std::cout << "   ";
         }
-        for (int i = 0; i < length % N; ++i)
+        if constexpr (ShowDecodedText)
         {
-            char c = ::isprint(ascii[i]) ? ascii[i] : '.';
-            std::cout << std::dec << c;
+            for (int i = 0; i < length % BytesPerRow; ++i)
+            {
+                char c = ::isprint(ascii[i]) ? ascii[i] : '.';
+                std::cout << std::dec << c;
+            }
         }
     }
-
 }

@@ -7,9 +7,10 @@
 #include <array>
 #include <vector>
 
-
 namespace python
 {
+    using PythonList = std::vector<Object*>;
+
     class ListKlass : public Klass, public Singleton<ListKlass>
     {
     public:
@@ -25,6 +26,8 @@ namespace python
         virtual void print(Object* x) override;
 
         virtual Object* py__getitem__(Object* x, Object* y) override;
+
+        virtual void py__setitem__(Object* object, Object* key, Object* value);
         
         virtual Object* py__contains__(Object* x, Object* y) override;
         
@@ -34,12 +37,18 @@ namespace python
 
         virtual Object* py__iter__(Object* x) override;
 
+        virtual Object* py__eq__(Object* x, Object* y) override;
+
+        virtual Object* py__ne__(Object* x, Object* y) override;
+
+        virtual Object* py__hash__(Object* x) override;
+
         // virtual Object* py__str__(Object* x) override;
     };
 
     class List : public Object
     {
-        std::vector<Object*> inner_list;
+        PythonList inner_list;
 
         friend class Interpreter;
 
@@ -55,7 +64,7 @@ namespace python
 
         explicit List(int size);
 
-        explicit List(std::vector<Object*> obj_list);
+        explicit List(PythonList obj_list);
 
         int size() const;
 
@@ -81,9 +90,7 @@ namespace python
 
         void insert(int pos, Object* obj);
 
-        // std::array<std::vector<Object*>::iterator, 2> get_iterator_pair();
-
-        std::vector<Object*>& value();
+        PythonList& value();
 
     };
 
@@ -127,3 +134,33 @@ namespace python::native
     // Object* list_index(List* args);
     // Object* list_getitem(List* args);
 }
+
+/*
+[
+    '__repr__',
+    '__hash__',
+    '__getattribute__',
+    '__lt__',
+    '__le__',
+    '__eq__',
+    '__ne__',
+    '__gt__',
+    '__ge__',
+    '__iter__',
+    '__init__',
+    '__len__',
+    '__getitem__',
+    '__setitem__',
+    '__delitem__',
+    '__add__',
+    '__mul__',
+    '__rmul__',
+    '__contains__',
+    '__iadd__',
+    '__imul__',
+    '__new__',
+    '__reversed__',
+    '__sizeof__',
+    '__doc__'
+]
+*/

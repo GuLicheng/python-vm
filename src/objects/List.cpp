@@ -27,7 +27,7 @@ namespace python
         this->klass = ListKlass::get_instance();
     }
 
-    List::List(std::vector<Object*> obj_list) : inner_list(std::move(obj_list))
+    List::List(PythonList obj_list) : inner_list(std::move(obj_list))
     {
         this->klass = ListKlass::get_instance();
     }
@@ -108,7 +108,7 @@ namespace python
         this->inner_list.insert(this->inner_list.begin() + pos, obj);
     }
 
-    std::vector<Object*>& List::value()
+    PythonList& List::value()
     {
         return this->inner_list;
     }
@@ -167,6 +167,12 @@ namespace python
         return ((List*)x)->get(index);
     }
 
+    void ListKlass::py__setitem__(Object* object, Object* key, Object* value)
+    {
+        auto idx = key->as<Integer>()->value();
+        object->as<List>()->set(idx, value);
+    }
+
     Object* ListKlass::py__contains__(Object* x, Object* y)
     {
         PYTHON_ASSERT(x && y && "x and y should not be nullptr.");
@@ -196,7 +202,7 @@ namespace python
         auto ls1 = x->as<List>();
         auto ls2 = y->as<List>();
 
-        auto result = std::vector<Object*>();
+        auto result = PythonList();
         result.reserve(ls1->size() + ls2->size());
 
         for (int i = 0; i < ls1->size(); ++i)
@@ -212,7 +218,35 @@ namespace python
     {
         // return new ListIterator(x->as<List>());
         return (new PyView(x, x->as<List>()->inner_list | std::views::all, "list_iterator"))->get_iterator();
-    }    
+    }
+
+    Object* ListKlass::py__eq__(Object* x, Object* y)
+    {
+        if (x->get_klass() != y->get_klass())
+            return Universe::False;
+
+        if (x == y)
+            return Universe::True;
+
+        return std::ranges::equal(
+            x->as<List>()->inner_list,
+            y->as<List>()->inner_list,
+            [](Object* lhs, Object* rhs) { 
+                return lhs->py__eq__(rhs) == Universe::True; 
+            }
+        ) ? Universe::True : Universe::False;
+    }
+
+    Object* ListKlass::py__ne__(Object* x, Object* y)
+    {
+        return x->py__eq__(y) == Universe::True ? Universe::False : Universe::True;
+    }
+
+    Object* ListKlass::py__hash__(Object* x)
+    {
+        PYTHON_ASSERT(false && "List cannot hashable");
+        return nullptr;
+    }
 
 }
 
