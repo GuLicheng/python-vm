@@ -7,7 +7,6 @@
 
 namespace python
 { 
-
     String::String(const char* s, int length) : m_value(s, length)
     {
         this->klass = StringKlass::get_instance();
@@ -123,7 +122,6 @@ namespace python
     {
         return detail::binary_arith_operation<String>(std::plus<>(), self, other);
     }
-
 }
 
 namespace python::native
