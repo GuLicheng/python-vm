@@ -17,9 +17,9 @@ namespace python
     {
     public:
 
-        virtual void print(Object* x) override;
+        virtual void print(Object* self) override;
 
-        virtual Object* py__setattr__(Object* object, Object* key, Object* value) override;
+        virtual Object* py__setattr__(Object* self, Object* key, Object* value) override;
 
     };
 
@@ -27,7 +27,7 @@ namespace python
     {
         friend class TypeKlass;
 
-        Klass* own_klass;
+        Klass* m_own_klass;
 
     public:
 
@@ -35,7 +35,7 @@ namespace python
 
         TypeObject();
 
-        void set_own_klass(Klass* k);
+        void set_own_klass(Klass* klass);
 
         Klass* get_own_klass();
 

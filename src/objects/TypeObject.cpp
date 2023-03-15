@@ -9,13 +9,13 @@
 namespace python
 {
 
-    void TypeKlass::print(Object* x)
+    void TypeKlass::print(Object* self)
     {
-        PYTHON_ASSERT(x->is<TypeObject>());
+        PYTHON_ASSERT(self->is<TypeObject>());
 
         std::cout << "<type";
 
-        Klass* own_klass = x->as<TypeObject>()->own_klass;
+        Klass* own_klass = self->as<TypeObject>()->m_own_klass;
 
         Dict* attr_dict = own_klass->klass_dict;
         if (attr_dict)
@@ -33,10 +33,10 @@ namespace python
 
     }
 
-    Object* TypeKlass::py__setattr__(Object* object, Object* key, Object* value)
+    Object* TypeKlass::py__setattr__(Object* self, Object* key, Object* value)
     {
         // Add attribute into klass dict
-        object->as<TypeObject>()->get_own_klass()->get_klass_dict()->put(key, value);
+        self->as<TypeObject>()->get_own_klass()->get_klass_dict()->put(key, value);
         return Universe::None;
     }
 
@@ -45,15 +45,14 @@ namespace python
         this->klass = TypeKlass::get_instance();
     }
 
-    void TypeObject::set_own_klass(Klass* k)
+    void TypeObject::set_own_klass(Klass* klass)
     {
-        this->own_klass = k;
-        k->set_type_object(this);
+        this->m_own_klass = klass;
+        klass->set_type_object(this);
     }
 
     Klass* TypeObject::get_own_klass()
     {
-        return this->own_klass;
+        return this->m_own_klass;
     }
-
 }
