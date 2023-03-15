@@ -19,14 +19,14 @@ namespace python
     template <typename TView>
     struct PyView : public Object
     {
-        Object* underlying;     // save list/dict to make it reachable for GC?
+        Object* m_underlying;     // save list/dict to make it reachable for GC?
 
-        TView view;
+        TView m_view;
 
-        std::string_view name;  // name for print
+        std::string_view m_name;  // name for print
 
-        PyView(Object* u, TView v, std::string_view n) 
-            : underlying(u), view(std::move(v)), name(n) 
+        PyView(Object* underlying, TView view, std::string_view name) 
+            : m_underlying(underlying), m_view(std::move(view)), m_name(name) 
         {
             this->klass = PyViewKlass<TView>::get_instance();
         }
@@ -45,34 +45,34 @@ namespace python
                 this->build_klass("PyViewIterator", ObjectKlass::get_instance(), nullptr);
             }
 
-            virtual Object* py__iter__(Object* x) override
+            virtual Object* py__iter__(Object* self) override
             {
-                return x;
+                return self;
             }
             
-            virtual Object* py__next__(Object* x) override
+            virtual Object* py__next__(Object* self) override
             {
-                auto val = x->as<PyViewIterator>()->value();
-                x->as<PyViewIterator>()->increase();
+                auto val = self->as<PyViewIterator>()->value();
+                self->as<PyViewIterator>()->increase();
                 return val;
             }
 
-            virtual void print(Object* x) override
+            virtual void print(Object* self) override
             {
-                std::cout << x->as<PyViewIterator>()->parent->name;
+                std::cout << self->as<PyViewIterator>()->m_parent->m_name;
             }
         };
 
         struct PyViewIterator : public Object
         {
-            PyView* parent;
+            PyView* m_parent;
 
-            std::ranges::iterator_t<TView> iterator;
+            std::ranges::iterator_t<TView> m_iterator;
 
-            std::ranges::sentinel_t<TView> sentinel;
+            std::ranges::sentinel_t<TView> m_sentinel;
 
             PyViewIterator(PyView* p, std::ranges::iterator_t<TView> first, std::ranges::sentinel_t<TView> last) 
-                : parent(p), iterator(std::move(first)), sentinel(std::move(last)) 
+                : m_parent(p), m_iterator(std::move(first)), m_sentinel(std::move(last)) 
             {
                 this->klass = PyViewIteratorKlass::get_instance();
             }
@@ -80,23 +80,23 @@ namespace python
             void increase() 
             {
                 // Some container may not support ++end() e.g. std::unordered_map 
-                std::ranges::advance(this->iterator, 1, this->sentinel); 
+                std::ranges::advance(this->m_iterator, 1, this->m_sentinel); 
             }
 
             bool is_over() const 
             { 
-                return this->iterator == this->sentinel; 
+                return this->m_iterator == this->m_sentinel; 
             }
 
             Object* value() 
             { 
-                return this->is_over() ? nullptr : *this->iterator; 
+                return this->is_over() ? nullptr : *this->m_iterator; 
             }
         };
 
         Object* get_iterator()
         {
-            return new PyViewIterator(this, std::ranges::begin(view), std::ranges::end(view));
+            return new PyViewIterator(this, std::ranges::begin(m_view), std::ranges::end(m_view));
         }
     };
 
@@ -108,14 +108,14 @@ namespace python
             this->build_klass("PyViewKlass", ObjectKlass::get_instance(), nullptr);
         }
 
-        virtual Object* py__iter__(Object* x) override
+        virtual Object* py__iter__(Object* self) override
         {
-            return x->as<PyView<TView>>()->get_iterator();
+            return self->as<PyView<TView>>()->get_iterator();
         }
 
-        virtual void print(Object* x) override
+        virtual void print(Object* self) override
         {
-            std::cout << x->as<PyView<TView>>()->name;
+            std::cout << self->as<PyView<TView>>()->m_name;
         }
     };
 
@@ -134,7 +134,7 @@ namespace python
 
     class ObjectView : public Object
     {
-        Object* iterable;
+        Object* m_iterable;
 
         struct ObjectIterator
         {
@@ -143,19 +143,19 @@ namespace python
             using difference_type = std::ptrdiff_t;
             using iterator_category = std::input_iterator_tag;
 
-            ObjectView* parent;
+            ObjectView* m_parent;
 
-            Object* iterator;
+            Object* m_iterator;
 
-            Object* value; // store current value
+            Object* m_value; // store current value
 
             ObjectIterator() = default;
             
             ObjectIterator(std::default_sentinel_t) : ObjectIterator() { }
 
-            ObjectIterator(ObjectView* parent) : parent(parent) 
+            ObjectIterator(ObjectView* parent) : m_parent(parent) 
             {
-                this->iterator = this->parent->iterable->py__iter__();
+                this->m_iterator = this->m_parent->m_iterable->py__iter__();
                 this->read();
             }
 
@@ -165,7 +165,7 @@ namespace python
 
             reference operator*() const
             {
-                return this->value;
+                return this->m_value;
             } 
 
             ObjectIterator& operator++()
@@ -189,18 +189,18 @@ namespace python
 
             bool is_over() const
             {
-                return this->iterator == nullptr || this->value == nullptr;
+                return this->m_iterator == nullptr || this->m_value == nullptr;
             }
 
             void read()
             {
-                this->value = this->iterator->py__next__();
+                this->m_value = this->m_iterator->py__next__();
             }
         };
 
     public:
 
-        ObjectView(Object* iterable) : iterable(iterable) 
+        ObjectView(Object* iterable) : m_iterable(iterable) 
         {
             this->klass = ObjectKlass::get_instance();
         }
