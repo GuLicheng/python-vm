@@ -56,7 +56,7 @@ namespace python
 
         virtual Object* py__str__(Object* self) override;
 
-        virtual Object* py__contains__(Object* self, Object* other) override;
+        virtual Object* py__contains__(Object* self, Object* value) override;
 
         virtual Object* py__iter__(Object* self) override;
 
@@ -87,7 +87,7 @@ namespace python
 
         int size() const;
 
-        Object* remove(Object* k);
+        Object* remove(Object* key);
 
         PythonObjectDictionary& value();
 

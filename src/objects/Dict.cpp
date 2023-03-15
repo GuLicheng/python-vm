@@ -16,9 +16,9 @@ namespace python
         this->klass = DictKlass::get_instance();
     }
 
-    Dict::Dict(PythonObjectDictionary d)
+    Dict::Dict(PythonObjectDictionary dict)
     {
-        this->m_dict = std::move(d);
+        this->m_dict = std::move(dict);
         this->klass = DictKlass::get_instance();
     }
 
@@ -43,9 +43,9 @@ namespace python
         return this->m_dict.size();
     }
 
-    Object* Dict::remove(Object* k)
+    Object* Dict::remove(Object* key)
     {
-        auto iter = this->m_dict.find(k);
+        auto iter = this->m_dict.find(key);
         if (iter == this->m_dict.end())
             return Universe::None;
         auto value = iter->second;
@@ -96,13 +96,13 @@ namespace python
         return sizeof(Dict);
     }
 
-    Object* DictKlass::py__str__(Object* x)
+    Object* DictKlass::py__str__(Object* self)
     {
-        PYTHON_ASSERT(x && x->is<Dict>());
+        PYTHON_ASSERT(self && self->is<Dict>());
         std::stringstream ss;
         bool first = true;
         ss << '{';
-        for (auto& d = x->as<Dict>()->m_dict; auto& [k, v] : d)
+        for (auto& d = self->as<Dict>()->m_dict; auto& [k, v] : d)
         {
             if (!first)
                 ss << ", ";
@@ -115,15 +115,15 @@ namespace python
         return new String(ss.str());
     }
 
-    Object* DictKlass::py__contains__(Object* x, Object* y)
+    Object* DictKlass::py__contains__(Object* self, Object* key)
     {
-        PYTHON_ASSERT(x && x->is<Dict>());
-        return x->as<Dict>()->has_key(y) ? Universe::True : Universe::False;
+        PYTHON_ASSERT(self && self->is<Dict>());
+        return self->as<Dict>()->has_key(key) ? Universe::True : Universe::False;
     }
 
-    Object* DictKlass::py__iter__(Object* x)
+    Object* DictKlass::py__iter__(Object* self)
     {
-        return (new PyView(x, x->as<Dict>()->m_dict | std::views::transform([](auto pair){
+        return (new PyView(self, self->as<Dict>()->m_dict | std::views::transform([](auto pair){
             List* ls = new List();
             ls->append(pair.first);
             ls->append(pair.second);
