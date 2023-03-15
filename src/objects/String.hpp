@@ -7,7 +7,6 @@
 
 namespace python
 {
-
     class StringKlass : public Klass, public Singleton<StringKlass>
     {
     public:
@@ -20,25 +19,25 @@ namespace python
 
         virtual size_t size() override;
 
-        virtual void print(Object* x) override;
-        virtual Object* py__hash__(Object* x) override;
-        virtual Object* py__deepcopy__(Object* x) override;
-        virtual Object* py__len__(Object* x) override;
+        virtual void print(Object* self) override;
+        virtual Object* py__hash__(Object* self) override;
+        virtual Object* py__deepcopy__(Object* self) override;
+        virtual Object* py__len__(Object* self) override;
 
-        virtual Object* py__add__(Object* x, Object* y) override;
+        virtual Object* py__add__(Object* self, Object* other) override;
 
-        virtual Object* py__lt__(Object* x, Object* y) override;
-        virtual Object* py__ne__(Object* x, Object* y) override;
-        virtual Object* py__eq__(Object* x, Object* y) override;
-        virtual Object* py__gt__(Object* x, Object* y) override;
-        virtual Object* py__le__(Object* x, Object* y) override;
-        virtual Object* py__ge__(Object* x, Object* y) override;
+        virtual Object* py__lt__(Object* self, Object* other) override;
+        virtual Object* py__ne__(Object* self, Object* other) override;
+        virtual Object* py__eq__(Object* self, Object* other) override;
+        virtual Object* py__gt__(Object* self, Object* other) override;
+        virtual Object* py__le__(Object* self, Object* other) override;
+        virtual Object* py__ge__(Object* self, Object* other) override;
 
     };
 
     class String : public Object
     {
-        std::string str;
+        std::string m_value;
     public:
 
         using KlassType = StringKlass;
@@ -57,7 +56,7 @@ namespace python
 
         void show() override
         {
-            std::cout << str;
+            std::cout << m_value;
         }
 
         std::string_view sv() const;

@@ -8,34 +8,34 @@
 namespace python
 { 
 
-    String::String(const char* s, int length) : str(s, length)
+    String::String(const char* s, int length) : m_value(s, length)
     {
         this->klass = StringKlass::get_instance();
     }
 
-    String::String(std::string s) : str(std::move(s))
+    String::String(std::string s) : m_value(std::move(s))
     {
         this->klass = StringKlass::get_instance();
     }
 
     const char* String::c_str() const
     {
-        return this->str.c_str();
+        return this->m_value.c_str();
     }
 
     const std::string& String::value() const
     {
-        return this->str;
+        return this->m_value;
     }
 
     int String::length() const
     {
-        return this->str.size();
+        return this->m_value.size();
     }
 
     std::string_view String::sv() const
     {
-        return std::string_view(this->str);
+        return std::string_view(this->m_value);
     }
 
     void StringKlass::initialize()
@@ -60,68 +60,68 @@ namespace python
         return sizeof(String);
     }
 
-    void StringKlass::print(Object *x)
+    void StringKlass::print(Object* self)
     {
-        PYTHON_ASSERT(x && x->is<String>());
-        auto s = (String*)x;
+        PYTHON_ASSERT(self && self->is<String>());
+        auto s = (String*)self;
         std::cout << s->sv();
     }
 
-    Object* StringKlass::py__hash__(Object* x)
+    Object* StringKlass::py__hash__(Object* self)
     {
-        PYTHON_ASSERT(x && x->is<String>());
-        auto sv = ((String*)x)->sv();
+        PYTHON_ASSERT(self && self->is<String>());
+        auto sv = ((String*)self)->sv();
         auto hash_val = std::hash<std::string_view>()(sv);
         return detail::cpp_hash_value2py_int(hash_val);
     }
 
-    Object* StringKlass::py__deepcopy__(Object* x)
+    Object* StringKlass::py__deepcopy__(Object* self)
     {
-        PYTHON_ASSERT(x && x->is<String>());
-        auto str = (String*)x;
+        PYTHON_ASSERT(self && self->is<String>());
+        auto str = (String*)self;
         return new String(str->c_str(), str->length());
     }
 
-    Object* StringKlass::py__len__(Object* x)
+    Object* StringKlass::py__len__(Object* self)
     {
-        PYTHON_ASSERT(x && x->is<String>());
-        String* s = (String*)x;
+        PYTHON_ASSERT(self && self->is<String>());
+        String* s = (String*)self;
         return new Integer(static_cast<int64_t>(s->sv().size()));
     }
 
-    Object* StringKlass::py__lt__(Object* x, Object* y)
+    Object* StringKlass::py__lt__(Object* self, Object* other)
     {
-        return detail::binary_relation_operation<String>(std::less<>(), x, y);
+        return detail::binary_relation_operation<String>(std::less<>(), self, other);
     }
 
-    Object* StringKlass::py__ne__(Object* x, Object* y)
+    Object* StringKlass::py__ne__(Object* self, Object* other)
     {
-        return detail::binary_relation_operation<String>(std::not_equal_to<>(), x, y);
+        return detail::binary_relation_operation<String>(std::not_equal_to<>(), self, other);
     }
 
-    Object* StringKlass::py__le__(Object* x, Object* y)
+    Object* StringKlass::py__le__(Object* self, Object* other)
     {
-        return detail::binary_relation_operation<String>(std::less_equal<>(), x, y);
+        return detail::binary_relation_operation<String>(std::less_equal<>(), self, other);
     }
 
-    Object* StringKlass::py__eq__(Object* x, Object* y)
+    Object* StringKlass::py__eq__(Object* self, Object* other)
     {
-        return detail::binary_relation_operation<String>(std::equal_to<>(), x, y);
+        return detail::binary_relation_operation<String>(std::equal_to<>(), self, other);
     }
 
-    Object* StringKlass::py__gt__(Object* x, Object* y)
+    Object* StringKlass::py__gt__(Object* self, Object* other)
     {
-        return detail::binary_relation_operation<String>(std::greater<>(), x, y);
+        return detail::binary_relation_operation<String>(std::greater<>(), self, other);
     }
 
-    Object* StringKlass::py__ge__(Object* x, Object* y)
+    Object* StringKlass::py__ge__(Object* self, Object* other)
     {
-        return detail::binary_relation_operation<String>(std::greater_equal<>(), x, y);
+        return detail::binary_relation_operation<String>(std::greater_equal<>(), self, other);
     }
 
-    Object* StringKlass::py__add__(Object* x, Object* y)
+    Object* StringKlass::py__add__(Object* self, Object* other)
     {
-        return detail::binary_arith_operation<String>(std::plus<>(), x, y);
+        return detail::binary_arith_operation<String>(std::plus<>(), self, other);
     }
 
 }
