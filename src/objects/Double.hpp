@@ -18,42 +18,42 @@ namespace python
 
         virtual Object* allocate_instance(Object* callable, List* args) override;
 
-        virtual void print(Object* x) override;
+        virtual void print(Object* self) override;
 
-        virtual Object* py__lt__(Object* x, Object* y) override;
-        virtual Object* py__eq__(Object* x, Object* y) override;
-        virtual Object* py__gt__(Object* x, Object* y) override;
-        virtual Object* py__ne__(Object* x, Object* y) override;
-        virtual Object* py__le__(Object* x, Object* y) override;
-        virtual Object* py__ge__(Object* x, Object* y) override;
+        virtual Object* py__lt__(Object* self, Object* other) override;
+        virtual Object* py__eq__(Object* self, Object* other) override;
+        virtual Object* py__gt__(Object* self, Object* other) override;
+        virtual Object* py__ne__(Object* self, Object* other) override;
+        virtual Object* py__le__(Object* self, Object* other) override;
+        virtual Object* py__ge__(Object* self, Object* other) override;
 
-        virtual Object* py__add__(Object* x, Object* y) override;
-        virtual Object* py__sub__(Object* x, Object* y) override;
-        virtual Object* py__mul__(Object* x, Object* y) override;
-        virtual Object* py__div__(Object* x, Object* y) override;
-        virtual Object* py__mod__(Object* x, Object* y) override;
+        virtual Object* py__add__(Object* self, Object* other) override;
+        virtual Object* py__sub__(Object* self, Object* other) override;
+        virtual Object* py__mul__(Object* self, Object* other) override;
+        virtual Object* py__div__(Object* self, Object* other) override;
+        virtual Object* py__mod__(Object* self, Object* other) override;
     
-        virtual Object* py__hash__(Object* x) override;
-        virtual Object* py__deepcopy__(Object* x) override;
-        virtual Object* py__str__(Object* x) override;
+        virtual Object* py__hash__(Object* self) override;
+        virtual Object* py__deepcopy__(Object* self) override;
+        virtual Object* py__str__(Object* self) override;
     
     };
 
     class Double : public Object
     {
-        double val;
+        double m_value;
 
     public:
 
         using KlassType = DoubleKlass;
 
-        Double(double x);
+        Double(double value);
 
-        double value() const { return this->val; }
+        double value() const;
 
         virtual void show() override
         {
-            std::cout << val;
+            std::cout << m_value;
         }
     };
 

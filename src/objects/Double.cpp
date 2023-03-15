@@ -11,9 +11,14 @@
 
 namespace python
 {
-    Double::Double(double x) : val(x)
+    Double::Double(double value) : m_value(value)
     {
         this->klass = DoubleKlass::get_instance();
+    }
+
+    double Double::value() const
+    {
+        return this->m_value;
     }
 
     DoubleKlass::DoubleKlass()
@@ -38,88 +43,88 @@ namespace python
         return nullptr;
     }
 
-    void DoubleKlass::print(Object *x)
+    void DoubleKlass::print(Object* self)
     {
-        PYTHON_ASSERT(x && x->is<Double>());
-        std::cout << x->as<Double>()->value();
+        PYTHON_ASSERT(self && self->is<Double>());
+        std::cout << self->as<Double>()->value();
     }
 
-    Object* DoubleKlass::py__lt__(Object* x, Object* y)
+    Object* DoubleKlass::py__lt__(Object* self, Object* other)
     {
-        return detail::binary_relation_operation_number(std::less<>(), x, y);
+        return detail::binary_relation_operation_number(std::less<>(), self, other);
     }
 
-    Object* DoubleKlass::py__le__(Object* x, Object* y)
+    Object* DoubleKlass::py__le__(Object* self, Object* other)
     {
-        return detail::binary_relation_operation_number(std::less_equal<>(), x, y);
+        return detail::binary_relation_operation_number(std::less_equal<>(), self, other);
     }
 
-    Object* DoubleKlass::py__gt__(Object* x, Object* y)
+    Object* DoubleKlass::py__gt__(Object* self, Object* other)
     {
-        return detail::binary_relation_operation_number(std::greater<>(), x, y);
+        return detail::binary_relation_operation_number(std::greater<>(), self, other);
     }
 
-    Object* DoubleKlass::py__ge__(Object* x, Object* y)
+    Object* DoubleKlass::py__ge__(Object* self, Object* other)
     {
-        return detail::binary_relation_operation_number(std::greater_equal<>(), x, y);
+        return detail::binary_relation_operation_number(std::greater_equal<>(), self, other);
     }
 
-    Object* DoubleKlass::py__eq__(Object* x, Object* y)
+    Object* DoubleKlass::py__eq__(Object* self, Object* other)
     {
-        return detail::pyobject_equal<Double>(x, y);
+        return detail::pyobject_equal<Double>(self, other);
     }
 
-    Object* DoubleKlass::py__ne__(Object* x, Object* y)
+    Object* DoubleKlass::py__ne__(Object* self, Object* other)
     {
-        return detail::pyobject_not_equal<Double>(x, y);
+        return detail::pyobject_not_equal<Double>(self, other);
     }
 
-    Object* DoubleKlass::py__add__(Object* x, Object* y)
+    Object* DoubleKlass::py__add__(Object* self, Object* other)
     {
-        return detail::binary_arith_operation_number(std::plus<>(), x, y);
+        return detail::binary_arith_operation_number(std::plus<>(), self, other);
     }
 
-    Object* DoubleKlass::py__sub__(Object* x, Object* y)
+    Object* DoubleKlass::py__sub__(Object* self, Object* other)
     {
-        return detail::binary_arith_operation_number(std::minus<>(), x, y);
+        return detail::binary_arith_operation_number(std::minus<>(), self, other);
     }
 
-    Object* DoubleKlass::py__mul__(Object* x, Object* y)
+    Object* DoubleKlass::py__mul__(Object* self, Object* other)
     {
-        return detail::binary_arith_operation_number(std::multiplies<>(), x, y);
+        return detail::binary_arith_operation_number(std::multiplies<>(), self, other);
     }
 
-    Object* DoubleKlass::py__div__(Object* x, Object* y)
+    Object* DoubleKlass::py__div__(Object* self, Object* other)
     {
-        return detail::binary_arith_operation_number(std::divides<>(), x, y);
+        return detail::binary_arith_operation_number(std::divides<>(), self, other);
     }
 
     // 2.5 % 3 = 2.5
     // 2.5 % 2 = 0.5
     // 2.5 % -3 = -0.5
     // 2.5 % -2 = -1.5
-    Object* DoubleKlass::py__mod__(Object* x, Object* y)
+    Object* DoubleKlass::py__mod__(Object* self, Object* other)
     {
-        return detail::binary_arith_operation_number(detail::PythonModulo(), x, y);
+        return detail::binary_arith_operation_number(detail::PythonModulo(), self, other);
     }
 
-    Object* DoubleKlass::py__hash__(Object* x)
+    Object* DoubleKlass::py__hash__(Object* self)
     {
-        PYTHON_ASSERT(x && x->is<Double>());
-        auto cpp_double = x->as<Double>()->value();
+        PYTHON_ASSERT(self && self->is<Double>());
+        auto cpp_double = self->as<Double>()->value();
         return detail::cpp_hash_value2py_int(std::hash<double>()(cpp_double));
     }
 
-    Object* DoubleKlass::py__deepcopy__(Object* x)
+    Object* DoubleKlass::py__deepcopy__(Object* self)
     {
-        PYTHON_ASSERT(x && x->is<Double>());
-        return new Double(x->as<Double>()->value());
+        PYTHON_ASSERT(self && self->is<Double>());
+        return new Double(self->as<Double>()->value());
     }
 
-    Object* DoubleKlass::py__str__(Object* x)
+    Object* DoubleKlass::py__str__(Object* self)
     {
-        PYTHON_ASSERT(x && x->is<Double>());
-        return new String(std::to_string(x->as<Double>()->value()));
+        PYTHON_ASSERT(self && self->is<Double>());
+        return new String(std::to_string(self->as<Double>()->value()));
     }
 }
 
