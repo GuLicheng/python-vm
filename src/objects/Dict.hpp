@@ -54,13 +54,13 @@ namespace python
 
         virtual size_t size() override;
 
-        virtual Object* py__str__(Object* x) override;
+        virtual Object* py__str__(Object* self) override;
 
-        virtual Object* py__contains__(Object* x, Object* y) override;
+        virtual Object* py__contains__(Object* self, Object* other) override;
 
-        virtual Object* py__iter__(Object* x) override;
+        virtual Object* py__iter__(Object* self) override;
 
-        virtual void print(Object* object) override;
+        virtual void print(Object* self) override;
         
     };
 
@@ -69,7 +69,7 @@ namespace python
 
         friend class DictKlass;
 
-        PythonObjectDictionary dict;
+        PythonObjectDictionary m_dict;
 
     public:
 
@@ -77,7 +77,7 @@ namespace python
 
         Dict();
 
-        Dict(PythonObjectDictionary d);
+        Dict(PythonObjectDictionary dict);
 
         void put(Object* key, Object* value);
 

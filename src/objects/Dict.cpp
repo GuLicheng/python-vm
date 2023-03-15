@@ -18,44 +18,44 @@ namespace python
 
     Dict::Dict(PythonObjectDictionary d)
     {
-        this->dict = std::move(d);
+        this->m_dict = std::move(d);
         this->klass = DictKlass::get_instance();
     }
 
     void Dict::put(Object* key, Object* value)
     {
-        this->dict.insert_or_assign(key, value);
+        this->m_dict.insert_or_assign(key, value);
     }
 
     Object* Dict::get(Object* key)
     {
-        auto iter = this->dict.find(key);
-        return iter == this->dict.end() ? Universe::None : iter->second;
+        auto iter = this->m_dict.find(key);
+        return iter == this->m_dict.end() ? Universe::None : iter->second;
     }
 
     bool Dict::has_key(Object* key)
     {
-        return this->dict.contains(key);
+        return this->m_dict.contains(key);
     }
 
     int Dict::size() const
     {
-        return this->dict.size();
+        return this->m_dict.size();
     }
 
     Object* Dict::remove(Object* k)
     {
-        auto iter = this->dict.find(k);
-        if (iter == this->dict.end())
+        auto iter = this->m_dict.find(k);
+        if (iter == this->m_dict.end())
             return Universe::None;
         auto value = iter->second;
-        this->dict.erase(iter);
+        this->m_dict.erase(iter);
         return value;
     }
 
     PythonObjectDictionary& Dict::value()
     {
-        return this->dict;
+        return this->m_dict;
     }
 
     void DictKlass::initialize()
@@ -102,7 +102,7 @@ namespace python
         std::stringstream ss;
         bool first = true;
         ss << '{';
-        for (auto& d = x->as<Dict>()->dict; auto& [k, v] : d)
+        for (auto& d = x->as<Dict>()->m_dict; auto& [k, v] : d)
         {
             if (!first)
                 ss << ", ";
@@ -123,7 +123,7 @@ namespace python
 
     Object* DictKlass::py__iter__(Object* x)
     {
-        return (new PyView(x, x->as<Dict>()->dict | std::views::transform([](auto pair){
+        return (new PyView(x, x->as<Dict>()->m_dict | std::views::transform([](auto pair){
             List* ls = new List();
             ls->append(pair.first);
             ls->append(pair.second);
@@ -134,7 +134,7 @@ namespace python
     void DictKlass::print(Object* object)
     {
         auto dict = object->as<Dict>();
-        for (auto [k, v] : dict->dict)
+        for (auto [k, v] : dict->m_dict)
         {
             k->print();
             std::cout << ", ";
