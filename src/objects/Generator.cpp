@@ -13,15 +13,15 @@ namespace python
         this->build_klass("generator", ObjectKlass::get_instance(), nullptr);
     }
 
-    Object* GeneratorKlass::py__iter__(Object* x)
+    Object* GeneratorKlass::py__iter__(Object* self)
     {
-        return x;
+        return self;
     }
 
-    Object* GeneratorKlass::py__next__(Object* x)
+    Object* GeneratorKlass::py__next__(Object* self)
     {
-        PYTHON_ASSERT(x->is<Generator>());
-        return Interpreter::get_instance()->eval_generator(x->as<Generator>());
+        PYTHON_ASSERT(self->is<Generator>());
+        return Interpreter::get_instance()->eval_generator(self->as<Generator>());
     }
 
     std::size_t GeneratorKlass::size()
@@ -31,12 +31,12 @@ namespace python
     
     Generator::Generator(FunctionObject* func, List* args, int arg_cnt)
     {
-        this->frame = new FrameObject(func, args, arg_cnt);
+        this->m_frame = new FrameObject(func, args, arg_cnt);
         this->set_klass(GeneratorKlass::get_instance());
     }
 
-    void Generator::set_frame(FrameObject* f)
+    void Generator::set_frame(FrameObject* frame)
     {
-        this->frame = f;
+        this->m_frame = frame;
     }
 }

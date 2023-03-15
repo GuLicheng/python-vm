@@ -8,7 +8,6 @@
 
 namespace python
 {
-
     void TypeKlass::print(Object* self)
     {
         PYTHON_ASSERT(self->is<TypeObject>());

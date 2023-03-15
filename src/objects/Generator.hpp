@@ -15,9 +15,9 @@ namespace python
 
         GeneratorKlass();
 
-        virtual Object* py__iter__(Object* x) override;
+        virtual Object* py__iter__(Object* self) override;
 
-        virtual Object* py__next__(Object* x) override;
+        virtual Object* py__next__(Object* self) override;
 
         virtual std::size_t size() override;
 
@@ -29,7 +29,7 @@ namespace python
         friend class FrameObject;
         friend class GeneratorKlass;
 
-        FrameObject* frame;   // Save frame for next iteration
+        FrameObject* m_frame;   // Save frame for next iteration
 
     public:
 
@@ -37,7 +37,7 @@ namespace python
 
         Generator(FunctionObject* func, List* args, int arg_cnt);
 
-        void set_frame(FrameObject* f);
+        void set_frame(FrameObject* frame);
 
     };
 }

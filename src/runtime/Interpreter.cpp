@@ -840,15 +840,15 @@ namespace python
     Object* Interpreter::eval_generator(Generator* g)
     {
         // Eval frame of Generator
-        this->enter_frame(g->frame);
-        g->frame->entry_frame = true;
+        this->enter_frame(g->m_frame);
+        g->m_frame->entry_frame = true;
         this->eval_frame();
 
         if (this->status != Status::IS_YIELD)
         {
             this->status = Status::IS_OK;
             this->leave_frame();
-            g->frame = nullptr;
+            g->m_frame = nullptr;
             return nullptr;
         }
 
