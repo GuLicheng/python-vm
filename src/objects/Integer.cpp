@@ -1,6 +1,6 @@
 #include "Integer.hpp"
 #include "Universe.hpp"
-#include "Double.hpp"
+#include "Float.hpp"
 #include "Operation.hpp"
 #include "String.hpp"
 #include "Dict.hpp"

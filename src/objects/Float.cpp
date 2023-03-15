@@ -1,4 +1,4 @@
-#include "Double.hpp"
+#include "Float.hpp"
 #include "Operation.hpp"
 #include "String.hpp"
 #include "Dict.hpp"
@@ -11,90 +11,90 @@
 
 namespace python
 {
-    Double::Double(double value) : m_value(value)
+    Float::Float(double value) : m_value(value)
     {
-        this->klass = DoubleKlass::get_instance();
+        this->klass = FloatKlass::get_instance();
     }
 
-    double Double::value() const
+    double Float::value() const
     {
         return this->m_value;
     }
 
-    DoubleKlass::DoubleKlass()
+    FloatKlass::FloatKlass()
     {
         this->initialize();
     }
 
-    void DoubleKlass::initialize()
+    void FloatKlass::initialize()
     {
         this->build_klass("float", ObjectKlass::get_instance(), new Dict());
     }
 
-    std::size_t DoubleKlass::size()
+    std::size_t FloatKlass::size()
     {
-        return sizeof(Double);
+        return sizeof(Float);
     }
 
-    Object* DoubleKlass::allocate_instance(Object* callable, List* args)
+    Object* FloatKlass::allocate_instance(Object* callable, List* args)
     {
         if (!args || args->size() == 0)
-            return new Double(0.0);
+            return new Float(0.0);
         return nullptr;
     }
 
-    void DoubleKlass::print(Object* self)
+    void FloatKlass::print(Object* self)
     {
-        PYTHON_ASSERT(self && self->is<Double>());
-        std::cout << self->as<Double>()->value();
+        PYTHON_ASSERT(self && self->is<Float>());
+        std::cout << self->as<Float>()->value();
     }
 
-    Object* DoubleKlass::py__lt__(Object* self, Object* other)
+    Object* FloatKlass::py__lt__(Object* self, Object* other)
     {
         return detail::binary_relation_operation_number(std::less<>(), self, other);
     }
 
-    Object* DoubleKlass::py__le__(Object* self, Object* other)
+    Object* FloatKlass::py__le__(Object* self, Object* other)
     {
         return detail::binary_relation_operation_number(std::less_equal<>(), self, other);
     }
 
-    Object* DoubleKlass::py__gt__(Object* self, Object* other)
+    Object* FloatKlass::py__gt__(Object* self, Object* other)
     {
         return detail::binary_relation_operation_number(std::greater<>(), self, other);
     }
 
-    Object* DoubleKlass::py__ge__(Object* self, Object* other)
+    Object* FloatKlass::py__ge__(Object* self, Object* other)
     {
         return detail::binary_relation_operation_number(std::greater_equal<>(), self, other);
     }
 
-    Object* DoubleKlass::py__eq__(Object* self, Object* other)
+    Object* FloatKlass::py__eq__(Object* self, Object* other)
     {
-        return detail::pyobject_equal<Double>(self, other);
+        return detail::pyobject_equal<Float>(self, other);
     }
 
-    Object* DoubleKlass::py__ne__(Object* self, Object* other)
+    Object* FloatKlass::py__ne__(Object* self, Object* other)
     {
-        return detail::pyobject_not_equal<Double>(self, other);
+        return detail::pyobject_not_equal<Float>(self, other);
     }
 
-    Object* DoubleKlass::py__add__(Object* self, Object* other)
+    Object* FloatKlass::py__add__(Object* self, Object* other)
     {
         return detail::binary_arith_operation_number(std::plus<>(), self, other);
     }
 
-    Object* DoubleKlass::py__sub__(Object* self, Object* other)
+    Object* FloatKlass::py__sub__(Object* self, Object* other)
     {
         return detail::binary_arith_operation_number(std::minus<>(), self, other);
     }
 
-    Object* DoubleKlass::py__mul__(Object* self, Object* other)
+    Object* FloatKlass::py__mul__(Object* self, Object* other)
     {
         return detail::binary_arith_operation_number(std::multiplies<>(), self, other);
     }
 
-    Object* DoubleKlass::py__div__(Object* self, Object* other)
+    Object* FloatKlass::py__div__(Object* self, Object* other)
     {
         return detail::binary_arith_operation_number(std::divides<>(), self, other);
     }
@@ -103,28 +103,28 @@ namespace python
     // 2.5 % 2 = 0.5
     // 2.5 % -3 = -0.5
     // 2.5 % -2 = -1.5
-    Object* DoubleKlass::py__mod__(Object* self, Object* other)
+    Object* FloatKlass::py__mod__(Object* self, Object* other)
     {
         return detail::binary_arith_operation_number(detail::PythonModulo(), self, other);
     }
 
-    Object* DoubleKlass::py__hash__(Object* self)
+    Object* FloatKlass::py__hash__(Object* self)
     {
-        PYTHON_ASSERT(self && self->is<Double>());
-        auto cpp_double = self->as<Double>()->value();
+        PYTHON_ASSERT(self && self->is<Float>());
+        auto cpp_double = self->as<Float>()->value();
         return detail::cpp_hash_value2py_int(std::hash<double>()(cpp_double));
     }
 
-    Object* DoubleKlass::py__deepcopy__(Object* self)
+    Object* FloatKlass::py__deepcopy__(Object* self)
     {
-        PYTHON_ASSERT(self && self->is<Double>());
-        return new Double(self->as<Double>()->value());
+        PYTHON_ASSERT(self && self->is<Float>());
+        return new Float(self->as<Float>()->value());
     }
 
-    Object* DoubleKlass::py__str__(Object* self)
+    Object* FloatKlass::py__str__(Object* self)
     {
-        PYTHON_ASSERT(self && self->is<Double>());
-        return new String(std::to_string(self->as<Double>()->value()));
+        PYTHON_ASSERT(self && self->is<Float>());
+        return new String(std::to_string(self->as<Float>()->value()));
     }
 }
 

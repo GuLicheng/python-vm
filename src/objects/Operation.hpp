@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Object.hpp"
-#include "Double.hpp"
+#include "Float.hpp"
 #include "Integer.hpp"
 #include "../Python.hpp"
 #include "Universe.hpp"
@@ -46,14 +46,14 @@ namespace python::detail
     {
         PYTHON_ASSERT(x && "x should not be nullptr");
         return x->get_klass() == IntegerKlass::get_instance()
-            || x->get_klass() == DoubleKlass::get_instance();
+            || x->get_klass() == FloatKlass::get_instance();
     }
 
     inline double convert2float(Object* x)
     {
         // assert x is not nullptr
-        if (x->get_klass() == DoubleKlass::get_instance())
-            return ((Double*)x)->value();
+        if (x->get_klass() == FloatKlass::get_instance())
+            return ((Float*)x)->value();
         else
             return ((Integer*)x)->value();
     }
@@ -67,8 +67,8 @@ namespace python::detail
         // If x and y are same type, just call binary_relation_operation
         if (x->get_klass() == y->get_klass())
         {
-            if (x->get_klass() == DoubleKlass::get_instance())
-                return binary_relation_operation<Double>(op, x, y);
+            if (x->get_klass() == FloatKlass::get_instance())
+                return binary_relation_operation<Float>(op, x, y);
             else
                 return binary_relation_operation<Integer>(op, x, y);
         }
@@ -89,8 +89,8 @@ namespace python::detail
         // If x and y are same type, just call binary_arith_operation
         if (x->get_klass() == y->get_klass())
         {
-            if (x->get_klass() == DoubleKlass::get_instance())
-                return binary_arith_operation<Double>(op, x, y);
+            if (x->get_klass() == FloatKlass::get_instance())
+                return binary_arith_operation<Float>(op, x, y);
             else
                 return binary_arith_operation<Integer>(op, x, y);
         }
@@ -98,7 +98,7 @@ namespace python::detail
         double dx = convert2float(x);
         double dy = convert2float(y);
 
-        return new Double(std::invoke(op, dx, dy));
+        return new Float(std::invoke(op, dx, dy));
     }
 
     template <typename ObjectType>

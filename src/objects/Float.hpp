@@ -6,11 +6,11 @@
 namespace python
 {
 
-    class DoubleKlass : public Klass, public Singleton<DoubleKlass>
+    class FloatKlass : public Klass, public Singleton<FloatKlass>
     {
     public:
 
-        DoubleKlass();
+        FloatKlass();
 
         void initialize();
 
@@ -39,15 +39,15 @@ namespace python
     
     };
 
-    class Double : public Object
+    class Float : public Object
     {
         double m_value;
 
     public:
 
-        using KlassType = DoubleKlass;
+        using KlassType = FloatKlass;
 
-        Double(double value);
+        Float(double value);
 
         double value() const;
 

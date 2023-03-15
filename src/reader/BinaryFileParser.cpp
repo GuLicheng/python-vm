@@ -6,7 +6,7 @@
 
 #include "BinaryFileParser.hpp"
 #include "../objects/Integer.hpp"
-#include "../objects/Double.hpp"
+#include "../objects/Float.hpp"
 #include "../objects/List.hpp"
 #include "../objects/Universe.hpp"
 #include "../Python.hpp"
@@ -135,7 +135,7 @@ namespace python
                 list->add(new Integer(this->file_stream->read_int()));
                 break;
             case TYPE_BINARY_FLOAT:
-                list->add(new Double(this->file_stream->read_double()));
+                list->add(new Float(this->file_stream->read_double()));
                 break;
             case TYPE_NONE:
                 list->add(Universe::None);
