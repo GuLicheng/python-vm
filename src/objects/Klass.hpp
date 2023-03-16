@@ -17,14 +17,14 @@ namespace python
 
     class Klass
     {
-
         friend class TypeKlass;
         friend class MemberFunctionObject;
+        friend class Object;
 
     protected:
 
         // Since each class only have one Klass, so
-        // we use a vector to save it's super 
+        // we use vector to save super s
         std::vector<Klass*> m_klass_super;
 
         std::vector<Klass*> m_klass_mro;
@@ -35,7 +35,6 @@ namespace python
         
         Dict* m_klass_dict = nullptr;
 
-        friend class Object;
 
         void build_klass(std::string_view class_name, Klass* super_class, Dict* class_attributes);
 
@@ -68,12 +67,7 @@ namespace python
         
         Object* get_super();
         
-        void order_supers();
-
         void set_super_list(List* x);
-
-        // Mro
-        List* get_mro();
 
         bool contains_mro(Klass* k);
 

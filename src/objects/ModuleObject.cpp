@@ -30,7 +30,7 @@ namespace python
         return this->m_obj_dict->get(key);
     }
 
-    void ModuleObject::extend(ModuleObject* module_)
+    void ModuleObject::extend(ModuleObject* module_obj)
     {
         // this->obj_dict->d
     }

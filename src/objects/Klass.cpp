@@ -67,71 +67,6 @@ namespace python
         // return this->super->get(0)->as<TypeObject>();
     }
 
-    void Klass::order_supers()
-    {
-        // // Each class will only initialize once, so we directly
-        // // return if the mro is not nullptr
-        // if (this->mro)
-        // {
-        //     PYTHON_ASSERT(this->super);
-        //     // std::cout << this->name->value() << "'s mro is ";
-        //     // for (int i = 0; i < this->mro->size(); i++) 
-        //     // {
-        //     //     TypeObject* tp_obj = (TypeObject*)(this->mro->get(i));
-        //     //     Klass* k = tp_obj->get_own_klass();
-        //     //     std::cout << k->name->value() << ", ";
-        //     // }
-        //     // std::cout << '\n';
-        //     // return;
-        // }
-        
-        // if (this->super == NULL)
-        //     return;
-
-        // if (this->mro == NULL)
-        //     this->mro = new List();
-
-        // int cur = -1;
-        // for (int i = 0; i < this->super->size(); i++) 
-        // {
-        //     TypeObject* tp_obj = (TypeObject*)(this->super->get(i));
-        //     Klass* k = tp_obj->get_own_klass();
-        //     this->mro->append(tp_obj);
-        //     if (k->mro == NULL)
-        //         continue;
-
-        //     for (int j = 0; j < k->mro->size(); j++) 
-        //     {
-        //         TypeObject* tp_obj = (TypeObject*)(k->mro->get(j));
-        //         int index = this->mro->index(tp_obj);
-        //         if (index < cur) 
-        //         {
-        //             std::cout << "Error: method resolution order conflicts.\n";
-        //             PYTHON_ASSERT(false);
-        //         }
-        //         cur = index;
-
-        //         if (index >= 0) 
-        //         {
-        //             this->mro->delete_by_index(index);
-        //         }
-        //         this->mro->append(tp_obj);
-        //     }
-        // }
-
-
-        // printf("%s's mro is ", this->name->value());
-        // std::cout << this->name->value() << "'s mro is ";
-        // for (int i = 0; i < this->mro->size(); i++) 
-        // {
-        //     TypeObject* tp_obj = (TypeObject*)(this->mro->get(i));
-        //     Klass* k = tp_obj->get_own_klass();
-        //     // printf("%s, ", k->name->value());
-        //     std::cout << k->name->value() << ", ";
-        // }
-        // std::cout << '\n';
-    }
-
     // This function only used by user-defined class.
     void Klass::set_super_list(List* x)
     {
@@ -150,17 +85,6 @@ namespace python
         {
             this->m_klass_mro.emplace_back(ObjectKlass::get_instance());
         }
-    }
-
-    List* Klass::get_mro()
-    {
-        PYTHON_ASSERT(false && "deprecated function");
-        return nullptr;
-        // if (!this->mro && this->super && this != ObjectKlass::get_instance())
-        // {
-        //     this->order_supers();
-        // }
-        // return this->mro;
     }
 
     bool Klass::contains_mro(Klass* k)
@@ -462,7 +386,6 @@ namespace python
         new_klass->set_klass_dict(klass_dict);
         new_klass->set_name(name->as<String>());
         new_klass->set_super_list(supers_list);
-        new_klass->order_supers();
 
         TypeObject* type_obj = new TypeObject();
         type_obj->set_own_klass(new_klass);

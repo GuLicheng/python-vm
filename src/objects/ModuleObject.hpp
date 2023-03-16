@@ -21,7 +21,7 @@ namespace python
     {
         friend class ModuleKlass;
 
-        class String* module_name;
+        class String* m_module_name;
 
     public:
 
@@ -35,7 +35,7 @@ namespace python
 
         Object* get(Object* key);
 
-        void extend(ModuleObject* module_);
+        void extend(ModuleObject* module_obj);
 
     };
 
