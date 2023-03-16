@@ -25,19 +25,15 @@ namespace python
 
         // Since each class only have one Klass, so
         // we use a vector to save it's super 
-        std::vector<Klass*> klass_super;
+        std::vector<Klass*> m_klass_super;
 
-        std::vector<Klass*> klass_mro;
+        std::vector<Klass*> m_klass_mro;
 
-        List* super = nullptr;  // super classes
+        TypeObject* m_type_object = nullptr;
 
-        List* mro = nullptr;    // memory resolution order, control the process of methods searching
-
-        TypeObject* type_object = nullptr;
-
-        String* name = nullptr;
+        String* m_name = nullptr;
         
-        Dict* klass_dict = nullptr;
+        Dict* m_klass_dict = nullptr;
 
         friend class Object;
 
@@ -68,7 +64,7 @@ namespace python
         void show_klass_info();
 
         // Super
-        void add_super(Klass* x);
+        void add_super(Klass* super);
         
         Object* get_super();
         
@@ -85,19 +81,19 @@ namespace python
         virtual Object* allocate_instance(Object* callable, List* args);
 
         // Name
-        void set_name(String* x) { this->name = x; }
+        void set_name(String* name) { this->m_name = name; }
 
-        String* get_name() const { return this->name; }
+        String* get_name() const { return this->m_name; }
 
         // Klass
-        void set_klass_dict(Dict* d) { this->klass_dict = d; }
+        void set_klass_dict(Dict* d) { this->m_klass_dict = d; }
 
-        Dict* get_klass_dict() { return this->klass_dict; }
+        Dict* get_klass_dict() { return this->m_klass_dict; }
 
         // Type
-        void set_type_object(TypeObject* obj) { this->type_object = obj; }
+        void set_type_object(TypeObject* obj) { this->m_type_object = obj; }
 
-        TypeObject* get_type_object() { return this->type_object; }
+        TypeObject* get_type_object() { return this->m_type_object; }
 
         // Member function
         virtual void print(Object* obj);
@@ -123,12 +119,12 @@ namespace python
         virtual Object* py__mod__(Object* x, Object* y) { NOT_IMPLEMENT; }
     
         // logic 
-        virtual Object* py__and__(Object* self, Object* other) { NOT_IMPLEMENT; }
-        virtual Object* py__rand__(Object* self, Object* other) { NOT_IMPLEMENT; }
-        virtual Object* py__xor__(Object* self, Object* other) { NOT_IMPLEMENT; }
-        virtual Object* py__rxor__(Object* self, Object* other) { NOT_IMPLEMENT; }
-        virtual Object* py__or__(Object* self, Object* other) { NOT_IMPLEMENT; }
-        virtual Object* py__ror__(Object* self, Object* other) { NOT_IMPLEMENT; }
+        virtual Object* py__and__(Object* x, Object* y) { NOT_IMPLEMENT; }
+        virtual Object* py__rand__(Object* x, Object* y) { NOT_IMPLEMENT; }
+        virtual Object* py__xor__(Object* x, Object* y) { NOT_IMPLEMENT; }
+        virtual Object* py__rxor__(Object* x, Object* y) { NOT_IMPLEMENT; }
+        virtual Object* py__or__(Object* x, Object* y) { NOT_IMPLEMENT; }
+        virtual Object* py__ror__(Object* x, Object* y) { NOT_IMPLEMENT; }
 
 
 
@@ -154,10 +150,10 @@ namespace python
 
         virtual Object* get_klass_attr(Object* x, Object* y);
 
-        virtual Object* py__getattr__(Object* object, Object* attribute_name);
-        virtual Object* py__setattr__(Object* object, Object* key, Object* value);
-        virtual Object* py__getitem__(Object* object, Object* name);
-        virtual void py__setitem__(Object* object, Object* key, Object* value);
+        virtual Object* py__getattr__(Object* self, Object* attribute_name);
+        virtual Object* py__setattr__(Object* self, Object* key, Object* value);
+        virtual Object* py__getitem__(Object* self, Object* name);
+        virtual void py__setitem__(Object* self, Object* key, Object* value);
 
         // gc interface
         // virtual void oops_do(class Closure*, Object*);

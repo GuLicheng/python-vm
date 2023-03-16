@@ -32,7 +32,7 @@ void python_main()
     };
 
     // const char* file = files[10];
-    const char* file = files[0];
+    const char* file = files[8];
     auto stream = BufferedInputStream(file);
 
     std::fstream log { "a.txt" };
@@ -48,9 +48,9 @@ void python_main()
 
     std::cout << "==================End running code==================\n";
 
-    // std::ranges::for_each(Universe::klasses, [=](python::Klass* klass) {
-    //     klass->show_klass_info();
-    // });
+    std::ranges::for_each(Universe::klasses, [=](python::Klass* klass) {
+        klass->show_klass_info();
+    });
 
 }
 

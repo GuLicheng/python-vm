@@ -16,7 +16,7 @@ namespace python
 
         Klass* own_klass = self->as<TypeObject>()->m_own_klass;
 
-        Dict* attr_dict = own_klass->klass_dict;
+        Dict* attr_dict = own_klass->m_klass_dict;
         if (attr_dict)
         {
             Object* mod = attr_dict->get(StringTable::module);
@@ -27,7 +27,7 @@ namespace python
             }
         }
 
-        own_klass->name->print();
+        own_klass->m_name->print();
         std::cout << ">";
 
     }

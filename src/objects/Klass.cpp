@@ -31,19 +31,19 @@ namespace python
 
     void Klass::show_klass_info()
     {
-        if (!this->name)
+        if (!this->m_name)
         {
             std::cout << "Unknown class\n";
             return;
         }
-        std::cout << "class name: " << this->name->value() << '\n';
+        std::cout << "class name: " << this->m_name->value() << '\n';
         std::cout << "{\n";
 
         std::cout << "\tsupers: ";
         // for (auto s : this->klass_super)
-        for (auto s : this->klass_mro)
+        for (auto s : this->m_klass_mro)
         {
-            std::cout << '\t' << s->name->value() << ',';
+            std::cout << '\t' << s->m_name->value() << ',';
         }
         std::cout << "\n}\n";
 
@@ -51,76 +51,73 @@ namespace python
 
     void Klass::add_super(Klass* x)
     {
-        if (!this->super)
-            this->super = new List();
-        this->super->append(x->type_object);
-        
         // This function only called for build-in type.
         // We make sure that all of buildin's type only have one base class.
-        this->klass_super.emplace_back(x);
-        collect_super_klass(this->klass_mro, x);
+        this->m_klass_super.emplace_back(x);
+        collect_super_klass(this->m_klass_mro, x);
     }
 
     Object* Klass::get_super()
     {
-        if (!this->super || this->super->size() == 0)
-            return nullptr;
+        NOT_IMPLEMENT;
+        // if (!this->super || this->super->size() == 0)
+        //     return nullptr;
 
-        // Return the first base class
-        return this->super->get(0)->as<TypeObject>();
+        // // Return the first base class
+        // return this->super->get(0)->as<TypeObject>();
     }
 
     void Klass::order_supers()
     {
-        // Each class will only initialize once, so we directly
-        // return if the mro is not nullptr
-        if (this->mro)
-        {
-            PYTHON_ASSERT(this->super);
-            // std::cout << this->name->value() << "'s mro is ";
-            // for (int i = 0; i < this->mro->size(); i++) 
-            // {
-            //     TypeObject* tp_obj = (TypeObject*)(this->mro->get(i));
-            //     Klass* k = tp_obj->get_own_klass();
-            //     std::cout << k->name->value() << ", ";
-            // }
-            // std::cout << '\n';
-            // return;
-        }
+        // // Each class will only initialize once, so we directly
+        // // return if the mro is not nullptr
+        // if (this->mro)
+        // {
+        //     PYTHON_ASSERT(this->super);
+        //     // std::cout << this->name->value() << "'s mro is ";
+        //     // for (int i = 0; i < this->mro->size(); i++) 
+        //     // {
+        //     //     TypeObject* tp_obj = (TypeObject*)(this->mro->get(i));
+        //     //     Klass* k = tp_obj->get_own_klass();
+        //     //     std::cout << k->name->value() << ", ";
+        //     // }
+        //     // std::cout << '\n';
+        //     // return;
+        // }
         
-        if (this->super == NULL)
-            return;
+        // if (this->super == NULL)
+        //     return;
 
-        if (this->mro == NULL)
-            this->mro = new List();
+        // if (this->mro == NULL)
+        //     this->mro = new List();
 
-        int cur = -1;
-        for (int i = 0; i < this->super->size(); i++) 
-        {
-            TypeObject* tp_obj = (TypeObject*)(this->super->get(i));
-            Klass* k = tp_obj->get_own_klass();
-            this->mro->append(tp_obj);
-            if (k->mro == NULL)
-                continue;
+        // int cur = -1;
+        // for (int i = 0; i < this->super->size(); i++) 
+        // {
+        //     TypeObject* tp_obj = (TypeObject*)(this->super->get(i));
+        //     Klass* k = tp_obj->get_own_klass();
+        //     this->mro->append(tp_obj);
+        //     if (k->mro == NULL)
+        //         continue;
 
-            for (int j = 0; j < k->mro->size(); j++) 
-            {
-                TypeObject* tp_obj = (TypeObject*)(k->mro->get(j));
-                int index = this->mro->index(tp_obj);
-                if (index < cur) 
-                {
-                    std::cout << "Error: method resolution order conflicts.\n";
-                    PYTHON_ASSERT(false);
-                }
-                cur = index;
+        //     for (int j = 0; j < k->mro->size(); j++) 
+        //     {
+        //         TypeObject* tp_obj = (TypeObject*)(k->mro->get(j));
+        //         int index = this->mro->index(tp_obj);
+        //         if (index < cur) 
+        //         {
+        //             std::cout << "Error: method resolution order conflicts.\n";
+        //             PYTHON_ASSERT(false);
+        //         }
+        //         cur = index;
 
-                if (index >= 0) 
-                {
-                    this->mro->delete_by_index(index);
-                }
-                this->mro->append(tp_obj);
-            }
-        }
+        //         if (index >= 0) 
+        //         {
+        //             this->mro->delete_by_index(index);
+        //         }
+        //         this->mro->append(tp_obj);
+        //     }
+        // }
 
 
         // printf("%s's mro is ", this->name->value());
@@ -138,35 +135,37 @@ namespace python
     // This function only used by user-defined class.
     void Klass::set_super_list(List* x)
     {
-        this->super = x; 
+        // this->super = x; 
         PYTHON_ASSERT(x && "x should not be nullptr");
         for (int i = 0; i < x->size(); ++i)
         {
-            auto klass = this->super->get(i)->as<TypeObject>()->get_own_klass(); 
-            this->klass_super.emplace_back(klass);
-            collect_super_klass(this->klass_mro, klass);
+            // auto klass = this->super->get(i)->as<TypeObject>()->get_own_klass(); 
+            auto klass = x->get(0)->as<TypeObject>()->get_own_klass();
+            this->m_klass_super.emplace_back(klass);
+            collect_super_klass(this->m_klass_mro, klass);
         }
         // In python 2.x, the usd-define class will not inherit from object. 
         // So we add this to make sure each usd-define class is inherited from object.
-        if (this->klass_mro.empty())
+        if (this->m_klass_mro.empty())
         {
-            this->klass_mro.emplace_back(ObjectKlass::get_instance());
+            this->m_klass_mro.emplace_back(ObjectKlass::get_instance());
         }
     }
 
     List* Klass::get_mro()
     {
         PYTHON_ASSERT(false && "deprecated function");
-        if (!this->mro && this->super && this != ObjectKlass::get_instance())
-        {
-            this->order_supers();
-        }
-        return this->mro;
+        return nullptr;
+        // if (!this->mro && this->super && this != ObjectKlass::get_instance())
+        // {
+        //     this->order_supers();
+        // }
+        // return this->mro;
     }
 
     bool Klass::contains_mro(Klass* k)
     {
-        return std::ranges::find(this->klass_mro, k) != this->klass_mro.end();
+        return std::ranges::find(this->m_klass_mro, k) != this->m_klass_mro.end();
     }
 
     Object* Klass::allocate_instance(Object* callable, List* args)
@@ -287,7 +286,7 @@ namespace python
 
     Object* Klass::py__setattr__(Object* object, Object* key, Object* value)
     {
-        auto func = object->m_klass->klass_dict->get(StringTable::setattr);
+        auto func = object->m_klass->m_klass_dict->get(StringTable::setattr);
 
         // For member function, we bind the object and function
         // if (func->klass == FunctionKlass::get_instance())
@@ -331,7 +330,7 @@ namespace python
         if (!class_attributes)
             class_attributes = new Dict();
 
-        this->klass_dict = class_attributes;
+        this->m_klass_dict = class_attributes;
         (new TypeObject)->set_own_klass(this);
         this->set_name(new String(class_name.data(), class_name.size()));
         PYTHON_ASSERT(super_class);
@@ -369,7 +368,7 @@ namespace python
         if (func != Universe::None)
             return Interpreter::get_instance()->call_virtual(func, args);
         std::cout << "class ";
-        x->m_klass->name->print();
+        x->m_klass->m_name->print();
         std::cout << " Error: unsupported operation for class. ";
         PYTHON_ASSERT(false);
         return Universe::None;
@@ -377,7 +376,7 @@ namespace python
 
     Object* Klass::find_in_parent(Object* x, Object* y)
     {
-        auto result = x->m_klass->klass_dict->get(y);
+        auto result = x->m_klass->m_klass_dict->get(y);
 
         if (result != Universe::None)
             return result;
@@ -395,11 +394,11 @@ namespace python
         // }
 
         // Replace above code with follow:
-        for (size_t i = 0; i < x->m_klass->klass_super.size(); ++i)
+        for (size_t i = 0; i < x->m_klass->m_klass_super.size(); ++i)
         {
             // Father class methods: x->klass->mro->get(i)->as<TypeObject>()->get_own_klass()
-            auto own_klass = x->m_klass->klass_super[i];
-            result = own_klass->klass_dict->get(y);
+            auto own_klass = x->m_klass->m_klass_super[i];
+            result = own_klass->m_klass_dict->get(y);
             if (result != Universe::None)
                 break;
         }
@@ -421,7 +420,7 @@ namespace python
         if (std::ranges::find(result, klass) == result.end())
             result.emplace_back(klass);
 
-        for (auto k : klass->klass_mro)
+        for (auto k : klass->m_klass_mro)
         {
             auto location = std::ranges::find(result, k);
             if (location == result.end())

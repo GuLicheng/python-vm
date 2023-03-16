@@ -172,8 +172,8 @@ namespace python
     void NativeFunctionKlass::print(Object* object)
     {
         std::cout << "NativeFunctionObject";
-        if (this->name)
-            std::cout << " Name is " << this->name;
+        if (this->m_name)
+            std::cout << " Name is " << this->m_name;
     }
 
 }
