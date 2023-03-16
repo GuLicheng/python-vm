@@ -10,9 +10,9 @@ namespace python
         this->build_klass("StackElement", ObjectKlass::get_instance(), nullptr);
     }
 
-    void StackElementKlass::print(Object* x)
+    void StackElementKlass::print(Object* self)
     {
-        StackElement* xse = x->as<StackElement>();
+        StackElement* xse = self->as<StackElement>();
         std::cout << "  File \"";
         xse->m_file_name->print();
         std::cout << "\" line " << xse->m_line_no;
@@ -37,9 +37,9 @@ namespace python
         this->build_klass("Traceback", ObjectKlass::get_instance(), nullptr);
     }
 
-    void TracebackKlass::print(Object* x)
+    void TracebackKlass::print(Object* self)
     {
-        auto tbx = x->as<Traceback>();
+        auto tbx = self->as<Traceback>();
         std::cout << "Traceback (most recent call last):\n";
         for (int i = tbx->m_stack_elements->size() - 1; i >= 0; --i)
         {

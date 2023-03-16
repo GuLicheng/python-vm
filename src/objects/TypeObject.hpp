@@ -20,7 +20,6 @@ namespace python
         virtual void print(Object* self) override;
 
         virtual Object* py__setattr__(Object* self, Object* key, Object* value) override;
-
     };
 
     class TypeObject : public Object
@@ -38,9 +37,6 @@ namespace python
         void set_own_klass(Klass* klass);
 
         Klass* get_own_klass();
-
     };
-
-
 }
 

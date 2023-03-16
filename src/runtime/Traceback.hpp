@@ -45,7 +45,7 @@ namespace python
 
         TracebackKlass();
 
-        virtual void print(Object* x) override;
+        virtual void print(Object* self) override;
     
         virtual std::size_t size() override;
     };
