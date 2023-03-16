@@ -41,7 +41,7 @@ namespace python
 
     TypeObject::TypeObject()
     {
-        this->klass = TypeKlass::get_instance();
+        this->set_klass(TypeKlass::get_instance());
     }
 
     void TypeObject::set_own_klass(Klass* klass)

@@ -18,18 +18,18 @@ namespace python
 {
     List::List() 
     {
-        this->klass = ListKlass::get_instance();
+        this->set_klass(ListKlass::get_instance());
     }
 
     List::List(int size)
     {
         this->inner_list.reserve(size);
-        this->klass = ListKlass::get_instance();
+        this->set_klass(ListKlass::get_instance());
     }
 
     List::List(PythonList obj_list) : inner_list(std::move(obj_list))
     {
-        this->klass = ListKlass::get_instance();
+        this->set_klass(ListKlass::get_instance());
     }
 
     int List::size() const

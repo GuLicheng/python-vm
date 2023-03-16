@@ -9,12 +9,12 @@ namespace python
 { 
     String::String(const char* s, int length) : m_value(s, length)
     {
-        this->klass = StringKlass::get_instance();
+        this->set_klass(StringKlass::get_instance());
     }
 
     String::String(std::string s) : m_value(std::move(s))
     {
-        this->klass = StringKlass::get_instance();
+        this->set_klass(StringKlass::get_instance());
     }
 
     const char* String::c_str() const

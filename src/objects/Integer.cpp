@@ -12,7 +12,7 @@ namespace python
 {
     Integer::Integer(int64_t value) : m_value(value)
     {
-        this->klass = IntegerKlass::get_instance();
+        this->set_klass(IntegerKlass::get_instance());
     }
 
     int64_t Integer::value() const

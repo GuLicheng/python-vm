@@ -13,13 +13,13 @@ namespace python
 {
     Dict::Dict()
     {
-        this->klass = DictKlass::get_instance();
+        this->set_klass(DictKlass::get_instance());
     }
 
     Dict::Dict(PythonObjectDictionary dict)
     {
         this->m_dict = std::move(dict);
-        this->klass = DictKlass::get_instance();
+        this->set_klass(DictKlass::get_instance());
     }
 
     void Dict::put(Object* key, Object* value)

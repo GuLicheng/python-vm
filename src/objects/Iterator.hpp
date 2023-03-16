@@ -28,7 +28,7 @@ namespace python
         PyView(Object* underlying, TView view, std::string_view name) 
             : m_underlying(underlying), m_view(std::move(view)), m_name(name) 
         {
-            this->klass = PyViewKlass<TView>::get_instance();
+            this->set_klass(PyViewKlass<TView>::get_instance());
         }
 
         struct PyViewIterator;
@@ -74,7 +74,7 @@ namespace python
             PyViewIterator(PyView* p, std::ranges::iterator_t<TView> first, std::ranges::sentinel_t<TView> last) 
                 : m_parent(p), m_iterator(std::move(first)), m_sentinel(std::move(last)) 
             {
-                this->klass = PyViewIteratorKlass::get_instance();
+                this->set_klass(PyViewIteratorKlass::get_instance());
             }
 
             void increase() 
@@ -202,7 +202,7 @@ namespace python
 
         ObjectView(Object* iterable) : m_iterable(iterable) 
         {
-            this->klass = ObjectKlass::get_instance();
+            this->set_klass(ObjectKlass::get_instance());
         }
 
         ObjectIterator begin()

@@ -13,7 +13,7 @@ namespace python
 {
     Float::Float(double value) : m_value(value)
     {
-        this->klass = FloatKlass::get_instance();
+        this->set_klass(FloatKlass::get_instance());
     }
 
     double Float::value() const

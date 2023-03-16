@@ -264,7 +264,8 @@ namespace python
         auto func = find_in_parent(object, StringTable::getattr);
 
         // Invoke py__getattr__(self, attribute_name)
-        if (func->klass == FunctionKlass::get_instance())
+        // if (func->m_klass == FunctionKlass::get_instance())
+        if (func->expected<FunctionKlass>())
         {
             func = new MemberFunctionObject(func->as<FunctionObject>(), object);
             auto args = new List();
@@ -273,9 +274,9 @@ namespace python
         }
 
         auto result = Universe::None;
-        if (object->obj_dict)
+        if (object->m_obj_dict)
         {
-            result = object->obj_dict->get(attribute_name);
+            result = object->m_obj_dict->get(attribute_name);
             if (result != Universe::None)
                 return result;
         }
@@ -286,10 +287,11 @@ namespace python
 
     Object* Klass::py__setattr__(Object* object, Object* key, Object* value)
     {
-        auto func = object->klass->klass_dict->get(StringTable::setattr);
+        auto func = object->m_klass->klass_dict->get(StringTable::setattr);
 
         // For member function, we bind the object and function
-        if (func->klass == FunctionKlass::get_instance())
+        // if (func->klass == FunctionKlass::get_instance())
+        if (func->expected<FunctionKlass>())
         {
             func = new MemberFunctionObject(func->as<FunctionObject>(), object);
             auto args = new List();
@@ -299,11 +301,11 @@ namespace python
             return Interpreter::get_instance()->call_virtual(func, args);
         }
 
-        if (!object->obj_dict)
+        if (!object->m_obj_dict)
             object->init_dict();
 
         // Register attribute 
-        object->obj_dict->put(key, value);
+        object->m_obj_dict->put(key, value);
         return Universe::None;
     }
 
@@ -367,7 +369,7 @@ namespace python
         if (func != Universe::None)
             return Interpreter::get_instance()->call_virtual(func, args);
         std::cout << "class ";
-        x->klass->name->print();
+        x->m_klass->name->print();
         std::cout << " Error: unsupported operation for class. ";
         PYTHON_ASSERT(false);
         return Universe::None;
@@ -375,7 +377,7 @@ namespace python
 
     Object* Klass::find_in_parent(Object* x, Object* y)
     {
-        auto result = x->klass->klass_dict->get(y);
+        auto result = x->m_klass->klass_dict->get(y);
 
         if (result != Universe::None)
             return result;
@@ -393,10 +395,10 @@ namespace python
         // }
 
         // Replace above code with follow:
-        for (size_t i = 0; i < x->klass->klass_super.size(); ++i)
+        for (size_t i = 0; i < x->m_klass->klass_super.size(); ++i)
         {
             // Father class methods: x->klass->mro->get(i)->as<TypeObject>()->get_own_klass()
-            auto own_klass = x->klass->klass_super[i];
+            auto own_klass = x->m_klass->klass_super[i];
             result = own_klass->klass_dict->get(y);
             if (result != Universe::None)
                 break;

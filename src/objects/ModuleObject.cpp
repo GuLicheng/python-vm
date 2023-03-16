@@ -16,18 +16,18 @@ namespace python
 
     ModuleObject::ModuleObject(Dict* x)
     {
-        this->obj_dict = x;
+        this->m_obj_dict = x;
         this->set_klass(ModuleKlass::get_instance());
     }
 
     void ModuleObject::put(Object* key, Object* value)
     {
-        this->obj_dict->put(key, value);
+        this->m_obj_dict->put(key, value);
     }
 
     Object* ModuleObject::get(Object* key)
     {
-        return this->obj_dict->get(key);
+        return this->m_obj_dict->get(key);
     }
 
     void ModuleObject::extend(ModuleObject* module_)
