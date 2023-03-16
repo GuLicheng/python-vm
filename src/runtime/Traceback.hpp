@@ -6,7 +6,6 @@
 
 namespace python
 {
-
     class String;
     class List;
     class FrameObject;
@@ -17,21 +16,20 @@ namespace python
         
         StackElementKlass();
         
-        virtual void print(Object* x) override;
+        virtual void print(Object* self) override;
 
         virtual std::size_t size() override;
-
     };
 
     class StackElement : public Object
     {
         friend class StackElementKlass;
     
-        String* file_name;
+        String* m_file_name;
     
-        String* function_name;
+        String* m_function_name;
     
-        int line_no;
+        int m_line_no;
 
     public:
 
@@ -50,14 +48,13 @@ namespace python
         virtual void print(Object* x) override;
     
         virtual std::size_t size() override;
-    
     };
 
     class Traceback : public Object
     {
         friend class TracebackKlass;
 
-        List* stack_elements;
+        List* m_stack_elements;
 
     public:
 
@@ -66,7 +63,5 @@ namespace python
         Traceback();
 
         void record_frame(FrameObject* frame);
-
     };
-
 }

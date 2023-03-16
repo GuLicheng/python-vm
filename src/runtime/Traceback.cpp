@@ -3,7 +3,6 @@
 #include "../objects/String.hpp"
 #include "../objects/FrameObject.hpp"
 
-
 namespace python
 {
     StackElementKlass::StackElementKlass()
@@ -15,10 +14,10 @@ namespace python
     {
         StackElement* xse = x->as<StackElement>();
         std::cout << "  File \"";
-        xse->file_name->print();
-        std::cout << "\" line " << xse->line_no;
+        xse->m_file_name->print();
+        std::cout << "\" line " << xse->m_line_no;
         std::cout << " in ";
-        xse->function_name->print();
+        xse->m_function_name->print();
         std::cout << '\n';
     }
 
@@ -28,7 +27,7 @@ namespace python
     }
 
     StackElement::StackElement(String* fname, String* mname, int lineno)
-        : file_name(fname), function_name(mname), line_no(lineno)
+        : m_file_name(fname), m_function_name(mname), m_line_no(lineno)
     {
         this->set_klass(StackElementKlass::get_instance());
     }
@@ -42,9 +41,9 @@ namespace python
     {
         auto tbx = x->as<Traceback>();
         std::cout << "Traceback (most recent call last):\n";
-        for (int i = tbx->stack_elements->size() - 1; i >= 0; --i)
+        for (int i = tbx->m_stack_elements->size() - 1; i >= 0; --i)
         {
-            tbx->stack_elements->get(i)->print();
+            tbx->m_stack_elements->get(i)->print();
         }
     }
 
@@ -55,17 +54,16 @@ namespace python
 
     Traceback::Traceback()
     {
-        this->stack_elements = new List();
+        this->m_stack_elements = new List();
         this->set_klass(TracebackKlass::get_instance());
     }
 
     void Traceback::record_frame(FrameObject* frame)
     {
-        this->stack_elements->append(new StackElement(
+        this->m_stack_elements->append(new StackElement(
             frame->file_name(),
             frame->func_name(),
             frame->lineno()
         ));
     }
-
 }
