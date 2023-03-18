@@ -97,52 +97,52 @@ namespace python
 
         // Operators
         // ==, !=, <, >, <=, >=
-        virtual Object* py__eq__(Object* x, Object* y) { NOT_IMPLEMENT; }
-        virtual Object* py__ne__(Object* x, Object* y) { NOT_IMPLEMENT; }
-        virtual Object* py__lt__(Object* x, Object* y);
-        virtual Object* py__gt__(Object* x, Object* y);
-        virtual Object* py__le__(Object* x, Object* y);
-        virtual Object* py__ge__(Object* x, Object* y);
+        virtual Object* py__eq__(Object* self, Object* other) { NOT_IMPLEMENT; }
+        virtual Object* py__ne__(Object* self, Object* other) { NOT_IMPLEMENT; }
+        virtual Object* py__lt__(Object* self, Object* other);
+        virtual Object* py__gt__(Object* self, Object* other);
+        virtual Object* py__le__(Object* self, Object* other);
+        virtual Object* py__ge__(Object* self, Object* other);
 
         // +, -, *, /, //, %
-        virtual Object* py__add__(Object* x, Object* y);
-        virtual Object* py__sub__(Object* x, Object* y);
-        virtual Object* py__mul__(Object* x, Object* y);
-        virtual Object* py__div__(Object* x, Object* y) { NOT_IMPLEMENT; } //  operator /
-        virtual Object* py__floordiv__(Object* x, Object* y) { NOT_IMPLEMENT; } //   operator //
-        virtual Object* py__mod__(Object* x, Object* y) { NOT_IMPLEMENT; }
+        virtual Object* py__add__(Object* self, Object* other);
+        virtual Object* py__sub__(Object* self, Object* other);
+        virtual Object* py__mul__(Object* self, Object* other);
+        virtual Object* py__div__(Object* self, Object* other) { NOT_IMPLEMENT; } //  operator /
+        virtual Object* py__floordiv__(Object* self, Object* other) { NOT_IMPLEMENT; } //   operator //
+        virtual Object* py__mod__(Object* self, Object* other) { NOT_IMPLEMENT; }
     
         // logic 
-        virtual Object* py__and__(Object* x, Object* y) { NOT_IMPLEMENT; }
-        virtual Object* py__rand__(Object* x, Object* y) { NOT_IMPLEMENT; }
-        virtual Object* py__xor__(Object* x, Object* y) { NOT_IMPLEMENT; }
-        virtual Object* py__rxor__(Object* x, Object* y) { NOT_IMPLEMENT; }
-        virtual Object* py__or__(Object* x, Object* y) { NOT_IMPLEMENT; }
-        virtual Object* py__ror__(Object* x, Object* y) { NOT_IMPLEMENT; }
+        virtual Object* py__and__(Object* self, Object* other) { NOT_IMPLEMENT; }
+        virtual Object* py__rand__(Object* self, Object* other) { NOT_IMPLEMENT; }
+        virtual Object* py__xor__(Object* self, Object* other) { NOT_IMPLEMENT; }
+        virtual Object* py__rxor__(Object* self, Object* other) { NOT_IMPLEMENT; }
+        virtual Object* py__or__(Object* self, Object* other) { NOT_IMPLEMENT; }
+        virtual Object* py__ror__(Object* self, Object* other) { NOT_IMPLEMENT; }
 
 
 
-        virtual Object* py__contains__(Object* x, Object* y) { NOT_IMPLEMENT; }
+        virtual Object* py__contains__(Object* self, Object* value) { NOT_IMPLEMENT; }
 
         // Type convert str, int, float, bool, ...
-        virtual Object* py__str__(Object* x) { NOT_IMPLEMENT; }
-        virtual Object* py__int__(Object* x) { NOT_IMPLEMENT; }
-        virtual Object* py__float__(Object* x) { NOT_IMPLEMENT; }
-        virtual Object* py__bool__(Object* x) { NOT_IMPLEMENT; }
+        virtual Object* py__str__(Object* self) { NOT_IMPLEMENT; }
+        virtual Object* py__int__(Object* self) { NOT_IMPLEMENT; }
+        virtual Object* py__float__(Object* self) { NOT_IMPLEMENT; }
+        virtual Object* py__bool__(Object* self) { NOT_IMPLEMENT; }
 
 
-        virtual Object* py__hash__(Object* x);
-        virtual Object* py__deepcopy__(Object* x) { NOT_IMPLEMENT; }
-        virtual Object* py__len__(Object* x);
-        virtual Object* py__iter__(Object* x);
-        virtual Object* py__next__(Object* x);
+        virtual Object* py__hash__(Object* self);
+        virtual Object* py__deepcopy__(Object* self) { NOT_IMPLEMENT; }
+        virtual Object* py__len__(Object* self);
+        virtual Object* py__iter__(Object* self);
+        virtual Object* py__next__(Object* self);
 
 
         virtual Object* py__repr__(Object* self) { NOT_IMPLEMENT; }
 
 
 
-        virtual Object* get_klass_attr(Object* x, Object* y);
+        virtual Object* get_klass_attr(Object* self, Object* attribute);
 
         virtual Object* py__getattr__(Object* self, Object* attribute_name);
         virtual Object* py__setattr__(Object* self, Object* key, Object* value);

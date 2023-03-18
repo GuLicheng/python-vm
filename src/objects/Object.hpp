@@ -12,7 +12,7 @@ namespace python
     class ObjectKlass : public Klass, public Singleton<ObjectKlass>
     {
     public:
-        virtual void print(Object* object) override;
+        virtual void print(Object* self) override;
     };
 
     class Object 

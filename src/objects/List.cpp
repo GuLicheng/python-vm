@@ -23,23 +23,23 @@ namespace python
 
     List::List(int size)
     {
-        this->inner_list.reserve(size);
+        this->m_inner_list.reserve(size);
         this->set_klass(ListKlass::get_instance());
     }
 
-    List::List(PythonList obj_list) : inner_list(std::move(obj_list))
+    List::List(PythonList obj_list) : m_inner_list(std::move(obj_list))
     {
         this->set_klass(ListKlass::get_instance());
     }
 
     int List::size() const
     {
-        return this->inner_list.size();
+        return this->m_inner_list.size();
     }
 
     void List::append(Object* obj)
     {
-        this->inner_list.emplace_back(obj);
+        this->m_inner_list.emplace_back(obj);
     }
 
     Object* List::get(int index)
@@ -47,7 +47,7 @@ namespace python
         if (index < 0)
             index += this->size();
         PYTHON_ASSERT(index < this->size());
-        return this->inner_list[index];
+        return this->m_inner_list[index];
     }
 
     void List::set(int index, Object* o)
@@ -55,40 +55,40 @@ namespace python
         if (index < 0)
             index += this->size();
         PYTHON_ASSERT(index < this->size());
-        this->inner_list[index] = o;
+        this->m_inner_list[index] = o;
     }
 
     void List::fill_nullptr(int index)
     {
         if (index < this->size())
             return;
-        this->inner_list.resize(index + 1);
+        this->m_inner_list.resize(index + 1);
     }
 
     Object* List::top()
     {
-        PYTHON_ASSERT(!this->inner_list.empty());
-        return this->inner_list.back();
+        PYTHON_ASSERT(!this->m_inner_list.empty());
+        return this->m_inner_list.back();
     }
 
     Object* List::pop()
     {
-        PYTHON_ASSERT(this->inner_list.size() > 0);
-        auto ret = this->inner_list.back();
-        this->inner_list.pop_back();
+        PYTHON_ASSERT(this->m_inner_list.size() > 0);
+        auto ret = this->m_inner_list.back();
+        this->m_inner_list.pop_back();
         return ret; 
     }
 
     int List::index(Object* object)
     {
-        auto location = std::ranges::find(this->inner_list, object);
-        return location == this->inner_list.end() ?
-                 -1 : std::ranges::distance(this->inner_list.begin(), location);
+        auto location = std::ranges::find(this->m_inner_list, object);
+        return location == this->m_inner_list.end() ?
+                 -1 : std::ranges::distance(this->m_inner_list.begin(), location);
     }
 
     void List::delete_by_index(int index)
     {
-        this->inner_list.erase(this->inner_list.begin() + index);
+        this->m_inner_list.erase(this->m_inner_list.begin() + index);
     }
 
     void List::delete_by_object(Object* obj)
@@ -100,17 +100,17 @@ namespace python
 
     void List::reverse()
     {
-        std::ranges::reverse(this->inner_list);
+        std::ranges::reverse(this->m_inner_list);
     }
 
     void List::insert(int pos, Object* obj)
     {
-        this->inner_list.insert(this->inner_list.begin() + pos, obj);
+        this->m_inner_list.insert(this->m_inner_list.begin() + pos, obj);
     }
 
     PythonList& List::value()
     {
-        return this->inner_list;
+        return this->m_inner_list;
     }
 
     void ListKlass::initialize()
@@ -137,9 +137,9 @@ namespace python
         return sizeof(List);
     }
 
-    void ListKlass::print(Object *x)
+    void ListKlass::print(Object *self)
     {
-        List* lx = (List*)x;
+        List* lx = (List*)self;
         PYTHON_ASSERT(lx && lx->is<List>());
 
         std::cout << '[';
@@ -158,49 +158,49 @@ namespace python
         std::cout << ']';
     }
 
-    Object* ListKlass::py__getitem__(Object* x, Object* y)
+    Object* ListKlass::py__getitem__(Object* self, Object* value)
     {
-        PYTHON_ASSERT(x && x->is<List>());
-        PYTHON_ASSERT(y && y->is<Integer>());
+        PYTHON_ASSERT(self && self->expected<ListKlass>());
+        PYTHON_ASSERT(value && value->expected<IntegerKlass>());
 
-        auto index = y->as<Integer>()->value();
-        return ((List*)x)->get(index);
+        auto index = value->as<Integer>()->value();
+        return ((List*)self)->get(index);
     }
 
-    void ListKlass::py__setitem__(Object* object, Object* key, Object* value)
+    void ListKlass::py__setitem__(Object* self, Object* key, Object* value)
     {
         auto idx = key->as<Integer>()->value();
-        object->as<List>()->set(idx, value);
+        self->as<List>()->set(idx, value);
     }
 
-    Object* ListKlass::py__contains__(Object* x, Object* y)
+    Object* ListKlass::py__contains__(Object* self, Object* value)
     {
-        PYTHON_ASSERT(x && y && "x and y should not be nullptr.");
+        PYTHON_ASSERT(self && value && "self and value should not be nullptr.");
 
-        List* ls = (List*)x;
+        List* ls = (List*)self;
         PYTHON_ASSERT(ls->is<List>());
 
         for (int i = 0; i < ls->size(); ++i)
         {
-            if (ls->get(i)->py__eq__(y))
+            if (ls->get(i)->py__eq__(value))
                 return Universe::True;
         }
         return Universe::False;
     }
 
-    Object* ListKlass::py__len__(Object* x)
+    Object* ListKlass::py__len__(Object* self)
     {
-        PYTHON_ASSERT(x && x->is<List>());
-        List* ls = x->as<List>();
+        PYTHON_ASSERT(self && self->is<List>());
+        List* ls = self->as<List>();
         return new Integer(static_cast<int64_t>(ls->size()));
     }
 
-    Object* ListKlass::py__add__(Object* x, Object* y)
+    Object* ListKlass::py__add__(Object* self, Object* other)
     {
-        PYTHON_ASSERT(x && y && x->is<List>() && y->is<List>());
+        PYTHON_ASSERT(self && other && self->is<List>() && other->is<List>());
         
-        auto ls1 = x->as<List>();
-        auto ls2 = y->as<List>();
+        auto ls1 = self->as<List>();
+        auto ls2 = other->as<List>();
 
         auto result = PythonList();
         result.reserve(ls1->size() + ls2->size());
@@ -214,35 +214,34 @@ namespace python
         return new List(std::move(result));
     }
 
-    Object* ListKlass::py__iter__(Object* x)
+    Object* ListKlass::py__iter__(Object* self)
     {
-        // return new ListIterator(x->as<List>());
-        return (new PyView(x, x->as<List>()->inner_list | std::views::all, "list_iterator"))->get_iterator();
+        return (new PyView(self, self->as<List>()->m_inner_list | std::views::all, "list_iterator"))->get_iterator();
     }
 
-    Object* ListKlass::py__eq__(Object* x, Object* y)
+    Object* ListKlass::py__eq__(Object* self, Object* other)
     {
-        if (x->get_klass() != y->get_klass())
+        if (self->get_klass() != other->get_klass())
             return Universe::False;
 
-        if (x == y)
+        if (self == other)
             return Universe::True;
 
         return std::ranges::equal(
-            x->as<List>()->inner_list,
-            y->as<List>()->inner_list,
+            self->as<List>()->m_inner_list,
+            other->as<List>()->m_inner_list,
             [](Object* lhs, Object* rhs) { 
                 return lhs->py__eq__(rhs) == Universe::True; 
             }
         ) ? Universe::True : Universe::False;
     }
 
-    Object* ListKlass::py__ne__(Object* x, Object* y)
+    Object* ListKlass::py__ne__(Object* self, Object* other)
     {
-        return x->py__eq__(y) == Universe::True ? Universe::False : Universe::True;
+        return self->py__eq__(other) == Universe::True ? Universe::False : Universe::True;
     }
 
-    Object* ListKlass::py__hash__(Object* x)
+    Object* ListKlass::py__hash__(Object* self)
     {
         PYTHON_ASSERT(false && "List cannot hashable");
         return nullptr;
@@ -280,7 +279,4 @@ namespace python::native
         arg0->as<List>()->delete_by_index(index);
         return ret;
     }
-
-
-
 }

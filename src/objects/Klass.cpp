@@ -119,59 +119,59 @@ namespace python
 
     }
 
-    Object* Klass::py__lt__(Object* x, Object* y)
+    Object* Klass::py__lt__(Object* self, Object* other)
     {
-        return find_magic_method_and_call(StringTable::lt, x, y);
+        return find_magic_method_and_call(StringTable::lt, self, other);
     }
 
-    Object* Klass::py__gt__(Object* x, Object* y)
+    Object* Klass::py__gt__(Object* self, Object* other)
     {
-        return find_magic_method_and_call(StringTable::gt, x, y);
+        return find_magic_method_and_call(StringTable::gt, self, other);
     }
 
-    Object* Klass::py__le__(Object* x, Object* y)
+    Object* Klass::py__le__(Object* self, Object* other)
     {
-        return find_magic_method_and_call(StringTable::le, x, y);
+        return find_magic_method_and_call(StringTable::le, self, other);
     }
 
-    Object* Klass::py__ge__(Object* x, Object* y)
+    Object* Klass::py__ge__(Object* self, Object* other)
     {
-        return find_magic_method_and_call(StringTable::ge, x, y);
+        return find_magic_method_and_call(StringTable::ge, self, other);
     }
 
-    Object* Klass::py__add__(Object* x, Object* y)
+    Object* Klass::py__add__(Object* self, Object* other)
     {
-        return find_magic_method_and_call(StringTable::add, x, y);
+        return find_magic_method_and_call(StringTable::add, self, other);
     }
 
-    Object* Klass::py__sub__(Object* x, Object* y)
+    Object* Klass::py__sub__(Object* self, Object* other)
     {
-        return find_magic_method_and_call(StringTable::sub, x, y);
+        return find_magic_method_and_call(StringTable::sub, self, other);
     }
 
-    Object* Klass::py__mul__(Object* x, Object* y)
+    Object* Klass::py__mul__(Object* self, Object* other)
     {
-        return find_magic_method_and_call(StringTable::mul, x, y);
+        return find_magic_method_and_call(StringTable::mul, self, other);
     }
 
-    Object* Klass::py__hash__(Object* x)
+    Object* Klass::py__hash__(Object* self)
     {
-        return find_magic_method_and_call(StringTable::hash, x);
+        return find_magic_method_and_call(StringTable::hash, self);
     }
 
-    Object* Klass::py__len__(Object* x)
+    Object* Klass::py__len__(Object* self)
     {
-        return find_magic_method_and_call(StringTable::len, x);
+        return find_magic_method_and_call(StringTable::len, self);
     }
 
-    Object* Klass::py__iter__(Object* x)
+    Object* Klass::py__iter__(Object* self)
     {
-        return find_magic_method_and_call(StringTable::iter, x);
+        return find_magic_method_and_call(StringTable::iter, self);
     }
 
-    Object* Klass::py__next__(Object* x)
+    Object* Klass::py__next__(Object* self)
     {
-        return find_magic_method_and_call(StringTable::next, x);
+        return find_magic_method_and_call(StringTable::next, self);
     }
 
     Object* Klass::get_klass_attr(Object* x, Object* y)
@@ -208,15 +208,15 @@ namespace python
 
     }
 
-    Object* Klass::py__setattr__(Object* object, Object* key, Object* value)
+    Object* Klass::py__setattr__(Object* self, Object* key, Object* value)
     {
-        auto func = object->m_klass->m_klass_dict->get(StringTable::setattr);
+        auto func = self->m_klass->m_klass_dict->get(StringTable::setattr);
 
-        // For member function, we bind the object and function
+        // For member function, we bind the self and function
         // if (func->klass == FunctionKlass::get_instance())
         if (func->expected<FunctionKlass>())
         {
-            func = new MemberFunctionObject(func->as<FunctionObject>(), object);
+            func = new MemberFunctionObject(func->as<FunctionObject>(), self);
             auto args = new List();
             args->append(key);
             args->append(value);
@@ -224,22 +224,22 @@ namespace python
             return Interpreter::get_instance()->call_virtual(func, args);
         }
 
-        if (!object->m_obj_dict)
-            object->init_dict();
+        if (!self->m_obj_dict)
+            self->init_dict();
 
         // Register attribute 
-        object->m_obj_dict->put(key, value);
+        self->m_obj_dict->put(key, value);
         return Universe::None;
     }
 
-    Object* Klass::py__getitem__(Object* object, Object* name)
+    Object* Klass::py__getitem__(Object* self, Object* name)
     {
-        return find_magic_method_and_call(StringTable::getitem, object, name);
+        return find_magic_method_and_call(StringTable::getitem, self, name);
     }
 
-    void Klass::py__setitem__(Object* object, Object* key, Object* value)
+    void Klass::py__setitem__(Object* self, Object* key, Object* value)
     {
-        find_magic_method_and_call(StringTable::setitem, object, key, value);
+        find_magic_method_and_call(StringTable::setitem, self, key, value);
     }
 
     std::size_t Klass::size()

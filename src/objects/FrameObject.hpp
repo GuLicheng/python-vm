@@ -10,9 +10,9 @@ namespace python
 {
     struct Block
     {
-        unsigned char type;     // Block type, such as WHILE_BLOCK, EXCEPTION_BLOCK and so on.
-        int target;             // Destination after executing the BREAK_LOOP
-        int level;              // Block depth
+        unsigned char m_type;     // Block type, such as WHILE_BLOCK, EXCEPTION_BLOCK and so on.
+        int m_target;             // Destination after executing the BREAK_LOOP
+        int m_level;              // Block depth
     };
 
     class FrameObject

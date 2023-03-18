@@ -23,32 +23,32 @@ namespace python
 
         virtual size_t size() override;
 
-        virtual void print(Object* x) override;
+        virtual void print(Object* self) override;
 
-        virtual Object* py__getitem__(Object* x, Object* y) override;
+        virtual Object* py__getitem__(Object* self, Object* value) override;
 
         virtual void py__setitem__(Object* object, Object* key, Object* value);
         
-        virtual Object* py__contains__(Object* x, Object* y) override;
+        virtual Object* py__contains__(Object* self, Object* value) override;
         
-        virtual Object* py__len__(Object* x) override;
+        virtual Object* py__len__(Object* self) override;
 
-        virtual Object* py__add__(Object* x, Object* y) override;
+        virtual Object* py__add__(Object* self, Object* other) override;
 
-        virtual Object* py__iter__(Object* x) override;
+        virtual Object* py__iter__(Object* self) override;
 
-        virtual Object* py__eq__(Object* x, Object* y) override;
+        virtual Object* py__eq__(Object* self, Object* other) override;
 
-        virtual Object* py__ne__(Object* x, Object* y) override;
+        virtual Object* py__ne__(Object* self, Object* other) override;
 
-        virtual Object* py__hash__(Object* x) override;
+        virtual Object* py__hash__(Object* self) override;
 
-        // virtual Object* py__str__(Object* x) override;
+        // virtual Object* py__str__(Object* self) override;
     };
 
     class List : public Object
     {
-        PythonList inner_list;
+        PythonList m_inner_list;
 
         friend class Interpreter;
 
@@ -91,9 +91,7 @@ namespace python
         void insert(int pos, Object* obj);
 
         PythonList& value();
-
     };
-
 }
 
 namespace python::native::detail

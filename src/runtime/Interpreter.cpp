@@ -387,16 +387,16 @@ namespace python
             case ByteCode::SETUP_LOOP:
             {
                 this->frame->loop_stack->add(new Block{
-                    .type = op_code,
-                    .target = this->frame->pc + op_arg,
-                    .level = this->stack_level()
+                    .m_type = op_code,
+                    .m_target = this->frame->pc + op_arg,
+                    .m_level = this->stack_level()
                     });
                 break;
             }
             case ByteCode::POP_BLOCK:
             {
                 auto b = this->frame->loop_stack->pop();
-                while (this->stack_level() > b->level)
+                while (this->stack_level() > b->m_level)
                 {
                     this->pop();
                 }
@@ -636,7 +636,7 @@ namespace python
             {
                 auto block = this->frame->loop_stack->get(this->frame->loop_stack->size() - 1);
                 // Continue block
-                if (this->status == Status::IS_CONTINUE && block->type == ByteCode::SETUP_LOOP)
+                if (this->status == Status::IS_CONTINUE && block->m_type == ByteCode::SETUP_LOOP)
                 {
                     this->frame->pc = (int) ((long long) this->ret_value);
                     this->status = Status::IS_OK;
@@ -644,18 +644,18 @@ namespace python
                 }
 
                 block = this->frame->loop_stack->pop();
-                while (this->stack_level() > block->level)
+                while (this->stack_level() > block->m_level)
                 {
                     this->pop();
                 }
 
-                if (this->status == Status::IS_BREAK && block->type == ByteCode::SETUP_LOOP)
+                if (this->status == Status::IS_BREAK && block->m_type == ByteCode::SETUP_LOOP)
                 {
-                    this->frame->pc = block->target;
+                    this->frame->pc = block->m_target;
                     this->status = Status::IS_OK;
                 } 
-                else if (block->type == ByteCode::SETUP_FINALLY || 
-                         (this->status == Status::IS_EXCEPTION && block->type == ByteCode::SETUP_EXCEPT))
+                else if (block->m_type == ByteCode::SETUP_FINALLY || 
+                         (this->status == Status::IS_EXCEPTION && block->m_type == ByteCode::SETUP_EXCEPT))
                 {
                     if (this->status == Status::IS_EXCEPTION)
                     {
@@ -678,7 +678,7 @@ namespace python
                         this->push((Object *) (((long) this->status << 1) | 0x1));
                     }
 
-                    this->frame->pc = block->target;
+                    this->frame->pc = block->m_target;
                     this->status = Status::IS_OK;
 
                 }

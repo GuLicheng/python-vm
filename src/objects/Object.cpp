@@ -153,13 +153,13 @@ namespace python
         return this->m_klass->py__setattr__(this, key, value);
     }
     
-    void ObjectKlass::print(Object* object)
+    void ObjectKlass::print(Object* self)
     {
-        if (object != Universe::None)
+        if (self != Universe::None)
         {
-            std::cout << "This is a class object";
-            if (object->get_klass() && object->get_klass()->get_name())
-                std::cout << " name is :" << object->get_klass()->get_name();
+            std::cout << "This is a class self";
+            if (self->get_klass() && self->get_klass()->get_name())
+                std::cout << " name is :" << self->get_klass()->get_name();
         }
         else
         {
