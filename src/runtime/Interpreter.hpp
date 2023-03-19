@@ -24,19 +24,19 @@ namespace python
             IS_YIELD,
         };
 
-        FrameObject* frame = nullptr;
+        FrameObject* m_frame = nullptr;
 
-        Object* ret_value = nullptr;  // Save return value for RETURN_VALUE and start position for CONTINUE
+        Object* m_ret_value = nullptr;  // Save return value for RETURN_VALUE and start position for CONTINUE
 
-        Dict* buildin = nullptr;
+        Dict* m_buildin = nullptr;
 
-        Status status = Status::IS_OK;
+        Status m_status = Status::IS_OK;
 
-        Object* exception_class = nullptr;  // Record the exception type such as `StopIteration`
+        Object* m_exception_class = nullptr;  // Record the exception type such as `StopIteration`
         
-        Object* pending_exception = nullptr;  // Record the exception instance such as `StopIteration()`
+        Object* m_pending_exception = nullptr;  // Record the exception instance such as `StopIteration()`
 
-        Object* trace_back = nullptr;  
+        Object* m_trace_back = nullptr;  
 
     private:
     

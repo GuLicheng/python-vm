@@ -17,29 +17,29 @@ namespace python
 
     class FrameObject
     {
-        ArrayList<Object*>* stack;
+        ArrayList<Object*>* m_stack;
 
-        ArrayList<Block*>* loop_stack;
+        ArrayList<Block*>* m_loop_stack;
 
-        ArrayList<Object*>* co_consts;
+        ArrayList<Object*>* m_co_consts;
 
-        ArrayList<Object*>* co_names;
+        ArrayList<Object*>* m_co_names;
 
-        Dict* locals;
+        Dict* m_locals;
 
-        Dict* globals;
+        Dict* m_globals;
 
-        CodeObject* codes;
+        CodeObject* m_codes;
 
-        List* fast_local; // save parameters 
+        List* m_fast_local; // save parameters 
 
-        List* closure;
+        List* m_closure;
 
-        FrameObject* sender;
+        FrameObject* m_sender;
 
-        int pc;
+        int m_pc;
 
-        bool entry_frame;
+        bool m_entry_frame;
 
         friend class Interpreter;
 
@@ -66,6 +66,5 @@ namespace python
         String* file_name();
 
         String* func_name();
-
     };
 }

@@ -25,29 +25,29 @@ namespace python
 
     void Interpreter::push(Object* x)
     {
-        this->frame->stack->add(x);
+        this->m_frame->m_stack->add(x);
     }
 
     Object* Interpreter::pop()
     {
-        return this->frame->stack->pop();
+        return this->m_frame->m_stack->pop();
     }
 
     Object* Interpreter::top()
     {
-        return this->frame->stack->get(-1);
+        return this->m_frame->m_stack->get(-1);
     }
 
     std::pair<Object*, Object*> Interpreter::pop_top_two()
     {
-        auto w = this->frame->stack->pop();
-        auto v = this->frame->stack->pop();
+        auto w = this->m_frame->m_stack->pop();
+        auto v = this->m_frame->m_stack->pop();
         return { w, v };
     }
 
     int Interpreter::stack_level() const
     {
-        return this->frame->stack->size();
+        return this->m_frame->m_stack->size();
     }
 
     void Interpreter::build_frame(Object* callable, List* args, int op_arg)
@@ -64,8 +64,8 @@ namespace python
             {
                 args = new List(1);
             }
-            args->insert(0, method->owner);
-            this->build_frame(method->func, args, op_arg + 1);
+            args->insert(0, method->m_owner);
+            this->build_frame(method->m_func, args, op_arg + 1);
         }
         else if (callable->get_klass() == TypeKlass::get_instance())
         {
@@ -84,8 +84,8 @@ namespace python
             FrameObject* fo = new FrameObject((FunctionObject*)callable, args, op_arg);
 
             // Push front f to linklist
-            fo->sender = this->frame;
-            this->frame = fo;
+            fo->m_sender = this->m_frame;
+            this->m_frame = fo;
         }
         else
         {
@@ -109,17 +109,17 @@ namespace python
     void Interpreter::eval_frame()
     {
 
-        while (this->frame->has_more_codes())
+        while (this->m_frame->has_more_codes())
         {
-            // PYTHON_ASSERT(this->status == Status::IS_OK);
+            // PYTHON_ASSERT(this->m_status == Status::IS_OK);
 
-            unsigned char op_code = this->frame->get_op_code();
+            unsigned char op_code = this->m_frame->get_op_code();
             bool has_argument = (op_code & 0xFF) >= ByteCode::HAVE_ARGUMENT;
             int op_arg = -1;
 
             if (has_argument)
             {
-                op_arg = this->frame->get_op_arg();
+                op_arg = this->m_frame->get_op_arg();
             }
 
             // std::cout << "Evaluating: " << (int)op_code << '\n';
@@ -128,8 +128,8 @@ namespace python
             {
             case ByteCode::YIELD_VALUE:
             {
-                this->status = Status::IS_YIELD;
-                this->ret_value = this->top();
+                this->m_status = Status::IS_YIELD;
+                this->m_ret_value = this->top();
                 return;  // Directory return for `yield`
             }
             case ByteCode::STORE_MAP:
@@ -170,9 +170,9 @@ namespace python
                 if (!w)
                 {
                     // We throw StopIteration in `py__next__` or `next`.
-                    this->frame->pc += op_arg;
-                    this->status = Status::IS_OK;
-                    this->pending_exception = nullptr;
+                    this->m_frame->m_pc += op_arg;
+                    this->m_status = Status::IS_OK;
+                    this->m_pending_exception = nullptr;
                 }
                 else
                 {
@@ -198,12 +198,12 @@ namespace python
             }
             case ByteCode::LOAD_LOCALS:
             {
-                this->push(this->frame->locals);
+                this->push(this->m_frame->m_locals);
                 break;
             }
             case ByteCode::LOAD_CONST:
             {
-                auto c = this->frame->co_consts->get(op_arg);
+                auto c = this->m_frame->m_co_consts->get(op_arg);
                 this->push(c);
                 break;
             }
@@ -252,8 +252,8 @@ namespace python
             }
             case ByteCode::RETURN_VALUE:
             {
-                this->ret_value = this->pop();
-                this->status = Status::IS_RETURN;
+                this->m_ret_value = this->pop();
+                this->m_status = Status::IS_RETURN;
                 break;
             }
             case ByteCode::COMPARE_OP:
@@ -320,51 +320,51 @@ namespace python
             {
                 auto v = pop();
                 if (((Integer*)v)->value() == 1)
-                    this->frame->pc = op_arg;
+                    this->m_frame->m_pc = op_arg;
                 break;
             }
             case ByteCode::POP_JUMP_IF_FALSE:
             {
                 auto v = pop();
                 if (((Integer*)v)->value() == 0)
-                    this->frame->pc = op_arg;
+                    this->m_frame->m_pc = op_arg;
                 break;
             }
             case ByteCode::JUMP_FORWARD:
             {
-                this->frame->pc += op_arg;
+                this->m_frame->m_pc += op_arg;
                 break;
             }
             case ByteCode::JUMP_ABSOLUTE:
             {
-                this->frame->pc = op_arg;
+                this->m_frame->m_pc = op_arg;
                 break;
             }
             case ByteCode::STORE_NAME:
             {
-                auto v = this->frame->co_names->get(op_arg);
+                auto v = this->m_frame->m_co_names->get(op_arg);
                 auto t = this->pop();
-                this->frame->locals->put(v, t);
+                this->m_frame->m_locals->put(v, t);
                 break;
             }
             case ByteCode::LOAD_NAME:
             {
-                auto v = this->frame->co_names->get(op_arg);
-                auto w = this->frame->locals->get(v);
+                auto v = this->m_frame->m_co_names->get(op_arg);
+                auto w = this->m_frame->m_locals->get(v);
                 if (w != Universe::None)
                 {
                     this->push(w);
                     break;
                 }
 
-                w = this->frame->globals->get(v);
+                w = this->m_frame->m_globals->get(v);
                 if (w != Universe::None)
                 {
                     this->push(w);
                     break;
                 }
 
-                w = this->buildin->get(v);
+                w = this->m_buildin->get(v);
                 if (w != Universe::None)
                 {
                     this->push(w);
@@ -386,16 +386,16 @@ namespace python
             case ByteCode::SETUP_FINALLY:
             case ByteCode::SETUP_LOOP:
             {
-                this->frame->loop_stack->add(new Block{
+                this->m_frame->m_loop_stack->add(new Block{
                     .m_type = op_code,
-                    .m_target = this->frame->pc + op_arg,
+                    .m_target = this->m_frame->m_pc + op_arg,
                     .m_level = this->stack_level()
                     });
                 break;
             }
             case ByteCode::POP_BLOCK:
             {
-                auto b = this->frame->loop_stack->pop();
+                auto b = this->m_frame->m_loop_stack->pop();
                 while (this->stack_level() > b->m_level)
                 {
                     this->pop();
@@ -404,15 +404,15 @@ namespace python
             }
             case ByteCode::BREAK_LOOP:
             {
-                this->status = Status::IS_BREAK;
+                this->m_status = Status::IS_BREAK;
                 break;
             }
             case ByteCode::MAKE_CLOSURE:
             {
                 auto v = this->pop();
                 auto fo = new FunctionObject(v);
-                fo->closure = this->pop()->as<List>();
-                fo->globals = this->frame->globals;
+                fo->m_closure = this->pop()->as<List>();
+                fo->m_globals = this->m_frame->m_globals;
                 List* args = nullptr;
                 if (op_arg > 0)
                 {
@@ -423,7 +423,7 @@ namespace python
                     }
                     args->reverse();
                 }
-                fo->defaults = args;
+                fo->m_defaults = args;
                 this->push(fo);
                 break;
             }
@@ -431,7 +431,7 @@ namespace python
             {
                 auto v = this->pop();
                 auto fo = new FunctionObject(v);
-                fo->globals = this->frame->globals;
+                fo->m_globals = this->m_frame->m_globals;
 
                 List* args = nullptr;
 
@@ -443,7 +443,7 @@ namespace python
                         args->append(this->pop());
                     }
                     args->reverse();
-                    fo->defaults = args;
+                    fo->m_defaults = args;
                 }
                 this->push(fo);
                 break;
@@ -468,31 +468,31 @@ namespace python
             }
             case ByteCode::LOAD_FAST:
             {
-                this->push(this->frame->fast_local->get(op_arg));
+                this->push(this->m_frame->m_fast_local->get(op_arg));
                 break;
             }
             case ByteCode::STORE_FAST:
             {
-                if (op_arg >= this->frame->fast_local->size())
+                if (op_arg >= this->m_frame->m_fast_local->size())
                 {
-                    while (op_arg >= this->frame->fast_local->size())
+                    while (op_arg >= this->m_frame->m_fast_local->size())
                     {
-                        this->frame->fast_local->append(nullptr);
+                        this->m_frame->m_fast_local->append(nullptr);
                     }
                 }
-                this->frame->fast_local->set(op_arg, this->pop());
+                this->m_frame->m_fast_local->set(op_arg, this->pop());
                 break;
             }
             case ByteCode::LOAD_GLOBAL:
             {
-                auto v = this->frame->co_names->get(op_arg);
-                auto w = this->frame->globals->get(v);
+                auto v = this->m_frame->m_co_names->get(op_arg);
+                auto w = this->m_frame->m_globals->get(v);
                 if (w != Universe::None) {
                     this->push(w);
                     break;
                 }
 
-                w = this->buildin->get(v);
+                w = this->m_buildin->get(v);
                 if (w != Universe::None) {
                     this->push(w);
                     break;
@@ -510,7 +510,7 @@ namespace python
             case ByteCode::STORE_ATTR:
             {
                 auto u = this->pop();
-                auto v = this->frame->co_names->get(op_arg);
+                auto v = this->m_frame->m_co_names->get(op_arg);
                 auto w = this->pop();
                 u->py__setattr__(v, w);
                 break;
@@ -518,7 +518,7 @@ namespace python
             case ByteCode::LOAD_ATTR:
             {
                 auto v = this->pop();
-                auto w = this->frame->co_names->get(op_arg);
+                auto w = this->m_frame->m_co_names->get(op_arg);
                 auto attr = v->py__getattr__(w);
                 this->push(attr);
                 break;
@@ -530,12 +530,12 @@ namespace python
             }
             case ByteCode::STORE_DEREF:
             {
-                this->frame->closure->set(op_arg, this->pop());
+                this->m_frame->m_closure->set(op_arg, this->pop());
                 break;
             }
             case ByteCode::LOAD_DEREF:
             {
-                auto v = this->frame->closure->get(op_arg);
+                auto v = this->m_frame->m_closure->get(op_arg);
                 if (v->is<CellObject>()) 
                 {
                     v = v->as<CellObject>()->value();
@@ -545,11 +545,11 @@ namespace python
             }
             case ByteCode::LOAD_CLOSURE:
             {
-                auto v = this->frame->closure->get(op_arg);
+                auto v = this->m_frame->m_closure->get(op_arg);
                 if (!v)
                 {
-                    v = this->frame->get_cell_from_parameter(op_arg);
-                    this->frame->closure->set(op_arg, v);
+                    v = this->m_frame->get_cell_from_parameter(op_arg);
+                    this->m_frame->m_closure->set(op_arg, v);
                 }
                 if (v->is<CellObject>())
                 {
@@ -557,7 +557,7 @@ namespace python
                 }
                 else
                 {
-                    this->push(new CellObject(this->frame->closure, op_arg));
+                    this->push(new CellObject(this->m_frame->m_closure, op_arg));
                 }
                 break;
             }
@@ -575,8 +575,8 @@ namespace python
             }
             case ByteCode::CONTINUE_LOOP:
             {
-                this->status = Status::IS_CONTINUE;
-                this->ret_value = (Object*)((long long) op_arg);
+                this->m_status = Status::IS_CONTINUE;
+                this->m_ret_value = (Object*)((long long) op_arg);
                 break;
             }
             case ByteCode::END_FINALLY:
@@ -585,18 +585,18 @@ namespace python
                 auto v = this->pop();
                 if (((long long) v) & 0x1)
                 {
-                    this->status = (Status)(((long long)v) >> 1);
-                    if (this->status == Status::IS_RETURN)
-                        this->ret_value = this->pop();
-                    else if (this->status == Status::IS_CONTINUE)
-                        this->frame->pc = (int)((long long)this->pop());
+                    this->m_status = (Status)(((long long)v) >> 1);
+                    if (this->m_status == Status::IS_RETURN)
+                        this->m_ret_value = this->pop();
+                    else if (this->m_status == Status::IS_CONTINUE)
+                        this->m_frame->m_pc = (int)((long long)this->pop());
                 }
                 else if (v != Universe::None)
                 {
-                    this->exception_class = v;
-                    this->pending_exception = this->pop();
-                    this->trace_back = this->pop();
-                    this->status = Status::IS_EXCEPTION;
+                    this->m_exception_class = v;
+                    this->m_pending_exception = this->pop();
+                    this->m_trace_back = this->pop();
+                    this->m_status = Status::IS_EXCEPTION;
                 }
                 break;
             }
@@ -619,8 +619,8 @@ namespace python
             }
             case ByteCode::STORE_GLOBAL:
             {
-                auto v = this->frame->co_names->get(op_arg);
-                this->frame->globals->put(v, this->pop());
+                auto v = this->m_frame->m_co_names->get(op_arg);
+                this->m_frame->m_globals->put(v, this->pop());
                 break;
             }
             default:
@@ -632,75 +632,75 @@ namespace python
             // of all blocks. If a block is SETUP_FINALLY, jump to final statement
 
             // Something like exception, continue or break happened
-            while (this->status != Status::IS_OK && this->frame->loop_stack->size() != 0)
+            while (this->m_status != Status::IS_OK && this->m_frame->m_loop_stack->size() != 0)
             {
-                auto block = this->frame->loop_stack->get(this->frame->loop_stack->size() - 1);
+                auto block = this->m_frame->m_loop_stack->get(this->m_frame->m_loop_stack->size() - 1);
                 // Continue block
-                if (this->status == Status::IS_CONTINUE && block->m_type == ByteCode::SETUP_LOOP)
+                if (this->m_status == Status::IS_CONTINUE && block->m_type == ByteCode::SETUP_LOOP)
                 {
-                    this->frame->pc = (int) ((long long) this->ret_value);
-                    this->status = Status::IS_OK;
+                    this->m_frame->m_pc = (int) ((long long) this->m_ret_value);
+                    this->m_status = Status::IS_OK;
                     break;
                 }
 
-                block = this->frame->loop_stack->pop();
+                block = this->m_frame->m_loop_stack->pop();
                 while (this->stack_level() > block->m_level)
                 {
                     this->pop();
                 }
 
-                if (this->status == Status::IS_BREAK && block->m_type == ByteCode::SETUP_LOOP)
+                if (this->m_status == Status::IS_BREAK && block->m_type == ByteCode::SETUP_LOOP)
                 {
-                    this->frame->pc = block->m_target;
-                    this->status = Status::IS_OK;
+                    this->m_frame->m_pc = block->m_target;
+                    this->m_status = Status::IS_OK;
                 } 
                 else if (block->m_type == ByteCode::SETUP_FINALLY || 
-                         (this->status == Status::IS_EXCEPTION && block->m_type == ByteCode::SETUP_EXCEPT))
+                         (this->m_status == Status::IS_EXCEPTION && block->m_type == ByteCode::SETUP_EXCEPT))
                 {
-                    if (this->status == Status::IS_EXCEPTION)
+                    if (this->m_status == Status::IS_EXCEPTION)
                     {
                         // Traceback , value and exception class
-                        this->push(this->trace_back);
-                        this->push(this->pending_exception);
-                        this->push(this->exception_class);
+                        this->push(this->m_trace_back);
+                        this->push(this->m_pending_exception);
+                        this->push(this->m_exception_class);
 
-                        this->trace_back = nullptr;
-                        this->pending_exception = nullptr;
-                        this->exception_class = nullptr;
+                        this->m_trace_back = nullptr;
+                        this->m_pending_exception = nullptr;
+                        this->m_exception_class = nullptr;
                     }
                     else
                     {
-                        if (this->status == Status::IS_RETURN || this->status == Status::IS_CONTINUE)
+                        if (this->m_status == Status::IS_RETURN || this->m_status == Status::IS_CONTINUE)
                         {
-                            this->push(this->ret_value);
+                            this->push(this->m_ret_value);
                         }
                         // Use the last bit to mark this is not a pointer
-                        this->push((Object *) (((long) this->status << 1) | 0x1));
+                        this->push((Object *) (((long) this->m_status << 1) | 0x1));
                     }
 
-                    this->frame->pc = block->m_target;
-                    this->status = Status::IS_OK;
+                    this->m_frame->m_pc = block->m_target;
+                    this->m_status = Status::IS_OK;
 
                 }
             }
 
             // Has pending exception and no handler found, unwind stack.
             // The status should be IS_OK before handling final block.
-            if (this->status != Status::IS_OK && this->frame->loop_stack->size() == 0)
+            if (this->m_status != Status::IS_OK && this->m_frame->m_loop_stack->size() == 0)
             {
-                if (this->status == Status::IS_EXCEPTION)
+                if (this->m_status == Status::IS_EXCEPTION)
                 {
-                    this->ret_value = nullptr;
-                    this->trace_back->as<Traceback>()->record_frame(this->frame);
+                    this->m_ret_value = nullptr;
+                    this->m_trace_back->as<Traceback>()->record_frame(this->m_frame);
                 }
 
-                if (this->status == Status::IS_RETURN)
+                if (this->m_status == Status::IS_RETURN)
                 {
-                    this->status = Status::IS_OK;
+                    this->m_status = Status::IS_OK;
                 }
 
                 // In such case, we don not need to remove current frame.
-                if (this->frame->is_first_frame() || this->frame->is_entry_frame())
+                if (this->m_frame->is_first_frame() || this->m_frame->is_entry_frame())
                 {
                     return;
                 }
@@ -712,21 +712,21 @@ namespace python
 
     void Interpreter::destroy_frame()
     {
-        FrameObject* fo = this->frame;
-        this->frame = this->frame->sender;
+        FrameObject* fo = this->m_frame;
+        this->m_frame = this->m_frame->m_sender;
         delete fo;
     }
 
     void Interpreter::enter_frame(FrameObject* frame)
     {
-        frame->sender = this->frame;
-        this->frame = frame;
+        frame->m_sender = this->m_frame;
+        this->m_frame = frame;
     }
 
     Interpreter::Status Interpreter::do_raise(Object* exception_type, Object* exception_instance, Object* traceback)
     {
         PYTHON_ASSERT(exception_type && "exception_type should not be nullptr?");
-        this->status = Status::IS_EXCEPTION;
+        this->m_status = Status::IS_EXCEPTION;
         if (!traceback)
         {
             traceback = new Traceback();
@@ -734,23 +734,23 @@ namespace python
 
         if (exception_instance)
         {
-            this->exception_class = exception_type;
-            this->pending_exception = exception_instance;
-            this->trace_back = traceback;
+            this->m_exception_class = exception_type;
+            this->m_pending_exception = exception_instance;
+            this->m_trace_back = traceback;
             return Status::IS_EXCEPTION;
         }
 
         if (exception_type->get_klass() == TypeKlass::get_instance())
         {
-            this->pending_exception = this->call_virtual(exception_type, nullptr);
-            this->exception_class = exception_type;
+            this->m_pending_exception = this->call_virtual(exception_type, nullptr);
+            this->m_exception_class = exception_type;
         }
         else
         {
-            this->pending_exception = exception_type;
-            this->exception_class = this->pending_exception->get_klass()->get_type_object();
+            this->m_pending_exception = exception_type;
+            this->m_exception_class = this->m_pending_exception->get_klass()->get_type_object();
         }
-        this->trace_back = traceback;
+        this->m_trace_back = traceback;
         return Status::IS_EXCEPTION;
     }
 
@@ -766,44 +766,44 @@ namespace python
     void Interpreter::leave_frame()
     {
         this->destroy_frame();
-        this->push(this->ret_value);
+        this->push(this->m_ret_value);
     }
 
     Interpreter::Interpreter()
     {
 
-        this->buildin = new Dict();
+        this->m_buildin = new Dict();
 
         /* buildin variables */
-        this->buildin->put(new String("True"), Universe::True);
-        this->buildin->put(new String("False"), Universe::False);
-        this->buildin->put(new String("None"), Universe::None);
+        this->m_buildin->put(new String("True"), Universe::True);
+        this->m_buildin->put(new String("False"), Universe::False);
+        this->m_buildin->put(new String("None"), Universe::None);
 
         /* buildin functions */
-        this->buildin->put(new String("len"), new FunctionObject(native::len));
-        this->buildin->put(new String("isinstance"), new FunctionObject(native::isinstance));
-        this->buildin->put(new String("type"), new FunctionObject(native::type));
-        this->buildin->put(new String("hash"), new FunctionObject(native::hash));
-        this->buildin->put(new String("iter"), new FunctionObject(native::iter));
-        this->buildin->put(new String("next"), new FunctionObject(native::next));
-        this->buildin->put(new String("map"), new FunctionObject(native::map));
-        this->buildin->put(new String("filter"), new FunctionObject(native::filter));
-        this->buildin->put(new String("take"), new FunctionObject(native::take));
-        this->buildin->put(new String("drop"), new FunctionObject(native::drop));
+        this->m_buildin->put(new String("len"), new FunctionObject(native::len));
+        this->m_buildin->put(new String("isinstance"), new FunctionObject(native::isinstance));
+        this->m_buildin->put(new String("type"), new FunctionObject(native::type));
+        this->m_buildin->put(new String("hash"), new FunctionObject(native::hash));
+        this->m_buildin->put(new String("iter"), new FunctionObject(native::iter));
+        this->m_buildin->put(new String("next"), new FunctionObject(native::next));
+        this->m_buildin->put(new String("map"), new FunctionObject(native::map));
+        this->m_buildin->put(new String("filter"), new FunctionObject(native::filter));
+        this->m_buildin->put(new String("take"), new FunctionObject(native::take));
+        this->m_buildin->put(new String("drop"), new FunctionObject(native::drop));
 
         /* buildin types */
-        this->buildin->put(new String("int"), IntegerKlass::get_instance()->get_type_object());
-        this->buildin->put(new String("object"), ObjectKlass::get_instance()->get_type_object());
-        this->buildin->put(new String("str"), StringKlass::get_instance()->get_type_object());
-        this->buildin->put(new String("list"), ListKlass::get_instance()->get_type_object());
-        this->buildin->put(new String("dict"), DictKlass::get_instance()->get_type_object());
+        this->m_buildin->put(new String("int"), IntegerKlass::get_instance()->get_type_object());
+        this->m_buildin->put(new String("object"), ObjectKlass::get_instance()->get_type_object());
+        this->m_buildin->put(new String("str"), StringKlass::get_instance()->get_type_object());
+        this->m_buildin->put(new String("list"), ListKlass::get_instance()->get_type_object());
+        this->m_buildin->put(new String("dict"), DictKlass::get_instance()->get_type_object());
 
-        this->buildin->put(new String("BaseException"), BaseExceptionKlass::get_instance()->get_type_object());
-        this->buildin->put(new String("Exception"), ExceptionKlass::get_instance()->get_type_object());
-        this->buildin->put(new String("StopIteration"), StopIterationKlass::get_instance()->get_type_object());
+        this->m_buildin->put(new String("BaseException"), BaseExceptionKlass::get_instance()->get_type_object());
+        this->m_buildin->put(new String("Exception"), ExceptionKlass::get_instance()->get_type_object());
+        this->m_buildin->put(new String("StopIteration"), StopIterationKlass::get_instance()->get_type_object());
 
         // Not necessary
-        // this->buildin->put(new String("list_iterator"), ListIteratorKlass::get_instance()->get_type_object());
+        // this->m_buildin->put(new String("list_iterator"), ListIteratorKlass::get_instance()->get_type_object());
 
 
         // TESTING:
@@ -820,18 +820,18 @@ namespace python
             if (!args) {
                 args = new List(1);
             }
-            args->insert(0, method->owner);
-            return this->call_virtual(method->func, args);
+            args->insert(0, method->m_owner);
+            return this->call_virtual(method->m_func, args);
         }
         else if (MemberFunctionObject::is_function(func)) {
             int size = args ? args->size() : 0;
             FrameObject* frame = new FrameObject((FunctionObject*) func, args, size);
             // frame->set_entry_frame(true);
-            frame->entry_frame = true;
+            frame->m_entry_frame = true;
             this->enter_frame(frame);
             this->eval_frame();
             this->destroy_frame();
-            return this->ret_value;
+            return this->m_ret_value;
         }
 
         return Universe::None;
@@ -841,39 +841,39 @@ namespace python
     {
         // Eval frame of Generator
         this->enter_frame(g->m_frame);
-        g->m_frame->entry_frame = true;
+        g->m_frame->m_entry_frame = true;
         this->eval_frame();
 
-        if (this->status != Status::IS_YIELD)
+        if (this->m_status != Status::IS_YIELD)
         {
-            this->status = Status::IS_OK;
+            this->m_status = Status::IS_OK;
             this->leave_frame();
             g->m_frame = nullptr;
             return nullptr;
         }
 
-        this->status = Status::IS_OK;
-        this->frame = this->frame->sender;
+        this->m_status = Status::IS_OK;
+        this->m_frame = this->m_frame->m_sender;
         
-        return this->ret_value;
+        return this->m_ret_value;
     }
 
     void Interpreter::run(CodeObject* codes)
     {
-        this->frame = new FrameObject(codes);
-        this->frame->locals->put(StringTable::name, new String("__main__"));
+        this->m_frame = new FrameObject(codes);
+        this->m_frame->m_locals->put(StringTable::name, new String("__main__"));
         this->eval_frame();
 
-        if (this->status == Status::IS_EXCEPTION)
+        if (this->m_status == Status::IS_EXCEPTION)
         {
-            this->status = Status::IS_OK;
-            this->trace_back->print();
-            this->pending_exception->print();
+            this->m_status = Status::IS_OK;
+            this->m_trace_back->print();
+            this->m_pending_exception->print();
             std::cout << '\n';
 
-            this->trace_back = nullptr;
-            this->pending_exception = nullptr;
-            this->exception_class = nullptr;
+            this->m_trace_back = nullptr;
+            this->m_pending_exception = nullptr;
+            this->m_exception_class = nullptr;
         }
 
         this->destroy_frame();

@@ -58,19 +58,19 @@ namespace python
         friend class Interpreter;
         friend class MemberFunctionObject;
 
-        CodeObject* func_code;
+        CodeObject* m_func_code;
 
-        String* func_name;
+        String* m_func_name;
 
-        Dict* globals;  // global variable
+        Dict* m_globals;  // global variable
 
-        unsigned int flags;
+        unsigned int m_flags;
 
-        List* defaults; // default params
+        List* m_defaults; // default params
 
-        List* closure;
+        List* m_closure;
 
-        NativeFunctionPointer native_func;
+        NativeFunctionPointer m_native_func;
 
     public:
 
@@ -105,9 +105,9 @@ namespace python
         friend class MemberFunctionKlass;
         friend class Interpreter;
 
-        Object* owner;
+        Object* m_owner;
 
-        FunctionObject* func; // For member function, the first argument is object 
+        FunctionObject* m_func; // For member function, the first argument is object 
 
     public:
 
@@ -120,16 +120,15 @@ namespace python
         static bool is_function(Object* x);
 
         static bool is_yield_function(Object* x);
-
     };
 
     class CellObject : public Object
     {
         friend class CellKlass;
 
-        List* table;   // the closure that this cell belong to
+        List* m_table;   // the closure that this cell belong to
 
-        int index;         // cell location
+        int m_index;         // cell location
         
     public:
 

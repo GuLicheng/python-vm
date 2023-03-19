@@ -26,7 +26,7 @@ namespace python
         // PYTHON_ASSERT(fo && fo->is<FunctionObject>());
         PYTHON_ASSERT(fo);
 
-        fo->func_name->print();
+        fo->m_func_name->print();
 
         std::cout << ">";
 
@@ -36,61 +36,61 @@ namespace python
     {
         CodeObject* co = (CodeObject*)code_object;
 
-        this->func_code = co;
-        this->func_name = co->co_name;
-        this->flags = co->co_flags;
-        this->globals = nullptr;
-        this->native_func = nullptr;
-        this->defaults = nullptr;
-        this->closure = nullptr;
+        this->m_func_code = co;
+        this->m_func_name = co->co_name;
+        this->m_flags = co->co_flags;
+        this->m_globals = nullptr;
+        this->m_native_func = nullptr;
+        this->m_defaults = nullptr;
+        this->m_closure = nullptr;
 
         this->set_klass(FunctionKlass::get_instance());
     }
 
     FunctionObject::FunctionObject(Klass* klass)
     {
-        this->func_code = nullptr;
-        this->func_name = nullptr;
-        this->flags = 0;
-        this->globals = nullptr;
-        this->defaults = nullptr;
-        this->native_func = nullptr;
-        this->closure = nullptr;
+        this->m_func_code = nullptr;
+        this->m_func_name = nullptr;
+        this->m_flags = 0;
+        this->m_globals = nullptr;
+        this->m_defaults = nullptr;
+        this->m_native_func = nullptr;
+        this->m_closure = nullptr;
 
         this->set_klass(klass);
     }
 
     FunctionObject::FunctionObject(NativeFunctionPointer nfp)
     {
-        this->func_code = nullptr;
-        this->func_name = nullptr;
-        this->flags = 0;
-        this->globals = nullptr;
-        this->native_func = nfp;
-        this->defaults = nullptr;
-        this->closure = nullptr;
+        this->m_func_code = nullptr;
+        this->m_func_name = nullptr;
+        this->m_flags = 0;
+        this->m_globals = nullptr;
+        this->m_native_func = nfp;
+        this->m_defaults = nullptr;
+        this->m_closure = nullptr;
 
         this->set_klass(NativeFunctionKlass::get_instance());
     }
 
     Object* FunctionObject::call(List* args)
     {
-        return std::invoke(this->native_func, args);
+        return std::invoke(this->m_native_func, args);
     }
 
     void FunctionObject::print()
     {
         std::cout << "FunctionObject";
-        if (this->func_name)
-            std::cout << " Name is " << this->func_name->value();
+        if (this->m_func_name)
+            std::cout << " Name is " << this->m_func_name->value();
     }
 
     FunctionObject* FunctionObject::make_builtin_function(std::string_view fname, unsigned int fflag, List* default_params, NativeFunctionPointer ffunc)
     {
         auto f = new FunctionObject(ffunc);
-        f->func_name = new String(fname.data(), fname.size());
-        f->defaults = default_params;
-        f->flags = fflag;
+        f->m_func_name = new String(fname.data(), fname.size());
+        f->m_defaults = default_params;
+        f->m_flags = fflag;
         return f;
     }
 
@@ -104,12 +104,12 @@ namespace python
         std::cout << "MemberFunction";
     }
 
-    MemberFunctionObject::MemberFunctionObject(FunctionObject* func) : owner(nullptr), func(func)
+    MemberFunctionObject::MemberFunctionObject(FunctionObject* func) : m_owner(nullptr), m_func(func)
     {
         this->set_klass(MemberFunctionKlass::get_instance());
     }
 
-    MemberFunctionObject::MemberFunctionObject(FunctionObject* func, Object* owner) : owner(owner), func(func)
+    MemberFunctionObject::MemberFunctionObject(FunctionObject* func, Object* owner) : m_owner(owner), m_func(func)
     {
         this->set_klass(MemberFunctionKlass::get_instance());
     }
@@ -139,19 +139,19 @@ namespace python
         if (x->get_klass() != FunctionKlass::get_instance())
             return false;
         
-        return (x->as<FunctionObject>()->flags & FunctionObject::CO_GENERATOR) != 0;
+        return (x->as<FunctionObject>()->m_flags & FunctionObject::CO_GENERATOR) != 0;
     }
 
     CellObject::CellObject(List *ls, int i)
     {
-        this->table = ls;
-        this->index = i;
+        this->m_table = ls;
+        this->m_index = i;
         this->set_klass(CellKlass::get_instance());
     }
 
-    Object *CellObject::value()
+    Object* CellObject::value()
     {
-        return this->table->get(this->index);
+        return this->m_table->get(this->m_index);
     }
 
     CellKlass::CellKlass()
@@ -175,5 +175,4 @@ namespace python
         if (this->m_name)
             std::cout << " Name is " << this->m_name;
     }
-
 }
