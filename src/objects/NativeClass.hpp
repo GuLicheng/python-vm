@@ -14,7 +14,6 @@
 
 namespace python
 {
-
     Dict* get_exception_constructor();
 
     CreateExceptionClass(BaseException, Object);
@@ -24,7 +23,6 @@ namespace python
     CreateExceptionClass(StopIteration, Exception);
 
     CreateExceptionClass(AssertionError, Exception);
-
 } 
 
 #undef CreateExceptionClass

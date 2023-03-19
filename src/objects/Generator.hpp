@@ -20,7 +20,6 @@ namespace python
         virtual Object* py__next__(Object* self) override;
 
         virtual std::size_t size() override;
-
     };  
     
     class Generator : public Object
@@ -38,7 +37,6 @@ namespace python
         Generator(FunctionObject* func, List* args, int arg_cnt);
 
         void set_frame(FrameObject* frame);
-
     };
 }
 

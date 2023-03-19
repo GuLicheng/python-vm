@@ -5,7 +5,6 @@
 
 namespace python
 {
-
     class FloatKlass : public Klass, public Singleton<FloatKlass>
     {
     public:
@@ -36,7 +35,6 @@ namespace python
         virtual Object* py__hash__(Object* self) override;
         virtual Object* py__deepcopy__(Object* self) override;
         virtual Object* py__str__(Object* self) override;
-    
     };
 
     class Float : public Object
@@ -56,8 +54,6 @@ namespace python
             std::cout << m_value;
         }
     };
-
-
 }
 /*
 ['__repr__',

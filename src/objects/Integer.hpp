@@ -36,7 +36,6 @@ namespace python
         virtual Object* py__hash__(Object* self) override;
         virtual Object* py__deepcopy__(Object* self) override;
         virtual Object* py__str__(Object* self) override;
-
     };
 
     class Integer : public Object
@@ -52,9 +51,7 @@ namespace python
         int64_t value() const;
 
         virtual void show() override { std::cout << m_value; }
-
     };
-
 }
 /*
 ['__repr__',

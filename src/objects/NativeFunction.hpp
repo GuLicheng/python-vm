@@ -34,7 +34,6 @@ namespace python::native
     Object* take(List* args);
 
     Object* drop(List* args);
-
 }
 
 namespace python
@@ -58,5 +57,4 @@ namespace python
     };
 
     void add_magic(Dict* dict, std::initializer_list<MagicID> magic_ids);
-
 } 

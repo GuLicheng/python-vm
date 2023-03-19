@@ -21,8 +21,7 @@ namespace python
 
         FunctionKlass();
 
-        virtual void print(Object* object) override;
-
+        virtual void print(Object* self) override;
     };
 
     class NativeFunctionKlass : public Klass, public Singleton<NativeFunctionKlass>
@@ -31,8 +30,7 @@ namespace python
 
         NativeFunctionKlass();
 
-        virtual void print(Object* object) override;
-
+        virtual void print(Object* self) override;
     };
 
     class CellKlass : public Klass, public Singleton<CellKlass>
@@ -41,8 +39,7 @@ namespace python
 
         CellKlass();
 
-        virtual void print(Object* object) override;
-
+        virtual void print(Object* self) override;
     };
 
     class MemberFunctionKlass : public Klass, public Singleton<MemberFunctionKlass>
@@ -51,8 +48,7 @@ namespace python
 
         MemberFunctionKlass();
 
-        virtual void print(Object* object) override;
-        
+        virtual void print(Object* self) override;
     };
 
     class FunctionObject : public Object
@@ -102,7 +98,6 @@ namespace python
         virtual void print();
 
         static FunctionObject* make_builtin_function(std::string_view fname, unsigned int fflag, List* default_params, NativeFunctionPointer ffunc); 
-
     };
 
     class MemberFunctionObject : public Object
@@ -143,7 +138,5 @@ namespace python
         CellObject(List* ls, int i);
 
         Object* value();
-    
     };
-
 }

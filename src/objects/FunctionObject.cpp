@@ -17,11 +17,11 @@ namespace python
         this->build_klass("function", ObjectKlass::get_instance(), new Dict());
     }
 
-    void FunctionKlass::print(Object* obj)
+    void FunctionKlass::print(Object* self)
     {
         std::cout << "<Function: ";
 
-        FunctionObject* fo = (FunctionObject*)obj;
+        FunctionObject* fo = (FunctionObject*)self;
 
         // PYTHON_ASSERT(fo && fo->is<FunctionObject>());
         PYTHON_ASSERT(fo);
@@ -99,7 +99,7 @@ namespace python
         this->build_klass("method", FunctionKlass::get_instance(), new Dict());
     }
 
-    void MemberFunctionKlass::print(Object* object)
+    void MemberFunctionKlass::print(Object* self)
     {
         std::cout << "MemberFunction";
     }
@@ -159,7 +159,7 @@ namespace python
         this->build_klass("cell", ObjectKlass::get_instance(), nullptr);
     }
 
-    void CellKlass::print(Object* object)
+    void CellKlass::print(Object* self)
     {
         std::cout << "CellObject";
     }
@@ -169,7 +169,7 @@ namespace python
         this->build_klass("native_function", FunctionKlass::get_instance(), new Dict());
     }
 
-    void NativeFunctionKlass::print(Object* object)
+    void NativeFunctionKlass::print(Object* self)
     {
         std::cout << "NativeFunctionObject";
         if (this->m_name)

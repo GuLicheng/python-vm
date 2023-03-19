@@ -14,7 +14,6 @@ namespace python
         void initialize();
 
         virtual size_t size() override;
-    
     };
 
     class ModuleObject : public Object
@@ -36,7 +35,6 @@ namespace python
         Object* get(Object* key);
 
         void extend(ModuleObject* module_obj);
-
     };
 
 } // namespace python

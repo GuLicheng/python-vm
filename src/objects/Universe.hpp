@@ -31,8 +31,5 @@ namespace python
         static void genesis();
 
         static void destroy();
-
     };
-
-
 }

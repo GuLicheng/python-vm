@@ -32,7 +32,6 @@ namespace python
         virtual Object* py__gt__(Object* self, Object* other) override;
         virtual Object* py__le__(Object* self, Object* other) override;
         virtual Object* py__ge__(Object* self, Object* other) override;
-
     };
 
     class String : public Object
@@ -60,9 +59,7 @@ namespace python
         }
 
         std::string_view sv() const;
-
     };
-
 }
 
 namespace python::native

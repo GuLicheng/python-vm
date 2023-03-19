@@ -157,7 +157,5 @@ namespace python
         // virtual void oops_do(class Closure*);
 
         // void* operator new(std::size_t);
-
     };
-
 }

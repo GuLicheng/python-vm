@@ -14,11 +14,6 @@ namespace python
         Logger(const char* filename) : fout(filename, std::ios_base::binary | std::ios_base::out)
         {
         }
-
-        
-
-
     };
-
 } // namespace python
 
