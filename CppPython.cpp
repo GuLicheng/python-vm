@@ -28,11 +28,12 @@ void python_main()
         R"(../../test\test_iterator.pyc)",
         R"(../../test\test_generator.pyc)", // 12
         R"(../../test\test_builtin.pyc)", 
+        R"(../../test\test_super.pyc)", 
         R"(D:\code\CppPython\test\test.pyc)",
     };
 
     // const char* file = files[10];
-    const char* file = files[8];
+    const char* file = files[14];
     auto stream = BufferedInputStream(file);
 
     std::fstream log { "a.txt" };

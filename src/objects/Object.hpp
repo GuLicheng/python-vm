@@ -35,6 +35,8 @@ namespace python
 
         void init_dict();
 
+        void merge_obj_dict(Object* object);
+
         virtual void show() { std::cout << "Object(None?)"; };
 
         Klass* get_klass()  

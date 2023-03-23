@@ -16,6 +16,7 @@
 #include "../objects/Object.hpp"
 #include "../objects/TypeObject.hpp"
 #include "../objects/NativeClass.hpp"
+#include "../objects/Super.hpp"
 #include "Traceback.hpp"
 
 #include <algorithm>
@@ -797,6 +798,7 @@ namespace python
         this->m_buildin->put(new String("str"), StringKlass::get_instance()->get_type_object());
         this->m_buildin->put(new String("list"), ListKlass::get_instance()->get_type_object());
         this->m_buildin->put(new String("dict"), DictKlass::get_instance()->get_type_object());
+        this->m_buildin->put(new String("super"), SuperKlass::get_instance()->get_type_object());
 
         this->m_buildin->put(new String("BaseException"), BaseExceptionKlass::get_instance()->get_type_object());
         this->m_buildin->put(new String("Exception"), ExceptionKlass::get_instance()->get_type_object());

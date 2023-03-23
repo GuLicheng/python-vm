@@ -20,6 +20,7 @@ namespace python
         friend class TypeKlass;
         friend class MemberFunctionObject;
         friend class Object;
+        friend class SuperKlass;
 
     protected:
 

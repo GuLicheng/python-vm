@@ -12,6 +12,19 @@ namespace python
         this->m_obj_dict = new Dict();
     }
 
+    void Object::merge_obj_dict(Object* object)
+    {
+        auto dict = object->m_obj_dict; 
+        if (!this->m_obj_dict)
+        {
+            this->m_obj_dict = dict;
+        }
+        else
+        {
+            this->m_obj_dict->value().merge(dict->value());
+        }
+    }
+
     void Object::print()
     {
         // std::cout << "name = " << this->m_klass->get_name()->value() << '\n';

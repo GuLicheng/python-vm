@@ -8,7 +8,9 @@ namespace python
     {
     public:
 
-        // virtual Object* py__repr__(Object* self) override;
+        BooleanKlass();
+
+        virtual Object* py__repr__(Object* self) override;
 
         // virtual Object* py__and__(Object* self, Object* other) override;
 
@@ -25,18 +27,19 @@ namespace python
         // virtual Object* py__new__(Object* self, Object* other) override;
 
         // virtual Object* py__doc__(Object* self, Object* other) override;
-
     };
 
     class Boolean : public Object
     {
+        friend class BooleanKlass;
+
         bool m_value;
 
     public:
 
-        using KlassType = BooleanKlass;
-
         Boolean(bool value);
+
+        using KlassType = BooleanKlass;
     };
 }
 
