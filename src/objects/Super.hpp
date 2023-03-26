@@ -11,6 +11,8 @@ namespace python
         SuperKlass();
 
         virtual Object* allocate_instance(Object* callable, List* args) override;
+
+        virtual void mark_self_and_children(Object* self) override;
     };
 
     class SuperObject : public Object

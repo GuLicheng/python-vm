@@ -7,7 +7,8 @@
 #include "Universe.hpp"
 #include "List.hpp"
 
-#include <unordered_map>
+// #include <unordered_map>
+#include "../collections/HashTable.hpp"
 
 namespace python
 {
@@ -34,13 +35,12 @@ namespace python
         };
     }
 
-    using PythonObjectDictionary = std::unordered_map<
+    using PythonObjectDictionary = HashMap<
         Object*,
         Object*,
         detail::ObjectKeyEqual,
         detail::ObjectKeyEqual
     >;
-
 
     class DictKlass : public Klass, public Singleton<DictKlass>
     {
@@ -61,6 +61,8 @@ namespace python
         virtual Object* py__iter__(Object* self) override;
 
         virtual void print(Object* self) override;
+
+        virtual void mark_self_and_children(Object* self) override;
         
     };
 

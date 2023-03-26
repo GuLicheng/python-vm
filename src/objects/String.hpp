@@ -32,6 +32,8 @@ namespace python
         virtual Object* py__gt__(Object* self, Object* other) override;
         virtual Object* py__le__(Object* self, Object* other) override;
         virtual Object* py__ge__(Object* self, Object* other) override;
+
+        virtual void mark_self_and_children(Object* self) override;
     };
 
     class String : public Object
@@ -52,11 +54,6 @@ namespace python
         const std::string& value() const;
 
         int length() const;
-
-        void show() override
-        {
-            std::cout << m_value;
-        }
 
         std::string_view sv() const;
     };

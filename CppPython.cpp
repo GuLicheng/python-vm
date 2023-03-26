@@ -1,5 +1,6 @@
 #include "src/reader/BufferedInputStream.hpp"
-#include "src/reader/BinaryFileParser.hpp"
+// #include "src/reader/BinaryFileParser.hpp"
+#include "src/reader/BinaryFileReader.hpp"
 #include "src/runtime/Interpreter.hpp"
 #include "src/objects/Universe.hpp"
 
@@ -29,19 +30,16 @@ void python_main()
         R"(../../test\test_generator.pyc)", // 12
         R"(../../test\test_builtin.pyc)", 
         R"(../../test\test_super.pyc)", 
-        R"(D:\code\CppPython\test\test.pyc)",
+        R"(../../test\test_slice.pyc)",   
+        R"(D:\code\CppPython\test\test.pyc)", // 16
     };
 
     // const char* file = files[10];
-    const char* file = files[14];
-    auto stream = BufferedInputStream(file);
+    const char* file = files[16];
 
-    std::fstream log { "a.txt" };
-
-    log << stream << '\n';
-
-    auto parser = BinaryFileParser(&stream);
-    auto codeobj = parser.parse();
+    // auto parser = BinaryFileParser(&stream);
+    auto parser = BinaryFileReader();
+    auto codeobj = parser.parse(file);
 
     std::cout << "==================Start running code==================\n";
     auto interpreter = Interpreter::get_instance();
@@ -49,9 +47,9 @@ void python_main()
 
     std::cout << "==================End running code==================\n";
 
-    std::ranges::for_each(Universe::klasses, [=](python::Klass* klass) {
-        klass->show_klass_info();
-    });
+    // std::ranges::for_each(Universe::klasses, [=](python::Klass* klass) {
+    //     klass->show_klass_info();
+    // });
 
 }
 

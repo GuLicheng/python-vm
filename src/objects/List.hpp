@@ -3,13 +3,14 @@
 #include "Object.hpp"
 #include "Klass.hpp"
 #include "Singleton.hpp"
+#include "../collections/Vector.hpp"
 
 #include <array>
 #include <vector>
 
 namespace python
 {
-    using PythonList = std::vector<Object*>;
+    using PythonList = Vector<Object*>;
 
     class ListKlass : public Klass, public Singleton<ListKlass>
     {
@@ -44,6 +45,8 @@ namespace python
         virtual Object* py__hash__(Object* self) override;
 
         // virtual Object* py__str__(Object* self) override;
+
+        virtual void mark_self_and_children(Object* self) override;
     };
 
     class List : public Object

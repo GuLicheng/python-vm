@@ -6,7 +6,9 @@ namespace python
 
     // https://github.com/python/cpython/blob/d48ecebad5ac78a1783e09b0d32c211d9754edf4/Include/opcode.h
     // https://gitee.com/hinus/pythonvm/blob/master/src/code/bytecode.hpp
-    class ByteCode {
+    // https://blog.csdn.net/lxlmycsdnfree/article/details/78694474
+    class ByteCode 
+    {
     public:
         // Define org.railgun.vm.Bytecode Operator Code
         static const unsigned char POP_TOP = 1;
@@ -20,6 +22,22 @@ namespace python
         static const unsigned char BINARY_DIVIDE = 21;
         static const unsigned char BINARY_ADD = 23;
         static const unsigned char BINARY_SUBTRACT = 24;
+
+        // Python3 use BUILD_SLICE
+        static const unsigned char SLICE0 = 30;
+        static const unsigned char SLICE1 = 31;
+        static const unsigned char SLICE2 = 32;
+        static const unsigned char SLICE3 = 33;
+
+        static const unsigned char STORE_SLICE0 = 40;
+        static const unsigned char STORE_SLICE1 = 41;
+        static const unsigned char STORE_SLICE2 = 42;
+        static const unsigned char STORE_SLICE3 = 43;
+
+        static const unsigned char DELETE_SLICE0 = 50;
+        static const unsigned char DELETE_SLICE1 = 51;
+        static const unsigned char DELETE_SLICE2 = 52;
+        static const unsigned char DELETE_SLICE3 = 53;
 
         static const unsigned char INPLACE_ADD = 55;
         static const unsigned char STORE_MAP = 54;

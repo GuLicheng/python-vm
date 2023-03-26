@@ -26,7 +26,7 @@ namespace python
 
     void Interpreter::push(Object* x)
     {
-        this->m_frame->m_stack->add(x);
+        this->m_frame->m_stack->append(x);
     }
 
     Object* Interpreter::pop()
@@ -387,7 +387,8 @@ namespace python
             case ByteCode::SETUP_FINALLY:
             case ByteCode::SETUP_LOOP:
             {
-                this->m_frame->m_loop_stack->add(new Block{
+                // this->m_frame->m_loop_stack->add(new Block{
+                this->m_frame->m_loop_stack.emplace_back(new Block{
                     .m_type = op_code,
                     .m_target = this->m_frame->m_pc + op_arg,
                     .m_level = this->stack_level()
@@ -396,7 +397,9 @@ namespace python
             }
             case ByteCode::POP_BLOCK:
             {
-                auto b = this->m_frame->m_loop_stack->pop();
+                // auto b = this->m_frame->m_loop_stack->pop();
+                auto b = this->m_frame->m_loop_stack.back();
+                this->m_frame->m_loop_stack.pop_back();
                 while (this->stack_level() > b->m_level)
                 {
                     this->pop();
@@ -633,9 +636,11 @@ namespace python
             // of all blocks. If a block is SETUP_FINALLY, jump to final statement
 
             // Something like exception, continue or break happened
-            while (this->m_status != Status::IS_OK && this->m_frame->m_loop_stack->size() != 0)
+            // while (this->m_status != Status::IS_OK && this->m_frame->m_loop_stack->size() != 0)
+            while (this->m_status != Status::IS_OK && this->m_frame->m_loop_stack.size() != 0)
             {
-                auto block = this->m_frame->m_loop_stack->get(this->m_frame->m_loop_stack->size() - 1);
+                // auto block = this->m_frame->m_loop_stack->get(this->m_frame->m_loop_stack->size() - 1);
+                auto block = this->m_frame->m_loop_stack.back();
                 // Continue block
                 if (this->m_status == Status::IS_CONTINUE && block->m_type == ByteCode::SETUP_LOOP)
                 {
@@ -644,7 +649,10 @@ namespace python
                     break;
                 }
 
-                block = this->m_frame->m_loop_stack->pop();
+                // block = this->m_frame->m_loop_stack->pop();
+                block = this->m_frame->m_loop_stack.back();
+                this->m_frame->m_loop_stack.pop_back();
+
                 while (this->stack_level() > block->m_level)
                 {
                     this->pop();
@@ -687,7 +695,8 @@ namespace python
 
             // Has pending exception and no handler found, unwind stack.
             // The status should be IS_OK before handling final block.
-            if (this->m_status != Status::IS_OK && this->m_frame->m_loop_stack->size() == 0)
+            // if (this->m_status != Status::IS_OK && this->m_frame->m_loop_stack->size() == 0)
+            if (this->m_status != Status::IS_OK && this->m_frame->m_loop_stack.size() == 0)
             {
                 if (this->m_status == Status::IS_EXCEPTION)
                 {
@@ -713,6 +722,7 @@ namespace python
 
     void Interpreter::destroy_frame()
     {
+        static_assert(!std::is_polymorphic_v<FrameObject>);
         FrameObject* fo = this->m_frame;
         this->m_frame = this->m_frame->m_sender;
         delete fo;

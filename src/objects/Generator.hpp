@@ -20,6 +20,8 @@ namespace python
         virtual Object* py__next__(Object* self) override;
 
         virtual std::size_t size() override;
+
+        virtual void mark_self_and_children(Object* self) override;
     };  
     
     class Generator : public Object

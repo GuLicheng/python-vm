@@ -35,6 +35,8 @@ namespace python
         virtual Object* py__hash__(Object* self) override;
         virtual Object* py__deepcopy__(Object* self) override;
         virtual Object* py__str__(Object* self) override;
+
+        virtual void mark_self_and_children(Object* self) override;
     };
 
     class Float : public Object
@@ -48,11 +50,6 @@ namespace python
         Float(double value);
 
         double value() const;
-
-        virtual void show() override
-        {
-            std::cout << m_value;
-        }
     };
 }
 /*

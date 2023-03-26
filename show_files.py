@@ -49,14 +49,14 @@ def show_hex(label, h, indent):
             print("%s   %s" % (indent, h[i:i+60]))
         print("%s</%s>" % (indent, label))
  
-# show_file(sys.argv[1])
+show_file(sys.argv[1])
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser()
+#     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--src", type=str, default=r"D:\code\CppPython\scripts\test.py")
+#     parser.add_argument("--src", type=str, default=r"D:\code\CppPython\scripts\test.py")
 
-    args = parser.parse_args()
+#     args = parser.parse_args()
 
-    show_file(args)
+#     show_file(args)

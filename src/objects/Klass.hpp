@@ -61,6 +61,12 @@ namespace python
 
         static int compare_klass(Klass* x, Klass* y);
 
+        template <typename... Ts>
+        static void mark_all(Ts... ts)
+        {
+            ((ts->mark_self_and_children()), ...);
+        }
+
         void show_klass_info();
 
         // Super
@@ -158,5 +164,6 @@ namespace python
         // virtual void oops_do(class Closure*);
 
         // void* operator new(std::size_t);
+        virtual void mark_self_and_children(Object* self);
     };
 }

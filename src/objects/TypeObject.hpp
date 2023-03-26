@@ -20,6 +20,8 @@ namespace python
         virtual void print(Object* self) override;
 
         virtual Object* py__setattr__(Object* self, Object* key, Object* value) override;
+
+        virtual void mark_self_and_children(Object* self) override;
     };
 
     class TypeObject : public Object

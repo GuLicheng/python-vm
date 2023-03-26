@@ -118,6 +118,11 @@ namespace python
         return detail::binary_relation_operation<String>(std::greater_equal<>(), self, other);
     }
 
+    void StringKlass::mark_self_and_children(Object* self)
+    {
+        self->mark();
+    }
+
     Object* StringKlass::py__add__(Object* self, Object* other)
     {
         return detail::binary_arith_operation<String>(std::plus<>(), self, other);

@@ -142,6 +142,20 @@ namespace python
             std::cout << ' ';
         }
     }
+
+    void DictKlass::mark_self_and_children(Object* self)
+    {
+        Dict* dict = self->as<Dict>();
+        if (dict->is_marked())
+            return;
+            
+        dict->mark();
+        for (auto& [k, v] : dict->m_dict)
+        {
+            k->mark_self_and_children();
+            v->mark_self_and_children();
+        }
+    }
 }
 
 namespace python::native

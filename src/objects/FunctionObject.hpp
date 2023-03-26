@@ -22,6 +22,8 @@ namespace python
         FunctionKlass();
 
         virtual void print(Object* self) override;
+
+        virtual void mark_self_and_children(Object* self) override;
     };
 
     class NativeFunctionKlass : public Klass, public Singleton<NativeFunctionKlass>
@@ -31,6 +33,8 @@ namespace python
         NativeFunctionKlass();
 
         virtual void print(Object* self) override;
+
+        virtual void mark_self_and_children(Object* self) override;
     };
 
     class CellKlass : public Klass, public Singleton<CellKlass>
@@ -40,6 +44,8 @@ namespace python
         CellKlass();
 
         virtual void print(Object* self) override;
+
+        virtual void mark_self_and_children(Object* self) override;
     };
 
     class MemberFunctionKlass : public Klass, public Singleton<MemberFunctionKlass>
@@ -49,11 +55,14 @@ namespace python
         MemberFunctionKlass();
 
         virtual void print(Object* self) override;
+
+        virtual void mark_self_and_children(Object* self) override;
     };
 
     class FunctionObject : public Object
     {
         friend class FunctionKlass;
+        friend class NativeFunctionKlass;
         friend class FrameObject;
         friend class Interpreter;
         friend class MemberFunctionObject;

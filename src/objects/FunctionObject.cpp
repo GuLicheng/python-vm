@@ -31,14 +31,30 @@ namespace python
         std::cout << ">";
 
     }
+
+    void FunctionKlass::mark_self_and_children(Object* self)
+    {
+        FunctionObject* fo = self->as<FunctionObject>();
+        if (fo->is_marked())
+            return;
+
+        fo->mark();
+        Klass::mark_all(
+            fo->m_func_code,
+            fo->m_func_name,
+            fo->m_globals,
+            fo->m_defaults,
+            fo->m_closure
+        );
+    }
     
     FunctionObject::FunctionObject(Object* code_object)
     {
         CodeObject* co = (CodeObject*)code_object;
 
         this->m_func_code = co;
-        this->m_func_name = co->co_name;
-        this->m_flags = co->co_flags;
+        this->m_func_name = co->m_name;
+        this->m_flags = co->m_flags;
         this->m_globals = nullptr;
         this->m_native_func = nullptr;
         this->m_defaults = nullptr;
@@ -104,6 +120,18 @@ namespace python
         std::cout << "MemberFunction";
     }
 
+    void MemberFunctionKlass::mark_self_and_children(Object* self)
+    {
+        MemberFunctionObject* mfo = self->as<MemberFunctionObject>();
+
+        if (mfo->is_marked())
+            return;
+
+        mfo->mark();
+        mfo->m_func->mark_self_and_children();
+        mfo->m_owner->mark_self_and_children();
+    }
+
     MemberFunctionObject::MemberFunctionObject(FunctionObject* func) : m_owner(nullptr), m_func(func)
     {
         this->set_klass(MemberFunctionKlass::get_instance());
@@ -164,6 +192,17 @@ namespace python
         std::cout << "CellObject";
     }
 
+    void CellKlass::mark_self_and_children(Object* self)
+    {
+        CellObject* cell = self->as<CellObject>();
+        
+        if (cell->is_marked())
+            return;
+
+        cell->mark();
+        cell->m_table->mark_self_and_children();
+    }
+
     NativeFunctionKlass::NativeFunctionKlass()
     {
         this->build_klass("native_function", FunctionKlass::get_instance(), new Dict());
@@ -174,5 +213,21 @@ namespace python
         std::cout << "NativeFunctionObject";
         if (this->m_name)
             std::cout << " Name is " << this->m_name;
+    }
+    
+    void NativeFunctionKlass::mark_self_and_children(Object* self)
+    {
+        FunctionObject* fo = self->as<FunctionObject>();
+        if (fo->is_marked())
+            return;
+
+        fo->mark();
+        Klass::mark_all(
+            fo->m_func_code,
+            fo->m_func_name,
+            fo->m_globals,
+            fo->m_defaults,
+            fo->m_closure
+        );
     }
 }

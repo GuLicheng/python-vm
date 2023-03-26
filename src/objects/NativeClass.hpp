@@ -10,6 +10,7 @@
         { \
             this->build_klass(#class_name , base_class_name##Klass :: get_instance(), get_exception_constructor());  \
         } \
+        virtual void mark_self_and_children(Object* self) override { self->mark(); } \
     }
 
 namespace python

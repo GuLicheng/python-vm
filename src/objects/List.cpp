@@ -247,6 +247,18 @@ namespace python
         return nullptr;
     }
 
+    void ListKlass::mark_self_and_children(Object* self)
+    {
+        if (self->is_marked())
+            return;
+
+        List* ls = self->as<List>();
+        ls->mark();
+        for (auto p : ls->m_inner_list)
+        {
+            p->mark_self_and_children();
+        }
+    }
 }
 
 namespace python::native

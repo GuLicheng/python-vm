@@ -39,6 +39,11 @@ namespace python
         return Universe::None;
     }
 
+    void TypeKlass::mark_self_and_children(Object* self)
+    {
+        self->mark();
+    }
+
     TypeObject::TypeObject()
     {
         this->set_klass(TypeKlass::get_instance());

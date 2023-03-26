@@ -15,15 +15,28 @@ namespace python
         int m_level;              // Block depth
     };
 
-    class FrameObject
+    class FrameObjectKlass : public Klass, public Singleton<FrameObjectKlass>
     {
-        ArrayList<Object*>* m_stack;
+    public:
 
-        ArrayList<Block*>* m_loop_stack;
+        FrameObjectKlass();
 
-        ArrayList<Object*>* m_co_consts;
+        virtual void mark_self_and_children(Object* self) override;
+    };
 
-        ArrayList<Object*>* m_co_names;
+    class FrameObject : public Object
+    {
+        friend class FrameObjectKlass;
+        
+        List* m_stack;
+
+        // ArrayList<Block*>* m_loop_stack;
+
+        Vector<Block*> m_loop_stack;
+
+        List* m_co_consts;
+
+        List* m_co_names;
 
         Dict* m_locals;
 

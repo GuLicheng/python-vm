@@ -126,6 +126,11 @@ namespace python
         PYTHON_ASSERT(self && self->is<Float>());
         return new String(std::to_string(self->as<Float>()->value()));
     }
+
+    void FloatKlass::mark_self_and_children(Object* self)
+    {
+        self->mark();
+    }
 }
 
 /*

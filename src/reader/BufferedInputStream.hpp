@@ -1,46 +1,46 @@
-#pragma once
+// #pragma once
 
-#include "../PrettyPrint.hpp"
+// #include "../PrettyPrint.hpp"
 
-#include <fstream>
-#include <string>
-#include <iostream>
+// #include <fstream>
+// #include <string>
+// #include <iostream>
 
-namespace python
-{
-    class BufferedInputStream
-    {
-        std::ifstream ifs;
+// namespace python
+// {
+//     class BufferedInputStream
+//     {
+//         std::ifstream ifs;
         
-        std::string sz_buffer;
+//         std::string sz_buffer;
         
-        int index;
+//         int index;
 
-        friend class BinaryFileParser;
+//         friend class BinaryFileParser;
 
-        const char* data() const;
+//         const char* data() const;
 
-        void skip(int n);
+//         void skip(int n);
 
-    public:
+//     public:
 
-        BufferedInputStream(const char* filename);
+//         BufferedInputStream(const char* filename);
 
-        ~BufferedInputStream() = default;
+//         ~BufferedInputStream() = default;
 
-        char read();
+//         char read();
 
-        int read_int();
+//         int read_int();
 
-        double read_double();
+//         double read_double();
 
-        void unread();
+//         void unread();
 
-        friend std::ostream& operator<<(std::ostream& os, const BufferedInputStream& stream)
-        {
-            print_hex_code<>(stream.sz_buffer.data(), stream.sz_buffer.size());
-            return os;
-        }
-    };
+//         friend std::ostream& operator<<(std::ostream& os, const BufferedInputStream& stream)
+//         {
+//             print_hex_code<>(stream.sz_buffer.data(), stream.sz_buffer.size());
+//             return os;
+//         }
+//     };
 
-}
+// }

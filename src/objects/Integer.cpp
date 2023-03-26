@@ -125,4 +125,9 @@ namespace python
         PYTHON_ASSERT(self && self->is<Integer>());
         return new String(std::to_string(self->as<Integer>()->value()));
     }
+
+    void IntegerKlass::mark_self_and_children(Object* self)
+    {
+        self->mark();
+    }
 }

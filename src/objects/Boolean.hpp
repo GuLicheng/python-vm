@@ -27,6 +27,8 @@ namespace python
         // virtual Object* py__new__(Object* self, Object* other) override;
 
         // virtual Object* py__doc__(Object* self, Object* other) override;
+
+        // virtual void mark_self_and_children(Object* self);
     };
 
     class Boolean : public Object

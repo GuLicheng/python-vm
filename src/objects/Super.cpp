@@ -49,6 +49,17 @@ namespace python
         return new SuperObject(type->as<TypeObject>(), instance);
     }
 
+    void SuperKlass::mark_self_and_children(Object* self)
+    {
+        if (self->is_marked())
+            return;
+
+        SuperObject* so = self->as<SuperObject>();
+        so->mark();
+        so->m_type->mark_self_and_children();
+        so->m_instance->mark_self_and_children();
+    }
+
     SuperObject::SuperObject(TypeObject* type, Object* instance)
         : m_type(type), m_instance(instance)
     {

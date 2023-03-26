@@ -25,6 +25,8 @@ namespace python
 
         Dict* m_obj_dict = nullptr;
 
+        bool m_mark = false;
+
     public:
 
         using KlassType = ObjectKlass;
@@ -37,7 +39,15 @@ namespace python
 
         void merge_obj_dict(Object* object);
 
-        virtual void show() { std::cout << "Object(None?)"; };
+        void mark();
+
+        void mark_self_and_children();
+
+        void unmark();
+
+        bool is_marked();
+
+        // virtual void show() { std::cout << "Object(None?)"; };
 
         Klass* get_klass()  
         { 

@@ -28,6 +28,16 @@ namespace python
     {
         return sizeof(Generator);
     }
+
+    void GeneratorKlass::mark_self_and_children(Object* self)
+    {
+        Generator* g = self->as<Generator>();
+        if (g->is_marked())
+            return;
+
+        g->mark();
+        g->m_frame->mark_self_and_children();
+    }
     
     Generator::Generator(FunctionObject* func, List* args, int arg_cnt)
     {

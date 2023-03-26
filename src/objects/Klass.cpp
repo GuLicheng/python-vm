@@ -11,6 +11,8 @@
 #include "../runtime/Interpreter.hpp"
 #include "../Python.hpp"
 
+#include <algorithm>
+
 namespace python
 {
 
@@ -245,6 +247,18 @@ namespace python
     std::size_t Klass::size()
     {
         return sizeof(Object);
+    }
+
+    void Klass::mark_self_and_children(Object* self)
+    {
+        if (self->is_marked())
+            return;
+
+        self->mark();
+        if (self->m_obj_dict)
+        {
+            self->m_obj_dict->mark_self_and_children();
+        }
     }
 
     void Klass::build_klass(std::string_view class_name, Klass* super_class, Dict* class_attributes)

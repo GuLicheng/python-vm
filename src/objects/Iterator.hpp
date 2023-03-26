@@ -61,6 +61,14 @@ namespace python
             {
                 std::cout << self->as<PyViewIterator>()->m_parent->m_name;
             }
+
+            virtual void mark_self_and_children(Object* self) override
+            {
+                if (self->is_marked())
+                    return;
+                self->mark();
+                self->as<PyViewIterator>()->m_parent->mark_self_and_children();
+            }
         };
 
         struct PyViewIterator : public Object
@@ -117,6 +125,14 @@ namespace python
         {
             std::cout << self->as<PyView<TView>>()->m_name;
         }
+
+        virtual void mark_self_and_children(Object* self) override
+        {
+            if (self->is_marked())
+                return;
+
+            self->as<PyView<TView>>()->m_underlying->mark_self_and_children();
+        }
     };
 
 
@@ -130,10 +146,14 @@ namespace python
         {
             this->build_klass("ObjectViewKlass", ObjectKlass::get_instance(), nullptr);
         }
+
+        virtual void mark_self_and_children(Object* self) override;
     };
 
     class ObjectView : public Object
     {
+        friend class ObjectViewKlass;
+
         Object* m_iterable;
 
         struct ObjectIterator

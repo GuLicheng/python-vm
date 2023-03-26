@@ -25,6 +25,26 @@ namespace python
         }
     }
 
+    void Object::mark()
+    {
+        this->m_mark = true;
+    }
+
+    void Object::mark_self_and_children()
+    {
+        this->m_klass->mark_self_and_children(this);
+    }
+
+    void Object::unmark()
+    {
+        this->m_mark = false;
+    }
+
+    bool Object::is_marked()
+    {
+        return this->m_mark;
+    }
+
     void Object::print()
     {
         // std::cout << "name = " << this->m_klass->get_name()->value() << '\n';

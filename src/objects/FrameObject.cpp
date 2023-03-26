@@ -5,16 +5,16 @@ namespace python
 {
     FrameObject::FrameObject(CodeObject* codes)
     {
-        this->m_co_consts = codes->co_consts;
-        this->m_co_names = codes->co_names;
+        this->m_co_consts = codes->m_consts;
+        this->m_co_names = codes->m_names;
 
         this->m_locals = new Dict();
         this->m_locals->put(new String("__name__"), new String("__main__"));
 
         this->m_globals = this->m_locals;
 
-        this->m_stack = new ArrayList<Object*>();
-        this->m_loop_stack = new ArrayList<Block*>();
+        this->m_stack = new List();
+        // this->m_loop_stack = new ArrayList<Block*>();
 
         this->m_codes = codes;
         this->m_pc = 0;
@@ -23,6 +23,7 @@ namespace python
         this->m_closure = nullptr;
         this->m_sender = nullptr;
         this->m_entry_frame = false;
+        this->set_klass(FrameObjectKlass::get_instance());
     }
 
     FrameObject::FrameObject(FunctionObject* function, List* args, int op_arg) 
@@ -30,19 +31,20 @@ namespace python
 
         PYTHON_ASSERT((args && op_arg != 0) || (!args && op_arg == 0));
 
-        this->m_co_consts = function->m_func_code->co_consts;
-        this->m_co_names = function->m_func_code->co_names;
+        this->m_co_consts = function->m_func_code->m_consts;
+        this->m_co_names = function->m_func_code->m_names;
 
         this->m_locals = new Dict();
         this->m_globals = function->m_globals;
 
-        this->m_stack = new ArrayList<Object*>();
-        this->m_loop_stack = new ArrayList<Block*>();
+        this->m_stack = new List();
+        // this->m_loop_stack = new ArrayList<Block*>();
 
         this->m_fast_local = new List();
         this->m_closure = 0;
         this->m_codes = function->m_func_code;
         this->m_pc = 0;
+        this->set_klass(FrameObjectKlass::get_instance());
         
 
         /*
@@ -54,7 +56,7 @@ namespace python
         
         const int na = op_arg & 0xFF;
         const int nk = op_arg >> 8;
-        int argcnt = this->m_codes->co_argcount;
+        int argcnt = this->m_codes->m_argcount;
         int kw_pos = argcnt;
 
 
@@ -111,7 +113,7 @@ namespace python
         {
             Object* key = args->get(na + i * 2);
             Object* val = args->get(na + i * 2 + 1);
-            int index = this->m_codes->co_varnames->index(key);
+            int index = this->m_codes->m_varnames->index(key);
             if (index >= 0)
             {
                 this->m_fast_local->set(index, val);
@@ -127,7 +129,7 @@ namespace python
         }
 
         // If flag & CO_VARARGS == 1, the function has varargs
-        if (this->m_codes->co_flags & FunctionObject::CO_VARARGS)
+        if (this->m_codes->m_flags & FunctionObject::CO_VARARGS)
         {
             if (!alist)
             {
@@ -147,7 +149,7 @@ namespace python
         }
 
         // If flag & CO_VARKEYWORDS == 1, the function has kwargs
-        if (this->m_codes->co_flags & FunctionObject::CO_VARKEYWORDS)
+        if (this->m_codes->m_flags & FunctionObject::CO_VARKEYWORDS)
         {
             if (!adict)
             {
@@ -166,7 +168,7 @@ namespace python
 
 
         // Fill closure
-        auto cells = this->m_codes->co_cellvars;
+        auto cells = this->m_codes->m_cellvars;
         if (cells && cells->size() > 0)
         {
             this->m_closure = new List();
@@ -194,17 +196,17 @@ namespace python
 
     bool FrameObject::has_more_codes() const
     {
-        return this->m_pc < this->m_codes->co_code->length();
+        return this->m_pc < this->m_codes->m_code->length();
     }
 
     unsigned char FrameObject::get_op_code()
     {
-        return this->m_codes->co_code->c_str()[this->m_pc++];
+        return this->m_codes->m_code->c_str()[this->m_pc++];
     }
     
     int FrameObject::get_op_arg()
     {
-        auto co_code = this->m_codes->co_code->c_str();
+        auto co_code = this->m_codes->m_code->c_str();
         int byte1 = co_code[this->m_pc++] & 0xFF;
         int byte2 = co_code[this->m_pc++] & 0xFF;
         return (byte2 << 8) | byte1;
@@ -222,18 +224,18 @@ namespace python
 
     Object* FrameObject::get_cell_from_parameter(int index)
     {
-        Object* cell = this->m_codes->co_cellvars->get(index);
-        index = this->m_codes->co_varnames->index(cell);
+        Object* cell = this->m_codes->m_cellvars->get(index);
+        index = this->m_codes->m_varnames->index(cell);
         return this->m_fast_local->get(index);
     }
 
     int FrameObject::lineno()
     {
         int pc_offset = 0;
-        int line_no = this->m_codes->co_firstlineno;
+        int line_no = this->m_codes->m_firstlineno;
 
-        const char* lnotab = this->m_codes->co_lnotab->value().data();
-        int length = this->m_codes->co_lnotab->length();
+        const char* lnotab = this->m_codes->m_lnotab->value().data();
+        int length = this->m_codes->m_lnotab->length();
 
         for (int i = 0; i < length; i++) {
             pc_offset += lnotab[i++];
@@ -248,11 +250,37 @@ namespace python
 
     String* FrameObject::file_name()
     {
-        return this->m_codes->co_filename;
+        return this->m_codes->m_filename;
     }
 
     String* FrameObject::func_name()
     {
-        return this->m_codes->co_name;
+        return this->m_codes->m_name;
+    }
+    
+    FrameObjectKlass::FrameObjectKlass()
+    {
+        this->build_klass("frameobject", ObjectKlass::get_instance(), nullptr);
+    }
+
+    void FrameObjectKlass::mark_self_and_children(Object* self)
+    {
+        FrameObject* fo = self->as<FrameObject>();
+        if (fo->is_marked())
+            return;
+        fo->mark();
+
+        Klass::mark_all(
+            fo->m_stack,
+            fo->m_co_consts, 
+            fo->m_co_names,
+            fo->m_locals,
+            fo->m_globals,
+            fo->m_codes,
+            fo->m_fast_local,
+            fo->m_closure
+        );
+        if (fo->m_sender)
+            fo->m_sender->mark_self_and_children();
     }
 }

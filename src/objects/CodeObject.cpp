@@ -1,6 +1,6 @@
 #include "CodeObject.hpp"
 #include "ByteCode.hpp"
-
+#include "List.hpp"
 #include "../PrettyPrint.hpp"
 #include <iostream>
 #include <iomanip>
@@ -22,6 +22,22 @@ namespace python
         {21, "BINARY_DIVIDE"},
         {23, "BINARY_ADD"},
         {24, "BINARY_SUBTRACT"},
+
+        {30, "SLICE0",},
+        {31, "SLICE1",},
+        {32, "SLICE2",},
+        {33, "SLICE3",},
+
+        {40, "STORE_SLICE0",},
+        {41, "STORE_SLICE1",},
+        {42, "STORE_SLICE2",},
+        {43, "STORE_SLICE3",},
+
+        {50, "DELETE_SLICE0",},
+        {51, "DELETE_SLICE1",},
+        {52, "DELETE_SLICE2",},
+        {53, "DELETE_SLICE3",},
+
         {55, "INPLACE_ADD"},
         {54, "STORE_MAP"},
         {56, "INPLACE_SUBSTRACT"},
@@ -78,33 +94,40 @@ namespace python
         {140, "CALL_FUNCTION_VAR"},
     };
 
-
-
-    void print_array_list(ArrayList<Object*>* list)
+    void print_array_list(List* list)
     {
-
-        if (!list)
-        {
+        if (list)
+            list->print();
+        else
             std::cout << "Empty List\n";
-            return;
-        }
-        
-        std::cout << "[";
-        for (int i = 0; i < list->size(); ++i)
-        {
-            auto obj = list->get(i);
-            if (obj)
-            {
-                if (i) std::cout << ", ";
-                obj->show();
-            }
-            else
-            {
-                std::cout << "nullptr\n";
-            }
-        }
-        std::cout << "]";
     }
+
+    // void print_array_list(ArrayList<Object*>* list)
+    // {
+
+    //     if (!list)
+    //     {
+    //         std::cout << "Empty List\n";
+    //         return;
+    //     }
+        
+    //     std::cout << "[";
+    //     for (int i = 0; i < list->size(); ++i)
+    //     {
+    //         auto obj = list->get(i);
+    //         if (obj)
+    //         {
+    //             if (i) std::cout << ", ";
+    //             // obj->show();
+    //             obj->print();
+    //         }
+    //         else
+    //         {
+    //             std::cout << "nullptr\n";
+    //         }
+    //     }
+    //     std::cout << "]";
+    // }
 
     void print_byte_code(String* codes, int level)
     {
@@ -141,7 +164,11 @@ namespace python
         for (int i = 0; i < length;)
         {
             auto code_type = data[i] & 0xFF;
-            PYTHON_ASSERT(EnumDict.count(code_type));
+            if (!EnumDict.count(code_type))
+            {
+                std::cout << code_type << '\n';
+                PYTHON_ASSERT(false);
+            }
             // std::cout << std::format("\t\t{} \t{}\n", i, EnumDict[code_type]);
             std::cout << prefix << "\t\t" << i << " \t" << EnumDict[code_type] << "\n";
             if (code_type >= ByteCode::HAVE_ARGUMENT)
@@ -158,49 +185,84 @@ namespace python
     void show_code_object(CodeObject* code, int level)
     {
 
-        print_label_style("argcount", code->co_argcount, level);
-        print_label_style("nlocals", code->co_nlocals, level);
-        print_label_style("stack_size", code->co_stacksize, level);
-        print_label_style("flag", code->co_flags, level);
+        print_label_style("argcount", code->m_argcount, level);
+        print_label_style("nlocals", code->m_nlocals, level);
+        print_label_style("stack_size", code->m_stacksize, level);
+        print_label_style("flag", code->m_flags, level);
 
         std::cout << "<code>";
-        print_byte_code(code->co_code, level + 1);
+        print_byte_code(code->m_code, level + 1);
         std::cout << "</code>\n";
 
         std::cout << "<consts>\n";
-        print_array_list(code->co_consts);
+        print_array_list(code->m_consts);
         std::cout << "\n</consts>\n";
     
         std::cout << "<co_names>";
-        code->co_name->show();
+        code->m_name->print();
         std::cout << "</co_names>";
         std::cout << '\n';
 
         std::cout << "<co_varnames>";
-        print_array_list(code->co_varnames);
+        print_array_list(code->m_varnames);
         std::cout << "</co_varnames>\n";
 
         std::cout << "<co_freevars>";
-        print_array_list(code->co_freevars);
+        print_array_list(code->m_freevars);
         std::cout << "</co_freevars>\n";
 
         std::cout << "<co_cellvars>";
-        print_array_list(code->co_cellvars);
+        print_array_list(code->m_cellvars);
         std::cout << "</co_cellvars>\n";
 
         std::cout << "<names>";
-        print_array_list(code->co_names);
+        print_array_list(code->m_names);
         std::cout << "</names>\n";
 
         std::cout << "<co_filename>";
-        code->co_filename->show();
+        code->m_filename->print();
         std::cout << "</co_filename>\n";
 
         std::cout << "<co_name>";
-        code->co_name->show();
+        code->m_name->print();
         std::cout << "</co_name>\n";
 
-        translate_byte_code(code->co_code, level);
+        translate_byte_code(code->m_code, level);
 
+    }
+    
+    CodeObjectKlass::CodeObjectKlass()
+    {
+        this->build_klass("", ObjectKlass::get_instance(), nullptr);
+    }
+    
+    void CodeObjectKlass::print(Object* obj)
+    {
+        return obj->as<CodeObject>()->print();
+    }
+
+    void CodeObjectKlass::mark_self_and_children(Object* self)
+    {
+        CodeObject* co = self->as<CodeObject>();
+        if (co->is_marked())
+            return;
+
+        co->mark();
+        Klass::mark_all(
+            co->m_code,
+            co->m_consts,
+            co->m_name,
+            co->m_varnames,
+            co->m_freevars, 
+            co->m_cellvars, 
+            co->m_filename, 
+            co->m_name, 
+            co->m_lnotab
+        );
+    }
+    
+    CodeObject::CodeObject()
+    {
+        this->set_klass(CodeObjectKlass::get_instance());
     }
 }
